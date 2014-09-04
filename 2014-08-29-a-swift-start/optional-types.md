@@ -32,7 +32,7 @@
 
 # [fit] Overview of Optional Types
 
-* Given a type "`A`", it's optional type is "`A?`"
+* Given a type "`A`", its optional type is "`A?`"
 * A value of type `A?` holds something of type `A` or nothing, aka `nil`
 * e.g.
   * `Int?`
@@ -55,7 +55,7 @@
 > But in a strongly typed language, how does one do that?
 
 1. Objective-C was pretty close to this with `nil`
-> But still possibly to smudge types
+> But still possible to smudge types
 
 ^ * swift enforces explicit types
 
