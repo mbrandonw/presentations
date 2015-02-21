@@ -121,6 +121,7 @@ xs |> map(square |> incr) |> filter(isPrime)
 
 
 
+
 // =================================================
 // =================================================
 // =================================================
@@ -154,8 +155,7 @@ func filter_from_reduce <A> (p: A -> Bool) -> [A] -> [A] {
 
 
 
-
-
+/* 👍👍👍👍👍👍👍👍👍 */
 func squaringTransducer <C> (reducer: (C, Int) -> C) -> ((C, Int) -> C) {
   return { accum, x in
     return reducer(accum, x * x)

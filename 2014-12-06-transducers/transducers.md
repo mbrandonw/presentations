@@ -17,12 +17,13 @@
 * Immutability
 * Statelessness
 
+
 ---
 
 # Function composition
 
-* methods are *not* composable
-* we should promote composition
+* Swift methods are not composable
+* we should do everything to promote composition
 * curried functions are highly composable
 
 ---
@@ -71,7 +72,7 @@ xs |> map(square) |> map(incr) |> filter(isPrime)
 The bad:
 
 * this code traverses the `xs` 3 times!
-* so 3 copies of the array will be created.
+* 3 copies of the array could will be created.
 
 ---
 
