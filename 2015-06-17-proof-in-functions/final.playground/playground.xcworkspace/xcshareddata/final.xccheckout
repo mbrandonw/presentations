@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>681A5A8C-1F46-40B1-9756-20113DB120D6</string>
+	<key>IDESourceControlProjectName</key>
+	<string>final</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>202BDA4F5846241893421A83A3A0890A74DD1A28</key>
+		<string>https://github.com/mbrandonw/presentations.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>2015-06-17-proof-in-functions/final.playground</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>202BDA4F5846241893421A83A3A0890A74DD1A28</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/mbrandonw/presentations.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>202BDA4F5846241893421A83A3A0890A74DD1A28</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>202BDA4F5846241893421A83A3A0890A74DD1A28</string>
+			<key>IDESourceControlWCCName</key>
+			<string>presentations</string>
+		</dict>
+	</array>
+</dict>
+</plist>
