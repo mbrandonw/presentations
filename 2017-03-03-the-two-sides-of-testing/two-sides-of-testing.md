@@ -10,9 +10,9 @@ build-lists: true
 
 ---
 
-### Brandon Williams
-#### brandon@kickstarter.com
-#### @mbrandonw
+## Brandon Williams
+### brandon@kickstarter.com
+### @mbrandonw
 
 ^ Here's some contact info if anyone wants to get in touch with me later.
 
@@ -34,8 +34,8 @@ build-lists: true
 
 ```swift
 /**
- * Reads a number from a file on disk, performs a computation, prints
- * the result to the console, and returns the result.
+ * Reads a number from a file on disk, performs a computation,
+ prints the result to the console, and returns the result.
  */
 func compute(file: String) -> Int {
 
@@ -60,8 +60,8 @@ We can implement this function pretty easily...
 
 ```swift
 /**
- * Reads a number from a file on disk, performs a computation, prints
- * the result to the console, and returns the result.
+ * Reads a number from a file on disk, performs a computation,
+ prints the result to the console, and returns the result.
  */
 func compute(file: String) -> Int {
 
@@ -92,24 +92,24 @@ Stepping through this:
 
 ```swift
 /**
- * Reads a number from a file on disk, performs a computation, prints
- * the result to the console, and returns the result.
+ * Reads a number from a file on disk, performs a computation,
+ prints the result to the console, and returns the result.
  */
 func compute(file: String) -> Int {
 
-  let value = Bundle.main.path(forResource: file, ofType: nil)   // "/var/folders/.../number.txt"
-    .flatMap { try? String(contentsOfFile: $0) }                 // "123"
-    .flatMap { Int($0) }                                         // 123
-    ?? 0                                                         // 123
+  let value = Bundle.main.path(forResource: file, ofType: nil)  // "/var/.../number.txt"
+    .flatMap { try? String(contentsOfFile: $0) }                // "123"
+    .flatMap { Int($0) }                                        // 123
+    ?? 0                                                        // 123
 
-  let result = value * value                                     // 15129
+  let result = value * value                                    // 15129
 
-  print("Computed: \(result)")                                   // "Computed: 15129\n"
+  print("Computed: \(result)")                                  // "Computed: 15129\n"
 
-  return result                                                  // 15129
+  return result                                                 // 15129
 }
 
-compute(file: "number.txt")                                      // 15129
+compute(file: "number.txt")                                     // 15129
 ```
 
 ^
