@@ -1,5 +1,7 @@
 build-lists: true
 
+---
+
 ## The Two Sides of Testing
 
 ^ Today I'm going to talk a lot about testing. We're going to dive deeply into why we want to test, and what it takes to write testable code. It turns out there are two precise things that prevent code from be testable, and in a certain sense they are "dual" versions of each other. All questions of testability come down to understanding these two sides.
@@ -10,9 +12,10 @@ build-lists: true
 
 ---
 
-## Brandon Williams
-### brandon@kickstarter.com
-### @mbrandonw
+# Brandon Williams
+* brandon@kickstarter.com
+* @mbrandonw
+* github.com/kickstarter/ios-oss
 
 ^ Here's some contact info if anyone wants to get in touch with me later.
 
@@ -126,14 +129,14 @@ However, it has some serious shortcomings when it comes to testing it. Let's loo
 
 ---
 
-![inline 60%](imgs/compute-1.png)
+![inline 54%](imgs/compute-1.png)
 
 ^
 Here is our function. It needs some input in order to do it's job. In this case, it needs a string that is the name of the file which it is supposed to read.
 
 ---
 
-![inline 60%](imgs/compute-2.png)
+![inline 54%](imgs/compute-2.png)
 
 ^
 We denote this as an arrow pointing into the function.
@@ -141,7 +144,7 @@ It returns some output.
 
 ---
 
-![inline 60%](imgs/compute-3.png)
+![inline 54%](imgs/compute-3.png)
 
 ^
 We denote this as an arrow leaving the function.
@@ -150,7 +153,7 @@ But, there's more to the story. In order for this function to do its job, it nee
 
 ---
 
-![inline 60%](imgs/compute-4.png)
+![inline 54%](imgs/compute-4.png)
 
 ^
 `Bundle.main.path(forResource:ofType)` in order to figure out the full path of where the file is located on disk.
@@ -160,7 +163,7 @@ Also we have this other global function...
 
 ---
 
-![inline 60%](imgs/compute-5.png)
+![inline 54%](imgs/compute-5.png)
 
 ^
 `String(contentsOfFile:)`. It somehow reads the contents of the file. It's a function whose output depends on the current state of your entire hard drive: sometimes it can read the file (e.g. when the file is actually there) and sometimes it cannot (e.g. when the file is missing).
@@ -169,7 +172,7 @@ The fact that this function was not given everything it needed to do its job is 
 
 ---
 
-![inline 60%](imgs/compute-6.png)
+![inline 54%](imgs/compute-6.png)
 
 ^
 When this function is executed it prints a message to the console, and that action is not accounted for at all in the return type. No one would know that the function does this unless we happen to be inspecting the console.
@@ -179,7 +182,7 @@ In order to test this function you must be able to place a file in a very specif
 
 ---
 
-![inline 60%](imgs/compute-6.png)
+![inline 54%](imgs/compute-6.png)
 
 ^
 This picture shows the two sides to testing. You have the inputs, both the explicit and implicit, and you have the outputs, both the explicit and implicit. It is crucial to understand these sides fully in order to write testable code.
@@ -187,16 +190,16 @@ So let's do that.
 
 ---
 
-# Testing output
+## Testing output
 
 ^
 We'll start with the output side. This in some sense the easiest side to understand because it is very familiar to us.
 
 ---
 
-### Testing output
+#### Testing output
 
-# Side effects
+## Side effects
 
 ^
 The thing that makes testing output difficult is side effects. First, a definition of side effects.
@@ -209,13 +212,13 @@ An expression is said to have a “side effect” if its execution makes an obse
 
 ---
 
-## How do you test code with side effects?
+### How do you test code with side effects?
 
 ^ In order to test a function that has a side effect, you must execute the function, and then make assertions on the state of the world after executing. You can confirm that the side effect that you wanted to happen did indeed happen, but you can never be sure that there were not additional side effects that accidentally happened.
 
 ---
 
-## A better way to handle side effects
+### A better way to handle side effects
 
 ---
 
@@ -251,7 +254,7 @@ Changing the return value is of course a big deal. It means now this function wo
 
 ---
 
-# Testing Input
+## Testing Input
 
 ^
 So we have now talked about testing the output side of a function. It involves not only testing what the function returned, but also what side effects it performed.
@@ -259,16 +262,16 @@ The other side of testing is testing the inputs. This means being able to fully 
 
 ---
 
-### Testing Input
-# Co-effects
+#### Testing Input
+## Co-effects
 
 ^
 The thing that makes testing inputs difficult are co-effects! These are the globals that the function reached out to access. They are the things you had no control over when the function executed. You didn't get to specify which globals.
 
 ---
 
-### Testing Input
-# Co-effects
+#### Testing Input
+## Co-effects
 ### i.e. the “dual” of side effects
 
 ^
@@ -299,7 +302,7 @@ So, with that analogy this is how I would define co-effect loosely.
 
 ---
 
-## How do you test code with co-effects?
+### How do you test code with co-effects?
 
 ^
 Let's ask the same question we asked for side effects.
@@ -308,7 +311,7 @@ Well, it is very difficult. You need some way to stub out the global values so t
 
 ---
 
-## A better way to handle co-effects
+### A better way to handle co-effects
 
 ^
 Inspired by a talk that Colin Barrett gave at the Functional Swift Conference I co-organize with Chris Eidhof, you can simply embrace globals by stuffing them all into a single struct and forbidding access to any global unless it is through that struct.
@@ -626,4 +629,8 @@ To tame **co-effects**, put them all in one big ole global struct, and don't eve
 
 ---
 
-## Thanks
+# Thanks
+
+* brandon@kickstarter.com
+* @mbrandonw
+* github.com/kickstarter/ios-oss
