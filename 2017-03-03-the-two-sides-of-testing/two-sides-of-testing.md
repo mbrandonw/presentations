@@ -314,6 +314,7 @@ Well, it is very difficult. You need some way to stub out the global values so t
 ### A better way to handle co-effects
 
 ^
+In order to do this, we need a way to control co-effects.
 Inspired by a talk that Colin Barrett gave at the Functional Swift Conference I co-organize with Chris Eidhof, you can simply embrace globals by stuffing them all into a single struct and forbidding access to any global unless it is through that struct.
 
 ---
@@ -601,7 +602,6 @@ func compute(file: String,
 
 ^
 This is the final function refactor. It is a completely pure function, with all effects and co-effects removed, and every edge case can be tested. The added complexity in the function signature, both in the inputs and outputs, and now measures to how much effectual work the function is doing. It completely documents the types of effects that can be expected from this function. It's cumbersome, but rightfully so! The function is far more complicated than it seems at first.
-TODO: warning about this style
 
 ---
 
