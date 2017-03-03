@@ -25,13 +25,13 @@ build-lists: true
 
 ^ I unfortunately don't have a great pitch as to why you should test. I can (and will) describe some of the many ways that testing has saved me and my colleagues in our every day work, but somehow that kind of stuff doesn't usually convince people.
 
-^ Instead I'm mostly going to focus on how testing has completely transformed the way I write code. I now write code only if it can be tested. It is a great boundary for me so that I can force myself to write my code in a functional programming style. I also have slowly started to consider my test code as the most important work I do, not the implementation. The test code is where I truly document how I expect my application to work, and it is where I have thought through edge cases and subtleties.
+^ However, I can describe why *I* test code. Testing has completely transformed the way I write code. I now write code only if it can be tested. It is a great boundary for me so that I can force myself to write my code in a functional style. I also have slowly started to consider my test code as the most important work I do, not the implementation. The test code is where I truly document how I expect my application to work, and it is where I have thought through edge cases and subtleties.
 
 ---
 
 ## A case study
 
-^ Let's analyze a seemingly innocent function and see what makes it difficult to test.
+^ Let's analyze a seemingly simple function and see what makes it difficult to test.
 
 ---
 
@@ -52,7 +52,7 @@ func compute(file: String) -> Int {
 
 
 
-`
+}
 ```
 
 ^
