@@ -3,5 +3,6 @@
     <pages>
         <page name='rings'/>
         <page name='talk'/>
+        <page name='validation'/>
     </pages>
 </playground>

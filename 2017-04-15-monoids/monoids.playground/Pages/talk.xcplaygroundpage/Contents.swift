@@ -48,35 +48,29 @@ sconcat([1, 2, 3], 0)
 sconcat([[1, 2, 3], [3, 4, 5], [5, 6, 7]], [])
 
 protocol Monoid: Semigroup {
-  static func e() -> Self
+  static var e: Self { get }
 }
 
 extension Int: Monoid {
-  static func e() -> Int {
-    return 0
-  }
+  static let e = 0
 }
 
 extension Array: Monoid {
-  static func e() -> Array {
+  static var e: Array {
     return []
   }
 }
 
 extension String: Monoid {
-  static func e() -> String {
-    return ""
-  }
+  static let e = ""
 }
 
 extension Bool: Monoid {
-  static func e() -> Bool {
-    return true
-  }
+  static let e = true
 }
 
 func mconcat <M: Monoid> (_ xs: [M]) -> M {
-  return xs.reduce(M.e(), <>)
+  return xs.reduce(M.e, <>)
 }
 
 mconcat([1, 2, 3, 4])
@@ -85,7 +79,7 @@ mconcat([[1, 2, 3], [4, 5, 6]])
 struct Endo<A>: Monoid {
   let call: (A) -> A
 
-  static func e() -> Endo {
+  static var e: Endo {
     return Endo { x in x }
   }
 
@@ -113,8 +107,8 @@ struct FunctionM<A, M: Monoid>: Monoid {
       return self.call(x) <> s.call(x)
     }
   }
-  static func e() -> FunctionM {
-    return FunctionM { _ in M.e() }
+  static var e: FunctionM {
+    return FunctionM { _ in M.e }
   }
 }
 
@@ -122,16 +116,24 @@ typealias Predicate<A> = FunctionM<A, Bool>
 
 let isEven = Predicate<Int> { $0 % 2 == 0 }
 let isLessThan10 = Predicate<Int> { $0 < 10 }
+//let isLessThan = { x in Predicate<Int> { $0 < x } }
+
+func isLessThan <C: Comparable> (_ x: C) -> Predicate<C> {
+  return Predicate { $0 < x }
+}
 
 isEven <> isLessThan10
 
-extension Array {
-  func filtered(by predicate: Predicate<Element>) -> Array {
+extension Sequence {
+  func filtered(by predicate: Predicate<Iterator.Element>) -> [Iterator.Element] {
     return self.filter { predicate.call($0) }
   }
 }
 
 Array(0...200).filtered(by: isEven <> isLessThan10)
+Array(0...200).filtered(by: isEven <> isLessThan(10))
+["foo", "bar", "baz", "qux"]
+  .filtered(by: isLessThan("f"))
 
 enum Ordering: Monoid {
   case lt
@@ -140,15 +142,13 @@ enum Ordering: Monoid {
 
   func op(_ s: Ordering) -> Ordering {
     switch (self, s) {
-    case (.lt, _):      return .lt
-    case (.gt, _):      return .gt
-    case let (.eq, x):  return x
+    case (.lt, _): return .lt
+    case (.gt, _): return .gt
+    case (.eq, _): return s
     }
   }
 
-  static func e() -> Ordering {
-    return .eq
-  }
+  static let e = Ordering.eq
 }
 
 typealias Comparator<A> = FunctionM<(A, A), Ordering>
@@ -162,12 +162,12 @@ extension Comparable {
 Int.comparator()
 
 extension Array {
-  func sorted(comparator: Comparator<Element>) -> Array {
+  func sorted(by comparator: Comparator<Element>) -> Array {
     return self.sorted { comparator.call($0, $1) == .lt }
   }
 }
 
-[4, 6, 2, 8, 1, 2].sorted(comparator: Int.comparator())
+[4, 6, 2, 8, 1, 2].sorted(by: Int.comparator())
 
 extension Ordering {
   func reversed() -> Ordering {
@@ -193,7 +193,7 @@ extension FunctionM where M == Ordering {
 
 Int.comparator().reversed()
 
-[4, 6, 2, 8, 1, 2].sorted(comparator: Int.comparator().reversed())
+[4, 6, 2, 8, 1, 2].sorted(by: Int.comparator().reversed())
 
 extension Lens where Part: Comparable {
   var comparator: Comparator<Whole> {
@@ -214,7 +214,7 @@ let comparators = [
 ]
 
 projects
-  .sorted(comparator: mconcat(comparators))
+  .sorted(by: mconcat(comparators))
   .map { "\($0.state) : \($0.creator.location.name) : \($0.name)" }
 
 
@@ -222,11 +222,6 @@ projects
 
 
 "done"
-
-
-
-
-
 
 
 

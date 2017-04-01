@@ -11,7 +11,7 @@ protocol Semigroup {
 }
 
 protocol Monoid: Semigroup {
-  static func e() -> Self
+  static var e: Self { get }
 }
 
 struct SumM<R: Ring>: Monoid {
@@ -23,10 +23,11 @@ struct SumM<R: Ring>: Monoid {
   func op(_ s: SumM) -> SumM {
     return SumM(self.unR.add(s.unR))
   }
-  static func e() -> SumM {
+  static var e: SumM {
     return SumM(R.zero())
   }
 }
+
 struct ProdM<R: Ring>: Monoid {
   let unR: R
   init(_ r: R) {
@@ -36,7 +37,7 @@ struct ProdM<R: Ring>: Monoid {
   func op(_ s: ProdM) -> ProdM {
     return ProdM(self.unR.mul(s.unR))
   }
-  static func e() -> ProdM {
+  static var e: ProdM {
     return ProdM(R.one())
   }
 }
