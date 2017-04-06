@@ -2,6 +2,7 @@
 <playground version='6.0' target-platform='macos' display-mode='raw'>
     <pages>
         <page name='rings'/>
-        <page name='monoids'/>
+        <page name='prepped'/>
+        <page name='live'/>
     </pages>
 </playground>

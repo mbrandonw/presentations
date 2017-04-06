@@ -1,46 +1,46 @@
 
 protocol Semiring {
-  static func + (lhs: Self, rhs: Self) -> Self
-  static func * (lhs: Self, rhs: Self) -> Self
+  func add(_ s: Self) -> Self
+  func mul(_ s: Self) -> Self
   static func one() -> Self
   static func zero() -> Self
 }
 
-//protocol Semigroup {
-//  static func <> (_ s: Self) -> Self
-//}
-//
-//protocol Monoid: Semigroup {
-//  static var e: Self { get }
-//}
+protocol Semigroup {
+  func op(_ s: Self) -> Self
+}
 
-//struct SumM<R: Semiring>: Monoid {
-//  let unR: R
-//  init(_ r: R) {
-//    self.unR = r
-//  }
-//
-//  func op(_ s: SumM) -> SumM {
-//    return SumM(self.unR.add(s.unR))
-//  }
-//  static var e: SumM {
-//    return SumM(R.zero())
-//  }
-//}
-//
-//struct ProdM<R: Semiring>: Monoid {
-//  let unR: R
-//  init(_ r: R) {
-//    self.unR = r
-//  }
-//
-//  func op(_ s: ProdM) -> ProdM {
-//    return ProdM(self.unR.mul(s.unR))
-//  }
-//  static var e: ProdM {
-//    return ProdM(R.one())
-//  }
-//}
+protocol Monoid: Semigroup {
+  static var e: Self { get }
+}
+
+struct SumM<R: Semiring>: Monoid {
+  let unR: R
+  init(_ r: R) {
+    self.unR = r
+  }
+
+  func op(_ s: SumM) -> SumM {
+    return SumM(self.unR.add(s.unR))
+  }
+  static var e: SumM {
+    return SumM(R.zero())
+  }
+}
+
+struct ProdM<R: Semiring>: Monoid {
+  let unR: R
+  init(_ r: R) {
+    self.unR = r
+  }
+
+  func op(_ s: ProdM) -> ProdM {
+    return ProdM(self.unR.mul(s.unR))
+  }
+  static var e: ProdM {
+    return ProdM(R.one())
+  }
+}
 
 typealias DisjunctiveBool = SumM<Bool>
 typealias ConjunctiveBool = ProdM<Bool>
