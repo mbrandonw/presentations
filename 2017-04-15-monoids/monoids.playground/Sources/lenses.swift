@@ -9,21 +9,9 @@ precedencegroup FunctionCompositionPrecedence {
   higherThan: LeftApplyPrecendence
 }
 
-infix operator • : FunctionCompositionPrecedence
-
 public struct Lens <Whole, Part> {
   public let view: (Whole) -> Part
   public let set: (Part, Whole) -> Whole
-}
-
-public func • <A, B, C> (lhs: Lens<A, B>, rhs: Lens<B, C>) -> Lens<A, C> {
-  return Lens(
-    view: { rhs.view(lhs.view($0)) },
-    set: { subPart, whole in
-      let part = lhs.view(whole)
-      let newPart = rhs.set(subPart, part)
-      return lhs.set(newPart, whole)
-  })
 }
 
 public struct Project {
@@ -94,24 +82,6 @@ extension Location {
   }
 }
 
-extension Lens where Whole == Project, Part == User {
-  public var name: Lens<Project, String> {
-    return Project.lens.creator • User.lens.name
-  }
-}
-
-extension Lens where Whole == Project, Part == User {
-  public var location: Lens<Project, Location> {
-    return Project.lens.creator • User.lens.location
-  }
-}
-
-extension Lens where Whole == Project, Part == Location {
-  public var name: Lens<Project, String> {
-    return Project.lens.creator.location • Location.lens.name
-  }
-}
-
 public let projects: [Project] = [
 
 
@@ -120,7 +90,7 @@ public let projects: [Project] = [
     name: "Voyager Golden Record: 40th Anniversary Edition",
     state: .live
   ),
-  
+
   .init(
     creator: .init(location: .init(name: "Brooklyn"), name: "David Alvarado and Jason Sussberg"),
     name: "The Bill Nye Film",
@@ -174,5 +144,60 @@ public let projects: [Project] = [
     name: "1 Second Everyday App",
     state: .live
   ),
-
+  
 ]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+infix operator • : FunctionCompositionPrecedence
+
+public func • <A, B, C> (lhs: Lens<A, B>, rhs: Lens<B, C>) -> Lens<A, C> {
+  return Lens(
+    view: { rhs.view(lhs.view($0)) },
+    set: { subPart, whole in
+      let part = lhs.view(whole)
+      let newPart = rhs.set(subPart, part)
+      return lhs.set(newPart, whole)
+  })
+}
+
+
+extension Lens where Whole == Project, Part == User {
+  public var name: Lens<Project, String> {
+    return Project.lens.creator • User.lens.name
+  }
+}
+
+extension Lens where Whole == Project, Part == User {
+  public var location: Lens<Project, Location> {
+    return Project.lens.creator • User.lens.location
+  }
+}
+
+extension Lens where Whole == Project, Part == Location {
+  public var name: Lens<Project, String> {
+    return Project.lens.creator.location • Location.lens.name
+  }
+}

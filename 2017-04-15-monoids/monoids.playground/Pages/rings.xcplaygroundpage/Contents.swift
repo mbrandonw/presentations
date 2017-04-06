@@ -1,55 +1,55 @@
 
-protocol Ring {
-  func add(_ a: Self) -> Self
-  func mul(_ a: Self) -> Self
+protocol Semiring {
+  static func + (lhs: Self, rhs: Self) -> Self
+  static func * (lhs: Self, rhs: Self) -> Self
   static func one() -> Self
   static func zero() -> Self
 }
 
-protocol Semigroup {
-  func op(_ s: Self) -> Self
-}
+//protocol Semigroup {
+//  static func <> (_ s: Self) -> Self
+//}
+//
+//protocol Monoid: Semigroup {
+//  static var e: Self { get }
+//}
 
-protocol Monoid: Semigroup {
-  static var e: Self { get }
-}
-
-struct SumM<R: Ring>: Monoid {
-  let unR: R
-  init(_ r: R) {
-    self.unR = r
-  }
-
-  func op(_ s: SumM) -> SumM {
-    return SumM(self.unR.add(s.unR))
-  }
-  static var e: SumM {
-    return SumM(R.zero())
-  }
-}
-
-struct ProdM<R: Ring>: Monoid {
-  let unR: R
-  init(_ r: R) {
-    self.unR = r
-  }
-
-  func op(_ s: ProdM) -> ProdM {
-    return ProdM(self.unR.mul(s.unR))
-  }
-  static var e: ProdM {
-    return ProdM(R.one())
-  }
-}
+//struct SumM<R: Semiring>: Monoid {
+//  let unR: R
+//  init(_ r: R) {
+//    self.unR = r
+//  }
+//
+//  func op(_ s: SumM) -> SumM {
+//    return SumM(self.unR.add(s.unR))
+//  }
+//  static var e: SumM {
+//    return SumM(R.zero())
+//  }
+//}
+//
+//struct ProdM<R: Semiring>: Monoid {
+//  let unR: R
+//  init(_ r: R) {
+//    self.unR = r
+//  }
+//
+//  func op(_ s: ProdM) -> ProdM {
+//    return ProdM(self.unR.mul(s.unR))
+//  }
+//  static var e: ProdM {
+//    return ProdM(R.one())
+//  }
+//}
 
 typealias DisjunctiveBool = SumM<Bool>
 typealias ConjunctiveBool = ProdM<Bool>
 
-extension Bool: Ring {
-  func add(_ a: Bool) -> Bool {
+extension Bool: Semiring {
+  static func +(lhs: Bool, rhs: Bool) -> Bool {
     return self || a
   }
-  func mul(_ a: Bool) -> Bool {
+  static func *(lhs: Bool, rhs: Bool) -> Bool {
     return self && a
   }
   static func one() -> Bool {
@@ -60,7 +60,7 @@ extension Bool: Ring {
   }
 }
 
-struct FunctionR<A, R: Ring>: Ring {
+struct FunctionR<A, R: Semiring>: Semiring {
   let call: (A) -> R
 
   func add(_ other: FunctionR) -> FunctionR {

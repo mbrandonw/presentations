@@ -1,40 +1,62 @@
 
+/*:
+ # Monoids!
+
+ ---
+
+ ## Brandon Williams
+
+ **Email:** brandon@kickstarter.com
+
+ **Twitter:** @mbrandonw
+ */
+
+
+
+/*:
+ Today we're going to talk about semigroups and monoids.
+
+ Monoids are a nice introduction to getting into abstract mathematics.
+
+ They are defined in quite an abstract way, and require certain axioms to hold, but it's easiy to construct
+ and play with them.
+
+ We start with the definition of a semigroup. A semigroup is the simplest idea of computation around. It
+ only describes how to combine two values of the same time to obtain a single value. The manner of
+ combining two values has to satisfying associativity too.
+
+ In Swift we could define it like so:
+ */
+
+
+infix operator <> : AdditionPrecedence
+
 protocol Semigroup {
-  func op(_ s: Self) -> Self
+  static func <> (lhs: Self, rhs: Self) -> Self
 }
 
 extension Int: Semigroup {
-  func op(_ s: Int) -> Int {
-    return self + s
+  static func <> (lhs: Int, rhs: Int) -> Int {
+    return lhs + rhs
   }
 }
 
 extension Array: Semigroup {
-  func op(_ s: Array) -> Array<Element> {
-    return self + s
+  static func <> (lhs: Array, rhs: Array) -> Array {
+    return lhs + rhs
   }
 }
 
 extension String: Semigroup {
-  func op(_ s: String) -> String {
-    return self + s
+  static func <> (lhs: String, rhs: String) -> String {
+    return lhs + rhs
   }
 }
 
 extension Bool: Semigroup {
-  func op(_ s: Bool) -> Bool {
-    return self && s
+  static func <> (lhs: Bool, rhs: Bool) -> Bool {
+    return lhs && rhs
   }
-}
-
-precedencegroup SemigroupPrecedence {
-  associativity: right
-}
-
-infix operator <> : SemigroupPrecedence
-
-func <> <S: Semigroup> (lhs: S, rhs: S) -> S {
-  return lhs.op(rhs)
 }
 
 1 <> 2
@@ -70,7 +92,7 @@ extension Bool: Monoid {
 }
 
 func mconcat <M: Monoid> (_ xs: [M]) -> M {
-  return xs.reduce(M.e, <>)
+  return sconcat(xs, M.e)
 }
 
 mconcat([1, 2, 3, 4])
@@ -83,9 +105,9 @@ struct Endo<A>: Monoid {
     return Endo { x in x }
   }
 
-  func op(_ s: Endo) -> Endo {
+  static func <> (lhs: Endo, rhs: Endo) -> Endo {
     return Endo { x in
-      return s.call(self.call(x))
+      return rhs.call(lhs.call(x))
     }
   }
 }
@@ -96,15 +118,12 @@ let mod3 = Endo { $0 % 3 }
 
 mconcat([square, incr, mod3]).call(2)
 
-struct Function <A, B> {
-}
-
 struct FunctionM<A, M: Monoid>: Monoid {
   let call: (A) -> M
 
-  func op(_ s: FunctionM) -> FunctionM {
+  static func <> (lhs: FunctionM, rhs: FunctionM) -> FunctionM {
     return FunctionM { x in
-      return self.call(x) <> s.call(x)
+      return lhs.call(x) <> rhs.call(x)
     }
   }
   static var e: FunctionM {
@@ -112,39 +131,58 @@ struct FunctionM<A, M: Monoid>: Monoid {
   }
 }
 
+/* 
+ Digresssion:
+
+ struct Function <A, B> {}
+ 
+ extension Function: Monoid where B: Monoid {}
+ 
+ (->)
+ 
+ extension (A -> B): Monoid where B: Monoid {}
+ 
+ extensions (A -> A): Monoid {}
+ */
+
 typealias Predicate<A> = FunctionM<A, Bool>
 
 let isEven = Predicate<Int> { $0 % 2 == 0 }
 let isLessThan10 = Predicate<Int> { $0 < 10 }
 //let isLessThan = { x in Predicate<Int> { $0 < x } }
 
+isEven <> isLessThan10
+
 func isLessThan <C: Comparable> (_ x: C) -> Predicate<C> {
   return Predicate { $0 < x }
 }
 
-isEven <> isLessThan10
+func isNil <A> () -> Predicate<A?> {
+  return Predicate { $0 == nil }
+}
 
-extension Sequence {
-  func filtered(by predicate: Predicate<Iterator.Element>) -> [Iterator.Element] {
-    return self.filter { predicate.call($0) }
+extension Array {
+  func filtered(by predicate: Predicate<Element>) -> Array {
+    return self.filter(predicate.call)
   }
 }
 
 Array(0...200).filtered(by: isEven <> isLessThan10)
 Array(0...200).filtered(by: isEven <> isLessThan(10))
-["foo", "bar", "baz", "qux"]
-  .filtered(by: isLessThan("f"))
+["foo", "bar", "baz", "qux"].filtered(by: isLessThan("f"))
+
+[1, 2, nil, 3, nil, 4].filtered(by: isNil())
 
 enum Ordering: Monoid {
   case lt
   case eq
   case gt
 
-  func op(_ s: Ordering) -> Ordering {
-    switch (self, s) {
+  static func <> (lhs: Ordering, rhs: Ordering) -> Ordering {
+    switch (lhs, rhs) {
     case (.lt, _): return .lt
     case (.gt, _): return .gt
-    case (.eq, _): return s
+    case (.eq, _): return rhs
     }
   }
 
@@ -175,6 +213,8 @@ extension Ordering {
   }
 }
 
+// possible todo: use this to describe monoid (homo)morphisms
+
 // Should work but doesnt 
 // ----------------------
 //extension Comparator {
@@ -187,13 +227,15 @@ extension Ordering {
 
 extension FunctionM where M == Ordering {
   func reversed() -> FunctionM {
-    return FunctionM.init { self.call($0).reversed() }
+    return FunctionM { self.call($0).reversed() }
   }
 }
 
 Int.comparator().reversed()
 
 [4, 6, 2, 8, 1, 2].sorted(by: Int.comparator().reversed())
+
+Project.lens.creator.name
 
 extension Lens where Part: Comparable {
   var comparator: Comparator<Whole> {
@@ -207,21 +249,48 @@ extension Lens where Part: Comparable {
 
 Project.lens.creator.location.name.comparator
 
-let comparators = [
-  Project.lens.state.comparator,
-  Project.lens.creator.location.name.comparator,
-  Project.lens.name.comparator
-]
-
 projects
-  .sorted(by: mconcat(comparators))
+  .sorted(by: Project.lens.state.comparator
+    <> Project.lens.creator.location.name.comparator
+    <> Project.lens.name.comparator
+  )
   .map { "\($0.state) : \($0.creator.location.name) : \($0.name)" }
 
+
+//spell out sorting things that are not typically comparable
 
 
 
 
 "done"
+
+
+
+
+
+
+
+
+
+
+/*:
+ # Thanks!
+ 
+ ### Brandon Williams
+ 
+ **Email:** brandon@kickstarter.com
+ 
+ **Twitter:** @mbrandonw
+ */
+
+
+
+
+
+
+
+
+
 
 
 
