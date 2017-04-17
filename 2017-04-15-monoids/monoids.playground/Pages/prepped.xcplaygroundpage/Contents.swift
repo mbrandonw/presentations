@@ -79,7 +79,7 @@ extension Bool: Semigroup {
  accumulator:
  */
 
-func sconcat <S: Semigroup> (_ xs: [S], _ initial: S) -> S {
+func concat <S: Semigroup> (_ xs: [S], _ initial: S) -> S {
   return xs.reduce(initial, <>)
 }
 
@@ -87,8 +87,8 @@ func sconcat <S: Semigroup> (_ xs: [S], _ initial: S) -> S {
  And we can use it as so:
  */
 
-sconcat([1, 2, 3], 0)
-sconcat([[1, 2, 3], [3, 4, 5], [5, 6, 7]], [])
+concat([1, 2, 3], 0)
+concat([[1, 2, 3], [3, 4, 5], [5, 6, 7]], [])
 
 /*:
  We still need an initial value. There is another algebraic structure that has a distinguished element. It's
@@ -128,16 +128,16 @@ extension Bool: Monoid {
  value or an accumulator:
  */
 
-func mconcat <M: Monoid> (_ xs: [M]) -> M {
-  return sconcat(xs, M.e)
+func concat <M: Monoid> (_ xs: [M]) -> M {
+  return concat(xs, M.e)
 }
 
 /*:
  And we can use it like so:
  */
 
-mconcat([1, 2, 3, 4])
-mconcat([[1, 2, 3], [4, 5, 6]])
+concat([1, 2, 3, 4])
+concat([[1, 2, 3], [4, 5, 6]])
 
 /*:
  All of these monoids are quite basic. There are more interesting ones we can cook up. For example, the type
@@ -166,10 +166,10 @@ let square: Endo<Int> = Endo { $0 * $0 }
 let incr = Endo { $0 + 1 }
 let mod3 = Endo { $0 % 3 }
 
-mconcat([square, incr, mod3]).call(2)
+concat([square, incr, mod3]).call(2)
 
 /*:
- There's also a way to construct new monoids from all. Consider the type of functions `(A) -> M`. If
+ There's also a way to construct new monoids from old. Consider the type of functions `(A) -> M`. If
  `M` is a monoid, then you can induce a monoidal structure on the type of functions!
  */
 

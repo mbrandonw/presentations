@@ -82,8 +82,13 @@ extension Location {
   }
 }
 
-public let projects: [Project] = [
+public let coolProject = Project(
+    creator: .init(location: .init(name: "Los Angeles"), name: "Elan Lee"),
+    name: "Exploding Kittens",
+    state: .successful
+)
 
+public let projects: [Project] = [
 
   .init(
     creator: .init(location: .init(name: "San Francisco"), name: "Ozma Records"),
@@ -171,9 +176,9 @@ public let projects: [Project] = [
 
 
 
-infix operator • : FunctionCompositionPrecedence
+infix operator .. : FunctionCompositionPrecedence
 
-public func • <A, B, C> (lhs: Lens<A, B>, rhs: Lens<B, C>) -> Lens<A, C> {
+public func .. <A, B, C> (lhs: Lens<A, B>, rhs: Lens<B, C>) -> Lens<A, C> {
   return Lens(
     view: { rhs.view(lhs.view($0)) },
     set: { subPart, whole in
@@ -186,18 +191,18 @@ public func • <A, B, C> (lhs: Lens<A, B>, rhs: Lens<B, C>) -> Lens<A, C> {
 
 extension Lens where Whole == Project, Part == User {
   public var name: Lens<Project, String> {
-    return Project.lens.creator • User.lens.name
+    return Project.lens.creator..User.lens.name
   }
 }
 
 extension Lens where Whole == Project, Part == User {
   public var location: Lens<Project, Location> {
-    return Project.lens.creator • User.lens.location
+    return Project.lens.creator..User.lens.location
   }
 }
 
 extension Lens where Whole == Project, Part == Location {
   public var name: Lens<Project, String> {
-    return Project.lens.creator.location • Location.lens.name
+    return Project.lens.creator.location..Location.lens.name
   }
 }
