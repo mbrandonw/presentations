@@ -22,7 +22,7 @@ theme: Ostrich, 1
 
 ^ Let's start with the language we use for our respective platforms.
 
-^ [Lisa] So everyone here is clearly already familiar with Swift, but you may not have heard of Kotlin. 
+^ [Lisa] So everyone here is clearly already familiar with Swift, but you may not have heard of Kotlin.
 
 ---
 
@@ -34,7 +34,7 @@ theme: Ostrich, 1
 * OOP with a bit of FP
 * Very expressive
 
-^ [Lisa] It's a JVM language that is built by JetBrains, the makers of Android Studio, the most popular IDE for android.
+^ [Lisa] It's a JVM language that is built by JetBrains, the makers of Android Studio, the most popular IDE for android and IntelliJ.
 
 ^ [Lisa] It's aim is to have 100% interop with Java, which is a bit different from Swift. They want all Kotlin code to be reachable from Java. This is a great thing, but also holding Kotlin back a bit.
 
@@ -98,7 +98,7 @@ sealed class Either<A, B> {
 }
 ```
 
-^ yeah, the `either` seems a lil verbose, BUT this has 100% interop with java. which means we get to use it from all of our java code (and we do).
+^ yeah, the `either` seems a lil verbose--this `sealed class`, `data class` syntax is essentially an OOP way to use an enum in Kotlin--BUT this has 100% interop with java. which means we get to use it from all of our java code (and we do)
 
 ^ whereas in swift a swift `either` enum is not accessible from objective-c at all.
 
@@ -186,6 +186,8 @@ fun square(x: Int): Int { return x * x }
 
 incr andThen square andThen incr
 ```
+
+tho we can't use symbols for our operators
 
 ---
 
