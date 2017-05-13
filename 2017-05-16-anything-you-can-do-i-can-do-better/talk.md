@@ -1,0 +1,237 @@
+build-lists: true
+theme: Ostrich, 1
+
+### Anything you can do,
+### I can do better...
+
+^ Hello! I'm Brandon, and [I'm] Lisa, we're engineers on the native team at Kickstarter, doing both iOS and Android. We're a pretty small team of engineers, ranging from junior to senior, and we've been on a journey for the past 2 years of unifying our foundations across iOS and Android.
+
+^ For example, I was originally hired as an iOS engineer at Kickstarter, but jumped onto Android when we started working on our 1.0
+
+^ Lisa on the other hand was hired as an Android engineer, but happily started writing Swift when we started on our rewrite and re-architecture.
+
+^ But we always had a few core ideas that we held closely so that we could share knowledge while working on two platforms even though we couldn't necessarily share code.
+
+^ However, that doesn't mean there isn't still a bit of identity involved. I would still say I primarily identify as an iOS engineer in my day-to-day, and Lisa would probably identify as an android engineer, even though she's given talks at more iOS conferences than Android and has made a guest appearance on Chris and Florian's swift talks :D
+
+^ So, Lisa and I would like to give you a tour of our platforms of choice to show off their strengths and weaknesses, but still hoping to convey that really we're all just doing the same thing if you embrace a few core ideas.
+
+--- 
+
+### Kotlin **&** Swift
+
+^ Let's start with the language we use for our respective platforms.
+
+^ [Lisa] So everyone here is clearly already familiar with Swift, but you may not have heard of Kotlin. 
+
+---
+
+# Kotlin
+
+* JVM language
+* Built by JetBrains
+* 100% interop with Java
+* OOP with a bit of FP
+* Very expressive
+
+^ [Lisa] It's a JVM language that is built by JetBrains, the makers of Android Studio, the most popular IDE for android.
+
+^ [Lisa] It's aim is to have 100% interop with Java, which is a bit different from Swift. They want all Kotlin code to be reachable from Java. This is a great thing, but also holding Kotlin back a bit.
+
+^ [Lisa] It has a similar philosophy as Swift in that it's primarily an OOP language but has given a few small FP features.
+
+^ [Lisa] And it is _very_ expressive in some really beautiful ways that we'll get into soon.
+
+---
+
+# Optionals
+
+### Swift
+
+![inline 100%](images/optional-swift.png)
+
+^ [brandon] Ok, so one of the nice features of swift is the optional type. It allows you to safely express the idea of the absence of a value. So here, I have an array of integers and I want to add one to the first element. Swift is stopping me from doing this because it cannot know that the array of `xs` is not empty. I have to explicitly handle the case that the array is empty and `first` returns `nil`.
+
+---
+
+# Optionals
+
+### Kotlin
+
+![inline 100%](images/optional-android.png)
+
+^ [Lisa] Yeah, optionals and null-safety are great. Fortunately Kotlin has made this a first-class concern. Here we see how we have to explicitly tell kotlin that `x` can hold a `null` value, and in the case of `y` Kotlin has prevented us from storing `null` since we have marked its type as a non-nullable `Int`.
+
+^ We also have an array of intergers and this `firstOrNull` method, which behaves like swift's `first` method, and again kotlin is preventing us from adding `1` to an optional integer.
+
+---
+
+# Structs and Enums
+
+```swift
+struct User {
+  let bio: String
+  let id: Int
+  let name: String
+}
+
+enum Either<A, B> {
+  case left(A)
+  case right(B)
+}
+```
+
+---
+
+# Data classes and Sealed Classes
+
+```kotlin
+data class User(
+  val bio: String,
+  val id: Int,
+  val name: String,
+)
+
+sealed class Either<A, B> {
+  data class Left<A, B>(val left: A): Either<A, B>()
+  data class Right<A, B>(val right: B): Either<A, B>()
+}
+```
+
+^ yeah, the `either` seems a lil verbose, BUT this has 100% interop with java. which means we get to use it from all of our java code (and we do).
+
+^ whereas in swift a swift `either` enum is not accessible from objective-c at all.
+
+---
+
+# Extensions, Closures and Destructuring
+
+```swift
+extension Either {
+  func map<C>(f: (B) -> C) -> Either<A, C> {
+    switch self {
+    case let .left(value):  return .left(value)
+    case let .right(value): return .right(f(value))     
+    }
+  }
+}
+
+Either<String, Int>.right(2).map { $0 * $0 }
+```
+
+---
+
+# Extensions, Closures and Destructuring
+
+```kotlin
+fun <A, B, C> Either<A, B>.map(f: (B) -> C): Either<A, C> {
+  return when(this) {
+    is Left ->  Left(this.left)
+    is Right -> Right(f(this.right))
+  }
+}
+
+Either<String, Int>.Right(2).map { it * it }
+```
+
+^ we have compile time safety that we handled both the left and the right cases.
+
+---
+
+# Extensions, Closures and Destructuring
+### Even better...
+
+```kotlin
+fun <A, B, C> Either<A, B>.map(f: (B) -> C): Either<A, C> = when(this) {
+  is Left ->  Left(this.left)
+  is Right -> Right(f(this.right))
+}
+```
+
+^ and just to remind everyone, this is fully 100% interoperable with java. we can construct `Either` values, we can call kotlin functions that accept and return `Either`s, all from Java.
+
+--- 
+
+# Operators
+
+> do a screenshot of this code
+
+```swift
+infix operator >>>
+
+func >>> <A, B, C> (f: @escaping (A) -> B, 
+                    g: @escaping (B) -> C) -> (A) -> C {
+  return { g(f($0)) }
+}
+
+func incr(_ x: Int) -> Int { return x + 1 }
+func square(_ x: Int) -> Int { return x * x }
+
+incr >>> square >>> incr
+```
+
+---
+
+# Operators
+
+> do a screenshot of this code
+
+```kotlin
+infix fun <A, B, C> ((A) -> B).andThen(g: (B) -> C): (A) -> C {
+  return { g(this(it)) }
+}
+
+fun incr(x: Int): Int { return x + 1 }
+fun square(x: Int): Int { return x * x }
+
+incr andThen square andThen incr
+```
+
+---
+
+# Tail recursion
+### Kotlin
+
+> do screenshot for code
+
+```
+tailrec fun sum(xs: List<Int>, total: Int = 0): Int {
+  val head = xs.firstOrNull()
+  return if(head == null) total else sum(xs.drop(1), total + head)
+}
+```
+
+^ [lisa] There's a cool feature of Kotlin that allows us to specify when a recursive function can take advantage of tail recursion.
+
+^ blha blah blah
+
+---
+
+# Tail recursion
+### Swift
+
+😭
+
+^ [brandon] blah blah
+
+---
+
+### Functional Programming
+
+---
+
+---
+
+
+^ val/var vs let/var semantics
+^ optionals!
+^ sum types
+^ friendlier syntax for arrays and dictionaries
+^ map/filter/reduce
+^ Either
+^ point free
+^ tailrecur
+^ if/switch expressions
+^ possible to copy-paste some swift code and live rewrite it in kotlin in android studio?
+^ interop
+^ live code: either
