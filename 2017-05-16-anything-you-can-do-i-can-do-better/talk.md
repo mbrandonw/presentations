@@ -34,9 +34,9 @@ theme: Ostrich, 1
 * OOP with a bit of FP
 * Very expressive
 
-^ [Lisa] It's a JVM language that is built by JetBrains, the makers of Android Studio, the most popular IDE for android and IntelliJ.
+^ [Lisa] It's a JVM language that is built by JetBrains, the makers of Android Studio, the most popular IDE for android, and IntelliJ.
 
-^ [Lisa] It's aim is to have 100% interop with Java, which is a bit different from Swift. They want all Kotlin code to be reachable from Java. This is a great thing, but also holding Kotlin back a bit.
+^ [Lisa] Its aim is to have 100% interop with Java, which is a bit different from Swift. They want all Kotlin code to be reachable from Java. This is a great thing, but also holding Kotlin back a bit.
 
 ^ [Lisa] It has a similar philosophy as Swift in that it's primarily an OOP language but has given a few small FP features.
 
@@ -134,7 +134,7 @@ fun <A, B, C> Either<A, B>.map(f: (B) -> C): Either<A, C> {
 Either<String, Int>.Right(2).map { it * it }
 ```
 
-^ we have compile time safety that we handled both the left and the right cases.
+^ With `when`, we have compile time safety that we handled both the left and the right cases.
 
 ---
 
@@ -148,7 +148,9 @@ fun <A, B, C> Either<A, B>.map(f: (B) -> C): Either<A, C> = when(this) {
 }
 ```
 
-^ and just to remind everyone, this is fully 100% interoperable with java. we can construct `Either` values, we can call kotlin functions that accept and return `Either`s, all from Java.
+^ Even better, we can write this function as an expression. We can use this syntax in Kotlin because `when` is treated as an expression.
+
+^ and just to remind everyone, this is fully interoperable with java. we can construct `Either` values, call kotlin functions that accept and return `Either`s, all from Java.
 
 --- 
 
@@ -187,7 +189,7 @@ fun square(x: Int): Int { return x * x }
 incr andThen square andThen incr
 ```
 
-tho we can't use symbols for our operators
+^ similar to swift, only downside is we can't use symbols for our operators
 
 ---
 
@@ -203,9 +205,11 @@ tailrec fun sum(xs: List<Int>, total: Int = 0): Int {
 }
 ```
 
-^ [lisa] There's a cool feature of Kotlin that allows us to specify when a recursive function can take advantage of tail recursion.
+^ [lisa] There's a cool feature of Kotlin that allows us to specify when a recursive function can take advantage of tail recursion
 
-^ blha blah blah
+^ This allows for us to write recursive functions, that we'd typically write using a loop, without worrying about stack overflow. Kotlin reads this `tailrec` modifier and expects the last call of the recursion to be the function, and raises a compiler warning when no tail call is found.
+
+^ The compiler then unrolls the recursion into a plain ol' loop
 
 ---
 
