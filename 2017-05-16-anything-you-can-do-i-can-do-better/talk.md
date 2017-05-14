@@ -46,8 +46,6 @@ theme: Ostrich, 1
 
 # Optionals
 
-### Swift
-
 ![inline 100%](images/optional-swift.png)
 
 ^ [brandon] Ok, so one of the nice features of swift is the optional type. It allows you to safely express the idea of the absence of a value. So here, I have an array of integers and I want to add one to the first element. Swift is stopping me from doing this because it cannot know that the array of `xs` is not empty. I have to explicitly handle the case that the array is empty and `first` returns `nil`.
@@ -55,8 +53,6 @@ theme: Ostrich, 1
 ---
 
 # Optionals
-
-### Kotlin
 
 ![inline 100%](images/optional-kotlin.png)
 
@@ -80,7 +76,7 @@ theme: Ostrich, 1
 
 ---
 
-# Data classes and Sealed Classes
+## Data classes and Sealed Classes
 
 ![inline 100%](images/struct-enum-kotlin.png)
 
@@ -90,7 +86,7 @@ theme: Ostrich, 1
 
 ---
 
-# Extensions, Closures and Destructuring
+### Extensions, Closures and Destructuring
 
 ![inline 100%](images/extensions-swift.png)
 
@@ -104,7 +100,7 @@ theme: Ostrich, 1
 
 ---
 
-# Extensions, Closures and Destructuring
+### Extensions, Closures and Destructuring
 
 ![inline 100%](images/extensions-kotlin.png)
 
@@ -112,8 +108,8 @@ theme: Ostrich, 1
 
 ---
 
-# Extensions, Closures and Destructuring
-### Even better...
+### Extensions, Closures and Destructuring
+#### Even better...
 
 ![inline 100%](images/extensions-bonus-kotlin.png)
 
@@ -123,7 +119,7 @@ theme: Ostrich, 1
 
 --- 
 
-# Operators
+## Operators
 
 ![inline 100%](images/operators-swift.png)
 
@@ -133,7 +129,7 @@ theme: Ostrich, 1
 
 ---
 
-# Operators
+### Operators
 
 ![inline 100%](images/operators-kotlin.png)
 
@@ -173,7 +169,7 @@ theme: Ostrich, 1
 
 ---
 
-### Anything you can do,
+### Anything you can do
 ### we can do **together**
 
 ^ The features we've talked about today highlight some of the sweet spots between two languages that we work in as native engineers. When we invest so much time in experimenting with ideas, writing libraries and code, we want to be able to share all of our findings with each other.
