@@ -58,7 +58,7 @@ theme: Ostrich, 1
 
 ### Kotlin
 
-![inline 100%](images/optional-android.png)
+![inline 100%](images/optional-kotlin.png)
 
 ^ [Lisa] Yeah, optionals and null-safety are great. Fortunately Kotlin has made this a first-class concern. Here we see how we have to explicitly tell kotlin that `x` can hold a `null` value, and in the case of `y` Kotlin has prevented us from storing `null` since we have marked its type as a non-nullable `Int`.
 
@@ -68,35 +68,13 @@ theme: Ostrich, 1
 
 # Structs and Enums
 
-```swift
-struct User {
-  let bio: String
-  let id: Int
-  let name: String
-}
-
-enum Either<A, B> {
-  case left(A)
-  case right(B)
-}
-```
+![inline 100%](images/struct-enum-swift.png)
 
 ---
 
 # Data classes and Sealed Classes
 
-```kotlin
-data class User(
-  val bio: String,
-  val id: Int,
-  val name: String,
-)
-
-sealed class Either<A, B> {
-  data class Left<A, B>(val left: A): Either<A, B>()
-  data class Right<A, B>(val right: B): Either<A, B>()
-}
-```
+![inline 100%](images/struct-enum-kotlin.png)
 
 ^ yeah, the `either` seems a lil verbose, BUT this has 100% interop with java. which means we get to use it from all of our java code (and we do).
 
@@ -106,33 +84,13 @@ sealed class Either<A, B> {
 
 # Extensions, Closures and Destructuring
 
-```swift
-extension Either {
-  func map<C>(f: (B) -> C) -> Either<A, C> {
-    switch self {
-    case let .left(value):  return .left(value)
-    case let .right(value): return .right(f(value))     
-    }
-  }
-}
-
-Either<String, Int>.right(2).map { $0 * $0 }
-```
+![inline 100%](images/extensions-swift.png)
 
 ---
 
 # Extensions, Closures and Destructuring
 
-```kotlin
-fun <A, B, C> Either<A, B>.map(f: (B) -> C): Either<A, C> {
-  return when(this) {
-    is Left ->  Left(this.left)
-    is Right -> Right(f(this.right))
-  }
-}
-
-Either<String, Int>.Right(2).map { it * it }
-```
+![inline 100%](images/extensions-kotlin.png)
 
 ^ we have compile time safety that we handled both the left and the right cases.
 
@@ -141,12 +99,7 @@ Either<String, Int>.Right(2).map { it * it }
 # Extensions, Closures and Destructuring
 ### Even better...
 
-```kotlin
-fun <A, B, C> Either<A, B>.map(f: (B) -> C): Either<A, C> = when(this) {
-  is Left ->  Left(this.left)
-  is Right -> Right(f(this.right))
-}
-```
+![inline 100%](images/extensions-bonus-kotlin.png)
 
 ^ and just to remind everyone, this is fully 100% interoperable with java. we can construct `Either` values, we can call kotlin functions that accept and return `Either`s, all from Java.
 
@@ -154,52 +107,20 @@ fun <A, B, C> Either<A, B>.map(f: (B) -> C): Either<A, C> = when(this) {
 
 # Operators
 
-> do a screenshot of this code
-
-```swift
-infix operator >>>
-
-func >>> <A, B, C> (f: @escaping (A) -> B, 
-                    g: @escaping (B) -> C) -> (A) -> C {
-  return { g(f($0)) }
-}
-
-func incr(_ x: Int) -> Int { return x + 1 }
-func square(_ x: Int) -> Int { return x * x }
-
-incr >>> square >>> incr
-```
+![inline 100%](images/operators-swift.png)
 
 ---
 
 # Operators
 
-> do a screenshot of this code
-
-```kotlin
-infix fun <A, B, C> ((A) -> B).andThen(g: (B) -> C): (A) -> C {
-  return { g(this(it)) }
-}
-
-fun incr(x: Int): Int { return x + 1 }
-fun square(x: Int): Int { return x * x }
-
-incr andThen square andThen incr
-```
+![inline 100%](images/operators-kotlin.png)
 
 ---
 
 # Tail recursion
 ### Kotlin
 
-> do screenshot for code
-
-```
-tailrec fun sum(xs: List<Int>, total: Int = 0): Int {
-  val head = xs.firstOrNull()
-  return if(head == null) total else sum(xs.drop(1), total + head)
-}
-```
+![inline 100%](images/tailrec-kotlin.png)
 
 ^ [lisa] There's a cool feature of Kotlin that allows us to specify when a recursive function can take advantage of tail recursion.
 
@@ -208,11 +129,9 @@ tailrec fun sum(xs: List<Int>, total: Int = 0): Int {
 ---
 
 # Tail recursion
-### Swift
+### Swift 😭
 
-😭
-
-^ [brandon] blah blah
+![inline 100%](images/tailrec-swift.png)
 
 ---
 
