@@ -224,9 +224,20 @@ tailrec fun sum(xs: List<Int>, total: Int = 0): Int {
 
 ### Functional Programming
 
----
+^ In case you haven't already guessed, we like functional programming because it allows for us to leverage functions, immutability, and minimal side effects to write composable and testable code.
+
+^ Swift and Kotlin are not functional languages, but they do offer first-class support for many functional features such as map and filter operators. They are good foundations for building functional frameworks.
 
 ---
+
+### Anything you can do,
+### we can do **together**
+
+^ The features we've talked about today highlight some of the sweet spots between two languages that we work in as native engineers. When we invest so much time in experimenting with ideas, writing libraries and code, we want to be able to share all of our findings with each other.
+
+---
+### @**mbrandonw**
+### @**luoser**
 
 
 ^ val/var vs let/var semantics
