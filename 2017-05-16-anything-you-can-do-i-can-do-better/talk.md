@@ -1,14 +1,14 @@
 build-lists: true
 theme: Ostrich, 1
 
-### Anything you can do,
-### I can do better...
+### Anything you can do
+### I can do **better**.
 
 ^ Hello! I'm Brandon, and [I'm] Lisa, we're engineers on the native team at Kickstarter, doing both iOS and Android. We're a pretty small team of engineers, ranging from junior to senior, and we've been on a journey for the past 2 years of unifying our foundations across iOS and Android.
 
 ^ For example, I was originally hired as an iOS engineer at Kickstarter, but jumped onto Android when we started working on our 1.0
 
-^ Lisa on the other hand was hired as an Android engineer, but happily started writing Swift when we started on our rewrite and re-architecture.
+^ My esteemed Lisa on the other hand was hired as an Android engineer, but happily started writing Swift when we started on our rewrite and re-architecture.
 
 ^ But we always had a few core ideas that we held closely so that we could share knowledge while working on two platforms even though we couldn't necessarily share code.
 
@@ -70,6 +70,14 @@ theme: Ostrich, 1
 
 ![inline 100%](images/struct-enum-swift.png)
 
+^ An important part of functional programming is structs and enums, also known as product types and sum types, or even product and coproducts if you wanna go really deep.
+
+^ these types express the idea of having many values at once, or having one choice of many types of values.
+
+^ they are also well suited for immutability and statelessness
+
+^ Here we have a `User` type that has three fields, and an `Either` type that expresses having either a value of type `A` or type `B`, which we use quite a bit in our code base.
+
 ---
 
 # Data classes and Sealed Classes
@@ -85,6 +93,14 @@ theme: Ostrich, 1
 # Extensions, Closures and Destructuring
 
 ![inline 100%](images/extensions-swift.png)
+
+^ Here we are showing off a couple of cool things in Swift. 
+
+^ First, we can open up the `Either` type and add functions to it.
+
+^ Second, functions can take functions as arguments, which means we can define this `map` function that transforms the `right` value of an `Either`.
+
+^ Third, we have `switch` for destructuring an `Either` and getting compile time guarantees that we handled all the cases properly.
 
 ---
 
@@ -110,6 +126,10 @@ theme: Ostrich, 1
 # Operators
 
 ![inline 100%](images/operators-swift.png)
+
+^ Swift has support for operators which allows us to write expressive code with nice algebraic properties. Here we have defined an arrow operator to represent forward composition of functions. 
+
+^ We can then take a couple of lil pure functions, `incr` and `square`, and derive new functions from composition.
 
 ---
 
@@ -138,6 +158,10 @@ theme: Ostrich, 1
 ### Swift 😭
 
 ![inline 100%](images/tailrec-swift.png)
+
+^ So this is a bit sad for Swift. We have no tail call guarantees. It could happen, but you can't count on it.
+
+^ Here I have defined the `sum` function that Lisa defined, but this could very easily blow up the stack since it cannot be guaranteed to be optimized.
 
 ---
 
