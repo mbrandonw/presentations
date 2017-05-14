@@ -22,7 +22,7 @@ theme: Ostrich, 1
 
 ^ Let's start with the language we use for our respective platforms.
 
-^ [Lisa] So everyone here is clearly already familiar with Swift, but you may not have heard of Kotlin. 
+^ [Lisa] So everyone here is clearly already familiar with Swift, but you may not have heard of Kotlin.
 
 ---
 
@@ -34,9 +34,9 @@ theme: Ostrich, 1
 * OOP with a bit of FP
 * Very expressive
 
-^ [Lisa] It's a JVM language that is built by JetBrains, the makers of Android Studio, the most popular IDE for android.
+^ [Lisa] It's a JVM language that is built by JetBrains, the makers of Android Studio, the most popular IDE for android, and IntelliJ.
 
-^ [Lisa] It's aim is to have 100% interop with Java, which is a bit different from Swift. They want all Kotlin code to be reachable from Java. This is a great thing, but also holding Kotlin back a bit.
+^ [Lisa] Its aim is to have 100% interop with Java, which is a bit different from Swift. They want all Kotlin code to be reachable from Java. This is a great thing, but also holding Kotlin back a bit.
 
 ^ [Lisa] It has a similar philosophy as Swift in that it's primarily an OOP language but has given a few small FP features.
 
@@ -76,7 +76,7 @@ theme: Ostrich, 1
 
 ![inline 100%](images/struct-enum-kotlin.png)
 
-^ yeah, the `either` seems a lil verbose, BUT this has 100% interop with java. which means we get to use it from all of our java code (and we do).
+^ yeah, the `either` seems a lil verbose--this `sealed class`, `data class` syntax is essentially an OOP way to use an enum in Kotlin--BUT this has 100% interop with java. which means we get to use it from all of our java code (and we do)
 
 ^ whereas in swift a swift `either` enum is not accessible from objective-c at all.
 
@@ -92,7 +92,7 @@ theme: Ostrich, 1
 
 ![inline 100%](images/extensions-kotlin.png)
 
-^ we have compile time safety that we handled both the left and the right cases.
+^ With `when`, we have compile time safety that we handled both the left and the right cases.
 
 ---
 
@@ -101,7 +101,9 @@ theme: Ostrich, 1
 
 ![inline 100%](images/extensions-bonus-kotlin.png)
 
-^ and just to remind everyone, this is fully 100% interoperable with java. we can construct `Either` values, we can call kotlin functions that accept and return `Either`s, all from Java.
+^ Even better, we can write this function as an expression. We can use this syntax in Kotlin because `when` is treated as an expression.
+
+^ and just to remind everyone, this is fully interoperable with java. we can construct `Either` values, call kotlin functions that accept and return `Either`s, all from Java.
 
 --- 
 
@@ -115,6 +117,8 @@ theme: Ostrich, 1
 
 ![inline 100%](images/operators-kotlin.png)
 
+^ similar to swift, only downside is we can't use symbols for our operators
+
 ---
 
 # Tail recursion
@@ -122,9 +126,11 @@ theme: Ostrich, 1
 
 ![inline 100%](images/tailrec-kotlin.png)
 
-^ [lisa] There's a cool feature of Kotlin that allows us to specify when a recursive function can take advantage of tail recursion.
+^ [lisa] There's a cool feature of Kotlin that allows us to specify when a recursive function can take advantage of tail recursion
 
-^ blha blah blah
+^ This allows for us to write recursive functions, that we'd typically write using a loop, without worrying about stack overflow. Kotlin reads this `tailrec` modifier and expects the last call of the recursion to be the function, and raises a compiler warning when no tail call is found.
+
+^ The compiler then unrolls the recursion into a plain ol' loop
 
 ---
 
