@@ -80,9 +80,15 @@ theme: Ostrich, 1
 
 ![inline 100%](images/struct-enum-kotlin.png)
 
-^ yeah, the `either` seems a lil verbose--this `sealed class`, `data class` syntax is essentially an OOP way to use an enum in Kotlin--BUT this has 100% interop with java. which means we get to use it from all of our java code (and we do)
+^ Over in the kotlin world, stucts and enums are called data classes and sealed classes.
 
-^ whereas in swift a swift `either` enum is not accessible from objective-c at all.
+^ The data classes have pretty similar style to structs, and they work pretty much the same.
+
+^ Sealed classes are how we achieve enum-like functionality in kotlin, and they look a bit different. essentially, we create an un-instantiable type called either, and then have two inner subclasses for modeling the left and right. it's basically an OOP way to do enums.
+
+^ the amazing part is that this is 100% interoperable with java, so we can use the `Either` type in our java code, and we do.
+
+^ whereas in swift the `Either` enum is not accessible from objective-c at all.
 
 ---
 
@@ -92,11 +98,13 @@ theme: Ostrich, 1
 
 ^ Here we are showing off a couple of cool things in Swift. 
 
-^ First, we can open up the `Either` type and add functions to it.
+^ First, we can open up the `Either` type and add functions to it. Here I've added a `map` function, which allows one to transform the type on the right `B` to a different type `C`.
 
-^ Second, functions can take functions as arguments, which means we can define this `map` function that transforms the `right` value of an `Either`.
+^ Second, functions can take functions as arguments, which allows us to pass in this transformation as an argument.
 
-^ Third, we have `switch` for destructuring an `Either` and getting compile time guarantees that we handled all the cases properly.
+^ Third, we have `switch` for destructuring an `Either` in order to process the left and right separately, and getting compile time guarantees that we handled all the cases properly.
+
+^ and then we can use it by constructing a right value, and mapping it
 
 ---
 
@@ -104,14 +112,24 @@ theme: Ostrich, 1
 
 ![inline 100%](images/extensions-kotlin.png)
 
+^ we can do all of this in kotlin too.
+
+^ first, to extend a type you just define a new function on the type itself using dot `.`.
+
+^ also, functions are supported as values in kotlin so that we can provide the transformation function as an argument to `map`.
+
+^ finally, we can use `when` to destructure the `Either` into each of its inner subclasses.
+
 ^ With `when`, we have compile time safety that we handled both the left and the right cases.
+
+^ and finally, we can use it much the same way as we did with swift.
 
 ---
 
 ### Extensions, Closures and Destructuring
 #### Even better...
 
-![inline 100%](images/extensions-bonus-kotlin.png)
+![inline 90%](images/extensions-bonus-kotlin.png)
 
 ^ Even better, we can write this function as an expression. We can use this syntax in Kotlin because `when` is treated as an expression.
 
@@ -127,13 +145,19 @@ theme: Ostrich, 1
 
 ^ We can then take a couple of lil pure functions, `incr` and `square`, and derive new functions from composition.
 
+^ Then, we can use that function to `map` an array of integers to a new array of integers.
+
 ---
 
 ### Operators
 
 ![inline 100%](images/operators-kotlin.png)
 
-^ similar to swift, only downside is we can't use symbols for our operators
+^ Kotlin doesn't have support for custom operators, but it does allow one to defined infix functions. This means you can define a function that takes two arguments, but use it in an infix manner.
+
+^ for example, here we have defined an `andThen` function that takes a function from `A` to `B` on the left, and a function `B` to `C` on the right, and returns a function from `A` to `C`. This allows us to chain the increment and square functions together in any way we want.
+
+^ and finally, we can feed that function to `map` to transform an array of integers to a new array of integers.
 
 ---
 
@@ -142,11 +166,13 @@ theme: Ostrich, 1
 
 ![inline 100%](images/tailrec-kotlin.png)
 
-^ [lisa] There's a cool feature of Kotlin that allows us to specify when a recursive function can take advantage of tail recursion
+^ [lisa] Here's a cool feature of Kotlin that allows us to specify when a recursive function can take advantage of tail recursion. Recursion is an important part of functional programming, allowing us to focus on the structure of data.
 
-^ This allows for us to write recursive functions, that we'd typically write using a loop, without worrying about stack overflow. Kotlin reads this `tailrec` modifier and expects the last call of the recursion to be the function, and raises a compiler warning when no tail call is found.
+^ First recall that a recursive function is said to be in "tail form" if the return statement of the function contains only a call to the function itself, and nothing else. such recursive functions can be optimized by unrolling the recursion into a plain ol' loop.
 
-^ The compiler then unrolls the recursion into a plain ol' loop
+^ kotlin has direct support for this optimization. if you can write your recursive function in tail form, you can annotate the function with the `tailrec` keyword and kotlin will optimize the function to be a plain ol' for loop. it will even raise a compiler warning if you use the modifier on a function that is not properly in tail form.
+
+^ here I have a `sum` function that shows how to recursive define the sum of a list of integers as the sum of the head plus the sum of the tail. it's easy enough to write this in tail form, and now i can sum a list of thousands of integers without worrying about blowing up the stack.
 
 ---
 
