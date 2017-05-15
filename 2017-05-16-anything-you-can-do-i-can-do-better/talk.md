@@ -4,17 +4,17 @@ theme: Ostrich, 1
 ### Anything you can do
 ### I can do **better**.
 
-^ Hello! I'm Brandon, and [I'm] Lisa, we're engineers on the native team at Kickstarter, doing both iOS and Android. We're a pretty small team of engineers, ranging from junior to senior, and we've been on a journey for the past 2 years of unifying our foundations across iOS and Android.
+^ [brandon] Hello! I'm Brandon, and [I'm] Lisa, we're engineers on the native team at Kickstarter, doing both iOS and Android. We're a pretty small team of engineers, ranging from junior to senior, and we've been on a journey for the past 2 years of unifying our foundations across iOS and Android.
 
-^ For example, I was originally hired as an iOS engineer at Kickstarter, but jumped onto Android when we started working on our 1.0
+^ [brandon] For example, I was originally hired as an iOS engineer at Kickstarter, but jumped onto Android when we started working on our 1.0
 
-^ My esteemed colleague Lisa on the other hand was hired as an Android engineer, but happily started writing Swift when we started on our rewrite and re-architecture.
+^ [brandon] My esteemed colleague Lisa on the other hand was hired as an Android engineer, but happily started writing Swift when we started on our rewrite and re-architecture.
 
-^ But we always had a few core ideas that we held closely so that we could share knowledge while working on two platforms even though we couldn't necessarily share code.
+^ [brandon] But we always had a few core ideas that we held closely so that we could share knowledge while working on two platforms even though we couldn't necessarily share code.
 
-^ However, that doesn't mean there isn't still a bit of identity involved. I would still say I primarily identify as an iOS engineer in my day-to-day, and Lisa would probably identify as an android engineer, even though she's given talks at more iOS conferences than Android and has made a guest appearance on Chris and Florian's swift talks :D
+^ [brandon] However, that doesn't mean there isn't still a bit of identity involved. I would still say I primarily identify as an iOS engineer in my day-to-day, and Lisa would probably identify as an android engineer, even though she's given talks at more iOS conferences than Android and has made a guest appearance on Chris and Florian's swift talks :D
 
-^ So, Lisa and I would like to give you a tour of our platforms of choice to show off their strengths and weaknesses, but still hoping to convey that really we're all just doing the same thing if you embrace a few core ideas.
+^ [brandon] So, Lisa and I would like to give you a tour of our platforms of choice to show off their strengths and weaknesses, but still hoping to convey that really we're all just doing the same thing if you embrace a few core ideas.
 
 ---
 
@@ -43,11 +43,13 @@ theme: Ostrich, 1
 * OOP with a bit of FP
 * Very expressive
 
-^ [Lisa] It's a JVM language that is built by JetBrains, the makers of Android Studio, the most popular IDE for android, and IntelliJ.
+^ [Lisa] It's a JVM language...
 
-^ [Lisa] Its aim is to have 100% interop with Java, which is a bit different from Swift. They want all Kotlin code to be reachable from Java. This is a great thing, but also holding Kotlin back a bit.
+^ [lisa] ...that is built by JetBrains, the makers of Android Studio, the most popular IDE for android, and IntelliJ.
 
-^ [Lisa] It has a similar philosophy as Swift in that it's primarily an OOP language but has given a few small FP features.
+^ [Lisa] Its aim is to have 100% interop with Java, which is a bit different from Swift. They want all Kotlin code to be reachable from Java. This is a great thing, but sometimes this holds kotlin back a bit.
+
+^ [Lisa] It has a similar philosophy as Swift in that it's primarily an OOP language but has given a few small features from functional programming.
 
 ^ [Lisa] And it is _very_ expressive in some really beautiful ways that we'll get into soon.
 
@@ -82,6 +84,8 @@ theme: Ostrich, 1
 ^ [brandon] they are also well suited for immutability and statelessness
 
 ^ [brandon] Here we have a `User` type that has three fields, and an `Either` type that expresses having either a value of type `A` or type `B`, which we use quite a bit in our code base.
+
+^ [brandon] and we've instantiated a few values here so that we can see how it's used
 
 ---
 
@@ -125,7 +129,7 @@ theme: Ostrich, 1
 
 ^ [lisa] first, to extend a type you just define a new function on the type itself using dot `.`.
 
-^ [lisa] also, functions are supported as values in kotlin so that we can provide the transformation function as an argument to `map`.
+^ [lisa] also, functions are supported as values in kotlin so that we can provide the transformation function as an argument to `map`. this is called a "higher order function"
 
 ^ [lisa] finally, we can use `when` to destructure the `Either` into each of its inner subclasses.
 
@@ -140,7 +144,7 @@ theme: Ostrich, 1
 
 ![inline 90%](images/extensions-bonus-kotlin.png)
 
-^ [lisa] Even better, we can write this function as an expression. We can use this syntax in Kotlin because `when` is treated as an expression.
+^ [lisa] And, anything you can do I can do better, we can write this function as an expression. We can use this syntax in Kotlin because `when` is treated as an expression.
 
 ^ [lisa] and just to remind everyone, this is fully interoperable with java. we can construct `Either` values, call kotlin functions that accept and return `Either`s, all from Java.
 
@@ -162,6 +166,8 @@ theme: Ostrich, 1
 
 ![inline 100%](images/operators-kotlin.png)
 
+^ NB: lisa clean up these paragraphs
+
 ^ [lisa] Kotlin doesn't have support for custom operators, but it does allow one to defined infix functions. This means you can define a function that takes two arguments, but use it in an infix manner.
 
 ^ [lisa] for example, here we have defined an `andThen` function that takes a function from `A` to `B` on the left, and a function `B` to `C` on the right, and returns a function from `A` to `C`. This allows us to chain the increment and square functions together in any way we want.
@@ -173,7 +179,7 @@ theme: Ostrich, 1
 # Tail recursion
 ### Kotlin
 
-![inline 100%](images/tailrec-kotlin.png)
+![inline 90%](images/tailrec-kotlin.png)
 
 ^ [lisa] Here's a cool feature of Kotlin that allows us to specify when a recursive function can take advantage of tail recursion. Recursion is an important part of functional programming, allowing us to focus on the structure of data.
 
@@ -198,18 +204,30 @@ theme: Ostrich, 1
 
 ### Functional Programming
 
-^ In case you haven't already guessed, we like functional programming because it allows for us to leverage functions, immutability, and minimal side effects to write composable and testable code.
+![inline 45%](images/swift-and-kotlin.png)
 
-^ Swift and Kotlin are not functional languages, but they do offer first-class support for many functional features such as map and filter operators. They are good foundations for building functional frameworks.
+^ [lisa] In case you haven't already guessed, we like functional programming because it allows for us to leverage functions, immutability, and minimal side effects to write composable and testable code.
+
+^ [lisa] Swift and Kotlin are not functional languages, but they do offer first-class support for many functional features such as map and filter operators. They are good foundations for building functional frameworks.
+
+^ [lisa] Here we have two snippets from our open sourced code bases. We are using ReactiveSwift and RxJava to pull 3 similar projects to show the user after they have backed a project. It's got quite a bit of complicated logic built in. [explain what this is doing].
+
+^ [lisa] It's cool to see how similar these code snippets are.
+
+^ [brandon] lead in to next slide...
 
 ---
 
 ### Anything you can do
 ### we can do **together**
 
-^ The features we've talked about today highlight some of the sweet spots between two languages that we work in as native engineers. When we invest so much time in experimenting with ideas, writing libraries and code, we want to be able to share all of our findings with each other.
+^ NB: brandon fill this out
+
+^ [brandon] The features we've talked about today highlight some of the sweet spots between two languages that we work in as native engineers. When we invest so much time in experimenting with ideas, writing libraries and code, we want to be able to share all of our findings with each other.
 
 ---
 
 ### @**mbrandonw**
 ### @**luoser**
+
+^ thanks everyone
