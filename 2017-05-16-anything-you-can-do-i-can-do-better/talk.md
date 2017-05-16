@@ -23,9 +23,9 @@ theme: Ostrich, 1
 > https://github.com/kickstarter/ios-oss
 > https://github.com/kickstarter/android-oss
 
-^ [Lisa] Oh also worth noting that all of our code is open sourced and so you can go see all of our code and see how we use all of the things we are going to talk about.
+^ [Lisa] Oh also worth noting that all of our code for our iOS and Android apps is open sourced on Github, so you can go see how we use all of the things we are going to talk about.
 
---- 
+---
 
 ### Kotlin **&** Swift
 
@@ -49,7 +49,7 @@ theme: Ostrich, 1
 
 ^ [Lisa] Its aim is to have 100% interop with Java, which is a bit different from Swift. They want all Kotlin code to be reachable from Java. This is a great thing, but sometimes this holds kotlin back a bit.
 
-^ [Lisa] It has a similar philosophy as Swift in that it's primarily an OOP language but has given a few small features from functional programming.
+^ [Lisa] It has a similar philosophy as Swift in that it's primarily an OOP language but has given first-class support to a few small features from functional programming.
 
 ^ [Lisa] And it is _very_ expressive in some really beautiful ways that we'll get into soon.
 
@@ -67,9 +67,9 @@ theme: Ostrich, 1
 
 ![inline 100%](images/optional-kotlin.png)
 
-^ [Lisa] Yeah, optionals and null-safety are great. Fortunately Kotlin has made this a first-class concern. Here we see how we have to explicitly tell kotlin that `x` can hold a `null` value, and in the case of `y` Kotlin has prevented us from storing `null` since we have marked its type as a non-nullable `Int`.
+^ [Lisa] Yeah, optionals and null-safety are great. Fortunately Kotlin has made this a first-class concern. Here we see how we have to explicitly tell kotlin that `x` can hold a `null` value, using the same `?` notation as in Swift, and in the case of `y` Kotlin has prevented us from storing `null` since we have marked its type as a non-nullable `Int`.
 
-^ [Lisa] We also have an array of intergers and this `firstOrNull` method, which behaves like swift's `first` method, and again kotlin is preventing us from adding `1` to an optional integer.
+^ [Lisa] We also have an array of integers and this `firstOrNull` method, which behaves like swift's `first` method, and similarly kotlin is preventing us from adding `1` to an optional integer.
 
 ---
 
@@ -93,11 +93,11 @@ theme: Ostrich, 1
 
 ![inline 100%](images/struct-enum-kotlin.png)
 
-^ [lisa] Over in the kotlin world, stucts and enums are called data classes and sealed classes.
+^ [lisa] Over in the kotlin world, stucts and enums are called `data classes` and `sealed classes`.
 
-^ [lisa] The data classes have pretty similar style to structs, and they work pretty much the same.
+^ [lisa] The data classes have pretty similar style to structs in Swift, and they work pretty much the same.
 
-^ [lisa] Sealed classes are how we achieve enum-like functionality in kotlin, and they look a bit different. essentially, we create an un-instantiable type called either, and then have two inner subclasses for modeling the left and right. it's basically an OOP way to do enums.
+^ [lisa] Sealed classes are how we achieve enum-like functionality in kotlin, and they look a bit different. Essentially, we create an un-instantiable type called either, the sealed class, and then have two inner subclasses for modeling the left and right values. it's basically an OOP way to do enums.
 
 ^ [lisa] the amazing part is that this is 100% interoperable with java, so we can use the `Either` type in our java code, and we do.
 
