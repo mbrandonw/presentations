@@ -166,9 +166,7 @@ theme: Ostrich, 1
 
 ![inline 100%](images/operators-kotlin.png)
 
-^ NB: lisa clean up these paragraphs
-
-^ [lisa] Kotlin doesn't have support for custom operators, but it does allow one to defined infix functions. This means you can define a function that takes two arguments, but use it in an infix manner.
+^ [lisa] Kotlin doesn't have support for custom operators, but it does allow you to define `infix` functions. This means you can define a function that takes two arguments, but use it in an infix manner.
 
 ^ [lisa] for example, here we have defined an `andThen` function that takes a function from `A` to `B` on the left, and a function `B` to `C` on the right, and returns a function from `A` to `C`. This allows us to chain the increment and square functions together in any way we want.
 
@@ -181,13 +179,13 @@ theme: Ostrich, 1
 
 ![inline 90%](images/tailrec-kotlin.png)
 
-^ [lisa] Here's a cool feature of Kotlin that allows us to specify when a recursive function can take advantage of tail recursion. Recursion is an important part of functional programming, allowing us to focus on the structure of data.
+^ [lisa] Here's a cool feature of Kotlin that allows us to specify when a recursive function can take advantage of tail recursion. Recursion is an important part of functional programming because it allows for us to focus on the structure of data.
 
-^ [lisa] First recall that a recursive function is said to be in "tail form" if the return statement of the function contains only a call to the function itself, and nothing else. such recursive functions can be optimized by unrolling the recursion into a plain ol' loop.
+^ [lisa] Let's remind ourselves that a recursive function is said to be in "tail form" if the return statement of the function contains only a call to the function itself, and nothing else. such recursive functions can be optimized by unrolling the recursion into a loop.
 
-^ [lisa] kotlin has direct support for this optimization. if you can write your recursive function in tail form, you can annotate the function with the `tailrec` keyword and kotlin will optimize the function to be a plain ol' for loop. it will even raise a compiler warning if you use the modifier on a function that is not properly in tail form.
+^ [lisa] kotlin has direct support for this optimization. if you can write your recursive function in tail form, you can annotate the function with the `tailrec` keyword and kotlin will optimize the function to be a plain ol' `for` loop. it'll even raise a compiler warning if you use the modifier on a function that is not properly in tail form.
 
-^ [lisa] here I have a `sum` function that shows how to recursive define the sum of a list of integers as the sum of the head plus the sum of the tail. it's easy enough to write this in tail form, and now i can sum a list of thousands of integers without worrying about blowing up the stack.
+^ [lisa] here I have a `sum` function that shows how to recursively define the sum of a list of integers as the sum of the head plus the sum of the tail. since it's easy enough to write this in tail form, i can now sum a list of thousands of integers without worrying about blowing up the stack.
 
 ---
 
@@ -214,7 +212,7 @@ theme: Ostrich, 1
 
 ^ [lisa] Swift and Kotlin are not functional languages, but they do offer first-class support for many functional features such as map and filter operators. They are good foundations for building functional frameworks.
 
-^ [lisa] Here we have two snippets from our open sourced code bases. We are using ReactiveSwift and RxJava to pull 3 similar projects to show the user after they have backed a project. It's got quite a bit of complicated logic built in. [explain what this is doing].
+^ [lisa] Here we have two snippets from our open sourced code bases. We are using ReactiveSwift and RxJava to pull 3 projects to show the user after they have backed a project. It's got quite a bit of complicated logic built in--essentially we want to find the first three, distinct projects from a concatenated list of recommended, similar, and staff pick projects that also omits the project a user has just backed.
 
 ^ [lisa] It's cool to see how similar these code snippets are.
 
