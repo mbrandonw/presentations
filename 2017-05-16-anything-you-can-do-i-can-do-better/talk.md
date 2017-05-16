@@ -231,7 +231,7 @@ theme: Ostrich, 1
 ### Anything you can do
 ### we can do **together**
 
-^ NB: brandon fill this out
+^ So, after two years of developing with a team where everyone is expected to contribute to both ios and android, we've come to the conclusion that we want to develop 
 
 ^ [brandon] The features we've talked about today highlight some of the sweet spots between two languages that we work in as native engineers. When we invest so much time in experimenting with ideas, writing libraries and code, we want to be able to share all of our findings with each other.
 
