@@ -231,9 +231,9 @@ theme: Ostrich, 1
 ### Anything you can do
 ### we can do **together**
 
-^ So, after two years of developing with a team where everyone is expected to contribute to both ios and android, we've come to the conclusion that we want to develop 
+^ So, after two years of developing with a team where everyone is expected to contribute to both ios and android, we've come to the conclusion that we want to develop our foundation on the ideas of functional programming, and then implement them into our respective platforms. We invest a lot of time in experimenting with ideas, for example we are quite deep in the world of lenses for working with immutable data and applicative parsing for safely handling blobs of data, so we want to be able to share those findings with each other, regardless of platform.
 
-^ [brandon] The features we've talked about today highlight some of the sweet spots between two languages that we work in as native engineers. When we invest so much time in experimenting with ideas, writing libraries and code, we want to be able to share all of our findings with each other.
+^ Further, it feels good to wipe away the divide between android and ios and the "anything you can do i can do better" attitude. we benefit tremendously from encouraging everyone to be fluent in all ios/android/java/swift/kotlin, sometimes in ways that are not completely obvious. for example, it is certainly true that i write more swift than java/kotlin these days, but i also review all of lisa's android pull requests. so we are able to distribute a lot of work and understanding, beyond just the act of writing code.
 
 ---
 
