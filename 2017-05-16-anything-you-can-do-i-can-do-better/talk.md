@@ -135,7 +135,7 @@ theme: Ostrich, 1
 
 ^ [lisa] With `when`, we have compile time safety that we handled both the left and the right cases.
 
-^ [lisa] and finally, we can use it much the same way as we did with swift.
+^ [lisa] and finally, we can use it much the same way as we did with swift. big difference here is that instead of `$0` we used the keyword `it`.
 
 ---
 
@@ -202,21 +202,29 @@ theme: Ostrich, 1
 
 ### Functional Programming
 
+^ [lisa] In case you haven't already guessed, we like functional programming because it allows for us to leverage functions, immutability, and minimal side effects to write composable and testable code.
+
+^ [lisa] Swift and Kotlin are not functional languages, but they do offer first-class support for many functional features such as map and filter operators. They are good foundations for building functional frameworks.
+
 ---
 
 ### Functional Programming
 
 ![inline 45%](images/swift-and-kotlin.png)
 
-^ [lisa] In case you haven't already guessed, we like functional programming because it allows for us to leverage functions, immutability, and minimal side effects to write composable and testable code.
+^ [lisa] Here we have two snippets from our open sourced code bases. We are using ReactiveSwift on the left and RxJava on the right.
 
-^ [lisa] Swift and Kotlin are not functional languages, but they do offer first-class support for many functional features such as map and filter operators. They are good foundations for building functional frameworks.
+^ [lisa] This code is run on the thanks screen after backing a project. We want to show you 3 projects, preferably 3 projects recommended for you, but in case you dont have enough recommendations we will pull 3 similar projects to the one you just backed, and there are still arent 3 projects we will fallback to just some staff curated projects. 
 
-^ [lisa] Here we have two snippets from our open sourced code bases. We are using ReactiveSwift and RxJava to pull 3 projects to show the user after they have backed a project. It's got quite a bit of complicated logic built in--essentially we want to find the first three, distinct projects from a concatenated list of recommended, similar, and staff pick projects that also omits the project a user has just backed.
+^ [lisa] So usually to get these projects we would have to perform multiple API requests to get all the types of projects, concat them together, and then take 3. But, working with signals and observables, the take(3) you see here will complete the entire chain, preventing us from doing more API requests than needed. For example, if the API request for recommended projects returned 3 projects, we wouldn't even execute the other two requests to fetch projects.
 
-^ [lisa] It's cool to see how similar these code snippets are.
+^ [lisa] This is an example of lazy evaluation which actually saves us from making excess API requests.
 
-^ [brandon] lead in to next slide...
+^ [lisa] The rest of the logic filters out the project you just backed and that there are no repeats in projects.
+
+^ [lisa] It's cool to see how such complicated logic can be written in nearly an identical way on both platforms, and two languages, without appealing to platform specific tools like URLSession or async task.
+
+^ [brandon] This is really fascinating stuff. I'm starting to think that instead of "Anything you can do I can do better", we should say "Anything you can do we can do together"
 
 ---
 
