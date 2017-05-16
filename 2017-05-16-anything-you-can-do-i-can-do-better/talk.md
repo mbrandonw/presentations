@@ -204,6 +204,10 @@ theme: Ostrich, 1
 
 ### Functional Programming
 
+---
+
+### Functional Programming
+
 ![inline 45%](images/swift-and-kotlin.png)
 
 ^ [lisa] In case you haven't already guessed, we like functional programming because it allows for us to leverage functions, immutability, and minimal side effects to write composable and testable code.
