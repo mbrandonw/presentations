@@ -36,13 +36,12 @@ public func playgroundController(
   parent.view.frame.size = size
   parent.preferredContentSize = parent.view.frame.size
   parent.addChildViewController(child)
+  parent.setOverrideTraitCollection(traits, forChildViewController: child)
   parent.view.addSubview(child.view)
 
   child.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
   child.view.frame = parent.view.frame
   parent.view.backgroundColor = .white
-
-  parent.setOverrideTraitCollection(traits, forChildViewController: child)
 
   return parent
 }
@@ -128,8 +127,6 @@ public enum Device {
     }
   }
 }
-
-
 
 
 import UIKit
@@ -262,18 +259,31 @@ let testStore = TestStore(
 
 let store = liveStore
 
+import AppFramework
+
 class Controller: UIViewController {
 
   override func viewDidLoad() {
     super.viewDidLoad()
 
     self.view.backgroundColor = .init(red: 0.75, green: 0.15, blue: 0.16, alpha: 1)
+
+    let imageView = UIImageView()
+    imageView.image = UIImage(
+      named: "frenchkit-logo",
+      in: Bundle(identifier: "com.playground-drive.AppFramework"),
+      compatibleWith: self.traitCollection
+    )
+    imageView.contentMode = .center
+
     let titleLabel = UILabel()
     titleLabel.text = "Playground Driven Development"
     titleLabel.textAlignment = .center
     titleLabel.textColor = .white
     titleLabel.numberOfLines = 2
-    titleLabel.font = UIFont.preferredFont(forTextStyle: .title3, compatibleWith: self.traitCollection)
+    titleLabel.font = self.traitCollection.horizontalSizeClass == .compact
+      ? .preferredFont(forTextStyle: .title3, compatibleWith: self.traitCollection)
+      : .preferredFont(forTextStyle: .title1, compatibleWith: self.traitCollection)
 
     let incrButton = UIButton()
     incrButton.setTitle("+", for: .normal)
@@ -292,9 +302,12 @@ class Controller: UIViewController {
     let countLabel = UILabel()
     countLabel.textAlignment = .center
     countLabel.textColor = .white
+    countLabel.font = .preferredFont(forTextStyle: .body, compatibleWith: self.traitCollection)
 
     let isPrimeLabel = UILabel()
+    isPrimeLabel.font = .preferredFont(forTextStyle: .body, compatibleWith: self.traitCollection)
     isPrimeLabel.textAlignment = .center
+    isPrimeLabel.numberOfLines = 0
 
     let buttonsAndCountStackView = UIStackView()
     buttonsAndCountStackView.axis = .horizontal
@@ -315,11 +328,14 @@ class Controller: UIViewController {
     let mainStackView = UIStackView()
     mainStackView.translatesAutoresizingMaskIntoConstraints = false
     mainStackView.axis = .vertical
-    mainStackView.layoutMargins = .init(top: 64, left: 24, bottom: 64, right: 24)
+    mainStackView.layoutMargins = self.traitCollection.horizontalSizeClass == .compact
+      ? .init(top: 64, left: 24, bottom: 64, right: 24)
+      : .init(top: 128, left: 64, bottom: 128, right: 64)
     mainStackView.isLayoutMarginsRelativeArrangement = true
     mainStackView.spacing = 24
 
     [
+      imageView,
       titleLabel,
       buttonsAndCountStackView,
       isPrimeLabel
@@ -346,7 +362,7 @@ class Controller: UIViewController {
         rootStackView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
         rootStackView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
 
-        whiteView.heightAnchor.constraint(equalTo: blueView.heightAnchor)
+        whiteView.heightAnchor.constraint(equalTo: blueView.heightAnchor),
       ]
     )
 
@@ -371,6 +387,7 @@ class Controller: UIViewController {
 
 PlaygroundPage.current.liveView = playgroundController(
   for: Controller(),
-  device: Device.phone4inch,
-  orientation: .portrait
+  device: .phone4_7inch,
+  orientation: .portrait,
+  traits: .init(preferredContentSizeCategory: .extraExtraExtraLarge)
 )

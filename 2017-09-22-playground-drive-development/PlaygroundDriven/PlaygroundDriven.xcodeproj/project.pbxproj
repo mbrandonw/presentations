@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CA24E6961F70909B00A07A32 /* AppFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = CA24E6941F70909B00A07A32 /* AppFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CA24E6991F70909B00A07A32 /* AppFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA24E6921F70909B00A07A32 /* AppFramework.framework */; };
+		CA24E69A1F70909B00A07A32 /* AppFramework.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CA24E6921F70909B00A07A32 /* AppFramework.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CA24E6A51F7090AD00A07A32 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA24E6A41F7090AD00A07A32 /* Media.xcassets */; };
+		CA24E6A71F7090CA00A07A32 /* AppFramework.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA24E6A61F7090CA00A07A32 /* AppFramework.swift */; };
 		CA90969D1F6B75CD00732792 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA90969C1F6B75CD00732792 /* AppDelegate.swift */; };
 		CA90969F1F6B75CD00732792 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA90969E1F6B75CD00732792 /* ViewController.swift */; };
 		CA9096A21F6B75CD00732792 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CA9096A01F6B75CD00732792 /* Main.storyboard */; };
@@ -15,6 +20,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		CA24E6971F70909B00A07A32 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CA9096911F6B75CC00732792 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CA24E6911F70909B00A07A32;
+			remoteInfo = AppFramework;
+		};
 		CAB842021F6EF2C3005249DC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CAB841F31F6EF2C3005249DC /* Boundaries.xcodeproj */;
@@ -122,6 +134,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				CA24E69A1F70909B00A07A32 /* AppFramework.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -129,6 +142,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		CA24E6921F70909B00A07A32 /* AppFramework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AppFramework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CA24E6941F70909B00A07A32 /* AppFramework.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppFramework.h; sourceTree = "<group>"; };
+		CA24E6951F70909B00A07A32 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CA24E6A41F7090AD00A07A32 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
+		CA24E6A61F7090CA00A07A32 /* AppFramework.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppFramework.swift; sourceTree = "<group>"; };
 		CA9096991F6B75CD00732792 /* PlaygroundDriven.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PlaygroundDriven.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA90969C1F6B75CD00732792 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CA90969E1F6B75CD00732792 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -141,22 +159,42 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		CA9096961F6B75CC00732792 /* Frameworks */ = {
+		CA24E68E1F70909B00A07A32 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CA9096961F6B75CC00732792 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CA24E6991F70909B00A07A32 /* AppFramework.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CA24E6931F70909B00A07A32 /* AppFramework */ = {
+			isa = PBXGroup;
+			children = (
+				CA24E6941F70909B00A07A32 /* AppFramework.h */,
+				CA24E6951F70909B00A07A32 /* Info.plist */,
+				CA24E6A41F7090AD00A07A32 /* Media.xcassets */,
+				CA24E6A61F7090CA00A07A32 /* AppFramework.swift */,
+			);
+			path = AppFramework;
+			sourceTree = "<group>";
+		};
 		CA9096901F6B75CC00732792 = {
 			isa = PBXGroup;
 			children = (
 				CAB841F31F6EF2C3005249DC /* Boundaries.xcodeproj */,
 				CA9096AE1F6B75FB00732792 /* PlaygroundDriven.playground */,
 				CA90969B1F6B75CD00732792 /* PlaygroundDriven */,
+				CA24E6931F70909B00A07A32 /* AppFramework */,
 				CA90969A1F6B75CD00732792 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -165,6 +203,7 @@
 			isa = PBXGroup;
 			children = (
 				CA9096991F6B75CD00732792 /* PlaygroundDriven.app */,
+				CA24E6921F70909B00A07A32 /* AppFramework.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -199,7 +238,36 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		CA24E68F1F70909B00A07A32 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CA24E6961F70909B00A07A32 /* AppFramework.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
+		CA24E6911F70909B00A07A32 /* AppFramework */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CA24E6A31F70909B00A07A32 /* Build configuration list for PBXNativeTarget "AppFramework" */;
+			buildPhases = (
+				CA24E68D1F70909B00A07A32 /* Sources */,
+				CA24E68E1F70909B00A07A32 /* Frameworks */,
+				CA24E68F1F70909B00A07A32 /* Headers */,
+				CA24E6901F70909B00A07A32 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AppFramework;
+			productName = AppFramework;
+			productReference = CA24E6921F70909B00A07A32 /* AppFramework.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		CA9096981F6B75CC00732792 /* PlaygroundDriven */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = CA9096AB1F6B75CD00732792 /* Build configuration list for PBXNativeTarget "PlaygroundDriven" */;
@@ -218,6 +286,7 @@
 				CAB8422C1F6EF2E0005249DC /* PBXTargetDependency */,
 				CAB8422E1F6EF2E0005249DC /* PBXTargetDependency */,
 				CAB842301F6EF2E0005249DC /* PBXTargetDependency */,
+				CA24E6981F70909B00A07A32 /* PBXTargetDependency */,
 			);
 			name = PlaygroundDriven;
 			productName = PlaygroundDriven;
@@ -234,6 +303,11 @@
 				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = "Brandon Williams";
 				TargetAttributes = {
+					CA24E6911F70909B00A07A32 = {
+						CreatedOnToolsVersion = 9.0;
+						LastSwiftMigration = 0900;
+						ProvisioningStyle = Automatic;
+					};
 					CA9096981F6B75CC00732792 = {
 						CreatedOnToolsVersion = 9.0;
 						ProvisioningStyle = Automatic;
@@ -260,6 +334,7 @@
 			projectRoot = "";
 			targets = (
 				CA9096981F6B75CC00732792 /* PlaygroundDriven */,
+				CA24E6911F70909B00A07A32 /* AppFramework */,
 			);
 		};
 /* End PBXProject section */
@@ -324,6 +399,14 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
+		CA24E6901F70909B00A07A32 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CA24E6A51F7090AD00A07A32 /* Media.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CA9096971F6B75CC00732792 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -337,6 +420,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		CA24E68D1F70909B00A07A32 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CA24E6A71F7090CA00A07A32 /* AppFramework.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CA9096951F6B75CC00732792 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -349,6 +440,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		CA24E6981F70909B00A07A32 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CA24E6911F70909B00A07A32 /* AppFramework */;
+			targetProxy = CA24E6971F70909B00A07A32 /* PBXContainerItemProxy */;
+		};
 		CAB842281F6EF2E0005249DC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = NonEmpty;
@@ -401,6 +497,57 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		CA24E69B1F70909B00A07A32 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 653P6Q4JQ2;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = AppFramework/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.playground-drive.AppFramework";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		CA24E69C1F70909B00A07A32 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 653P6Q4JQ2;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = AppFramework/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.playground-drive.AppFramework";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
 		CA9096A91F6B75CD00732792 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -543,6 +690,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		CA24E6A31F70909B00A07A32 /* Build configuration list for PBXNativeTarget "AppFramework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CA24E69B1F70909B00A07A32 /* Debug */,
+				CA24E69C1F70909B00A07A32 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		CA9096941F6B75CC00732792 /* Build configuration list for PBXProject "PlaygroundDriven" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
