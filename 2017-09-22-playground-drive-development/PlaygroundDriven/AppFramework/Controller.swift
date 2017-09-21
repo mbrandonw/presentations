@@ -1,44 +1,19 @@
 import Boundaries
-import BoundariesTestSupport
-let largeNumber = 18_408_989 - 2
+//import BoundariesTestSupport
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-import UIKit
-import PlaygroundSupport
-import AppFramework
-PlaygroundPage.current.needsIndefiniteExecution = true
-
-enum Hidden {
-  struct State {
+public enum Hidden {
+  public struct State {
     var count: Int
     var isPrimeLabelText: String
     var isPrimeLabelColor: UIColor
   }
-  enum Action {
+  public enum Action {
     case decr
     case incr
     case `init`(Int)
     case isPrimeResult(String)
   }
-  struct Result: Decodable {
+  public struct Result: Decodable {
     let queryresult: QueryResult
 
     struct QueryResult: Decodable {
@@ -53,17 +28,17 @@ enum Hidden {
       }
     }
   }
-  enum Effect: EffectProtocol {
-    typealias A = Action
+  public enum Effect: EffectProtocol {
+    public typealias A = Action
     case isPrime(Int)
   }
-  static func execute(effect: Effect) -> Action? {
+  public static func execute(effect: Effect) -> Action? {
     switch effect {
     case let .isPrime(n):
       return isPrime(n)
     }
   }
-  static func testExecute(effect: Effect) -> Action? {
+  public static func testExecute(effect: Effect) -> Action? {
     switch effect {
     case let .isPrime(n):
       return [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71].contains(n)
@@ -71,7 +46,7 @@ enum Hidden {
         : .isPrimeResult("\(n) is not a prime number")
     }
   }
-  static func isPrime(_ n: Int) -> Action? {
+  public static func isPrime(_ n: Int) -> Action? {
     let semaphore = DispatchSemaphore(value: 0)
     var action: Action?
 
@@ -94,7 +69,7 @@ enum Hidden {
   }
 
 
-  static let appReducer = Reducer<State, Action, Effect> { action, state in
+  public static let appReducer = Reducer<State, Action, Effect> { action, state in
     var nextState = state
     let effect: Cmd<Effect>
 
@@ -124,7 +99,7 @@ enum Hidden {
     return (nextState, effect)
   }
 
-  static let liveStore = Store(
+  public static let liveStore = Store(
     reducer: Hidden.appReducer,
     initialState: Hidden.State(
       count: 1,
@@ -134,23 +109,22 @@ enum Hidden {
     execute: Hidden.execute(effect:)
   )
 
-  static let testStore = TestStore(
-    reducer: Hidden.appReducer,
-    initialState: Hidden.State(
-      count: 1,
-      isPrimeLabelText: "1 is not a prime number",
-      isPrimeLabelColor: UIColor(white: 1.0, alpha: 0.5)
-    ),
-    execute: Hidden.testExecute(effect:)
-  )
+//  static let testStore = TestStore(
+//    reducer: Hidden.appReducer,
+//    initialState: Hidden.State(
+//      count: 1,
+//      isPrimeLabelText: "1 is not a prime number",
+//      isPrimeLabelColor: UIColor(white: 1.0, alpha: 0.5)
+//    ),
+//    execute: Hidden.testExecute(effect:)
+//  )
 }
-let store = Hidden.testStore
+public let store = Hidden.liveStore
 
-class Controller: UIViewController {
-  override func viewDidLoad() {
+public class Controller: UIViewController {
+
+  public override func viewDidLoad() {
     super.viewDidLoad()
-
-    let grid: CGFloat = 6
 
     self.view.backgroundColor = .init(red: 0.75, green: 0.15, blue: 0.16, alpha: 1)
 
@@ -181,7 +155,7 @@ class Controller: UIViewController {
     incrButton.layer.borderColor = UIColor(red: 0.8, green: 0.3, blue: 0.3, alpha: 0.8).cgColor
     incrButton.layer.borderWidth = 1
     incrButton.layer.masksToBounds = true
-    incrButton.contentEdgeInsets = .init(top: grid * 2, left: grid * 3, bottom: grid * 2, right: grid * 3)
+    incrButton.contentEdgeInsets = .init(top: 10, left: 20, bottom: 10, right: 20)
     incrButton.backgroundColor = UIColor.init(white: 0.0, alpha: 0.1)
 
     let decrButton = UIButton()
@@ -194,7 +168,7 @@ class Controller: UIViewController {
     decrButton.layer.borderColor = UIColor(red: 0.8, green: 0.3, blue: 0.3, alpha: 0.8).cgColor
     decrButton.layer.borderWidth = 1
     decrButton.layer.masksToBounds = true
-    decrButton.contentEdgeInsets = .init(top: grid * 2, left: grid * 3, bottom: grid * 2, right: grid * 3)
+    decrButton.contentEdgeInsets = .init(top: 10, left: 20, bottom: 10, right: 20)
     decrButton.backgroundColor = UIColor.init(white: 0.0, alpha: 0.1)
 
     let countLabel = UILabel()
@@ -227,10 +201,10 @@ class Controller: UIViewController {
     mainStackView.translatesAutoresizingMaskIntoConstraints = false
     mainStackView.axis = .vertical
     mainStackView.layoutMargins = self.traitCollection.horizontalSizeClass == .compact
-      ? .init(top: grid * 10, left: grid * 4, bottom: grid * 10, right: grid * 4)
-      : .init(top: grid * 20, left: grid * 10, bottom: grid * 20, right: grid * 10)
+      ? .init(top: 64, left: 24, bottom: 64, right: 24)
+      : .init(top: 128, left: 64, bottom: 128, right: 64)
     mainStackView.isLayoutMarginsRelativeArrangement = true
-    mainStackView.spacing = grid * 4
+    mainStackView.spacing = 24
 
     [
       imageView,
@@ -260,7 +234,7 @@ class Controller: UIViewController {
         rootStackView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
         rootStackView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
         whiteView.heightAnchor.constraint(equalTo: blueView.heightAnchor),
-      ]
+        ]
     )
 
     store.subscribe { state in
@@ -269,7 +243,7 @@ class Controller: UIViewController {
       isPrimeLabel.textColor = state.isPrimeLabelColor
     }
 
-    store.dispatch(.init(largeNumber))
+    store.dispatch(.init(1))
   }
   @objc func incrButtonTapped() {
     store.dispatch(.incr)
@@ -278,24 +252,4 @@ class Controller: UIViewController {
     store.dispatch(.decr)
   }
 }
-  
-PlaygroundPage.current.liveView = playgroundController(
-  for: Controller(),
-  device: .phone4_7inch,
-  orientation: .portrait,
-  traits: .init(traitsFrom: [
-    .init(layoutDirection: .rightToLeft),
-    .init(preferredContentSizeCategory: .extraExtraExtraLarge),
-    ])
-)
-
-
-
-
-
-
-
-
-
-
 

@@ -7,11 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CA216FE01F73FDF70009E590 /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA216FDF1F73FDF70009E590 /* Controller.swift */; };
 		CA24E6961F70909B00A07A32 /* AppFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = CA24E6941F70909B00A07A32 /* AppFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CA24E6991F70909B00A07A32 /* AppFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA24E6921F70909B00A07A32 /* AppFramework.framework */; };
 		CA24E69A1F70909B00A07A32 /* AppFramework.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CA24E6921F70909B00A07A32 /* AppFramework.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CA24E6A51F7090AD00A07A32 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA24E6A41F7090AD00A07A32 /* Media.xcassets */; };
-		CA24E6A71F7090CA00A07A32 /* AppFramework.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA24E6A61F7090CA00A07A32 /* AppFramework.swift */; };
+		CA24E6A71F7090CA00A07A32 /* SomeClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA24E6A61F7090CA00A07A32 /* SomeClass.swift */; };
 		CA90969D1F6B75CD00732792 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA90969C1F6B75CD00732792 /* AppDelegate.swift */; };
 		CA90969F1F6B75CD00732792 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA90969E1F6B75CD00732792 /* ViewController.swift */; };
 		CA9096A21F6B75CD00732792 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CA9096A01F6B75CD00732792 /* Main.storyboard */; };
@@ -20,6 +21,41 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		CA216FE91F73FE3F0009E590 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CAB841F31F6EF2C3005249DC /* Boundaries.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = "Prelude::NonEmpty";
+			remoteInfo = NonEmpty;
+		};
+		CA216FEB1F73FE3F0009E590 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CAB841F31F6EF2C3005249DC /* Boundaries.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = "Boundaries::Boundaries";
+			remoteInfo = Boundaries;
+		};
+		CA216FED1F73FE3F0009E590 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CAB841F31F6EF2C3005249DC /* Boundaries.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = "Prelude::Optics";
+			remoteInfo = Optics;
+		};
+		CA216FEF1F73FE3F0009E590 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CAB841F31F6EF2C3005249DC /* Boundaries.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = "Prelude::Either";
+			remoteInfo = Either;
+		};
+		CA216FF11F73FE3F0009E590 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CAB841F31F6EF2C3005249DC /* Boundaries.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = "Prelude::Prelude";
+			remoteInfo = Prelude;
+		};
 		CA24E6971F70909B00A07A32 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CA9096911F6B75CC00732792 /* Project object */;
@@ -142,11 +178,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		CA216FDF1F73FDF70009E590 /* Controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
+		CA216FF41F73FE700009E590 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		CA24E6921F70909B00A07A32 /* AppFramework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AppFramework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA24E6941F70909B00A07A32 /* AppFramework.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppFramework.h; sourceTree = "<group>"; };
 		CA24E6951F70909B00A07A32 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CA24E6A41F7090AD00A07A32 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
-		CA24E6A61F7090CA00A07A32 /* AppFramework.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppFramework.swift; sourceTree = "<group>"; };
+		CA24E6A61F7090CA00A07A32 /* SomeClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SomeClass.swift; sourceTree = "<group>"; };
 		CA9096991F6B75CD00732792 /* PlaygroundDriven.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PlaygroundDriven.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA90969C1F6B75CD00732792 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CA90969E1F6B75CD00732792 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -177,13 +215,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CA216FF31F73FE700009E590 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CA216FF41F73FE700009E590 /* XCTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		CA24E6931F70909B00A07A32 /* AppFramework */ = {
 			isa = PBXGroup;
 			children = (
 				CA24E6941F70909B00A07A32 /* AppFramework.h */,
 				CA24E6951F70909B00A07A32 /* Info.plist */,
 				CA24E6A41F7090AD00A07A32 /* Media.xcassets */,
-				CA24E6A61F7090CA00A07A32 /* AppFramework.swift */,
+				CA24E6A61F7090CA00A07A32 /* SomeClass.swift */,
+				CA216FDF1F73FDF70009E590 /* Controller.swift */,
 			);
 			path = AppFramework;
 			sourceTree = "<group>";
@@ -196,6 +243,7 @@
 				CA90969B1F6B75CD00732792 /* PlaygroundDriven */,
 				CA24E6931F70909B00A07A32 /* AppFramework */,
 				CA90969A1F6B75CD00732792 /* Products */,
+				CA216FF31F73FE700009E590 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -262,6 +310,11 @@
 			buildRules = (
 			);
 			dependencies = (
+				CA216FEA1F73FE3F0009E590 /* PBXTargetDependency */,
+				CA216FEC1F73FE3F0009E590 /* PBXTargetDependency */,
+				CA216FEE1F73FE3F0009E590 /* PBXTargetDependency */,
+				CA216FF01F73FE3F0009E590 /* PBXTargetDependency */,
+				CA216FF21F73FE3F0009E590 /* PBXTargetDependency */,
 			);
 			name = AppFramework;
 			productName = AppFramework;
@@ -424,7 +477,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CA24E6A71F7090CA00A07A32 /* AppFramework.swift in Sources */,
+				CA24E6A71F7090CA00A07A32 /* SomeClass.swift in Sources */,
+				CA216FE01F73FDF70009E590 /* Controller.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -440,6 +494,31 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		CA216FEA1F73FE3F0009E590 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = NonEmpty;
+			targetProxy = CA216FE91F73FE3F0009E590 /* PBXContainerItemProxy */;
+		};
+		CA216FEC1F73FE3F0009E590 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Boundaries;
+			targetProxy = CA216FEB1F73FE3F0009E590 /* PBXContainerItemProxy */;
+		};
+		CA216FEE1F73FE3F0009E590 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Optics;
+			targetProxy = CA216FED1F73FE3F0009E590 /* PBXContainerItemProxy */;
+		};
+		CA216FF01F73FE3F0009E590 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Either;
+			targetProxy = CA216FEF1F73FE3F0009E590 /* PBXContainerItemProxy */;
+		};
+		CA216FF21F73FE3F0009E590 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Prelude;
+			targetProxy = CA216FF11F73FE3F0009E590 /* PBXContainerItemProxy */;
+		};
 		CA24E6981F70909B00A07A32 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = CA24E6911F70909B00A07A32 /* AppFramework */;

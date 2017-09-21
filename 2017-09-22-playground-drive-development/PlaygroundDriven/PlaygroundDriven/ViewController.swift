@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Reducer
 
 class ViewController: UIViewController {
 
