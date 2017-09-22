@@ -21,9 +21,15 @@ let largeNumber = 18_408_989 - 2
 
 
 
+
+
+
+
+
+
+
 import UIKit
 import PlaygroundSupport
-import AppFramework
 PlaygroundPage.current.needsIndefiniteExecution = true
 
 enum Hidden {
@@ -144,7 +150,8 @@ enum Hidden {
     execute: Hidden.testExecute(effect:)
   )
 }
-let store = Hidden.testStore
+let store = Hidden.liveStore
+let startingCount = 2
 
 class Controller: UIViewController {
   override func viewDidLoad() {
@@ -155,18 +162,12 @@ class Controller: UIViewController {
     self.view.backgroundColor = .init(red: 0.75, green: 0.15, blue: 0.16, alpha: 1)
 
     let imageView = UIImageView()
-    imageView.image = UIImage(
-      named: "frenchkit-logo",
-      in: Bundle(for: SomeClass.self),
-      compatibleWith: self.traitCollection
-    )
     imageView.contentMode = .center
 
     let titleLabel = UILabel()
     titleLabel.text = "Playground Driven Development"
     titleLabel.textAlignment = .center
     titleLabel.textColor = .white
-    titleLabel.numberOfLines = 2
     titleLabel.font = self.traitCollection.horizontalSizeClass == .compact
       ? .preferredFont(forTextStyle: .title3, compatibleWith: self.traitCollection)
       : .preferredFont(forTextStyle: .title1, compatibleWith: self.traitCollection)
@@ -269,7 +270,7 @@ class Controller: UIViewController {
       isPrimeLabel.textColor = state.isPrimeLabelColor
     }
 
-    store.dispatch(.init(largeNumber))
+    store.dispatch(.init(startingCount))
   }
   @objc func incrButtonTapped() {
     store.dispatch(.incr)
@@ -278,16 +279,8 @@ class Controller: UIViewController {
     store.dispatch(.decr)
   }
 }
-  
-PlaygroundPage.current.liveView = playgroundController(
-  for: Controller(),
-  device: .phone4_7inch,
-  orientation: .portrait,
-  traits: .init(traitsFrom: [
-    .init(layoutDirection: .rightToLeft),
-    .init(preferredContentSizeCategory: .extraExtraExtraLarge),
-    ])
-)
+
+PlaygroundPage.current.liveView = Controller()
 
 
 
