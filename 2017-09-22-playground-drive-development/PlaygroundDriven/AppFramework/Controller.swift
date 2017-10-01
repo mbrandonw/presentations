@@ -5,7 +5,7 @@ public class Controller: UIViewController {
   public override func viewDidLoad() {
     super.viewDidLoad()
 
-    self.view.backgroundColor = .init(red: 0.75, green: 0.15, blue: 0.16, alpha: 1)
+    self.view.backgroundColor = .red
 
     let imageView = UIImageView()
     imageView.image = UIImage(

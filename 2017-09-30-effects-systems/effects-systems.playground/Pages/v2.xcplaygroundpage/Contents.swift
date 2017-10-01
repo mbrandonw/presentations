@@ -5,6 +5,15 @@
  * @mbrandonw
  */
 
+precedencegroup MonoidAppend {
+  associativity: left
+}
+infix operator <>
+protocol Monoid {
+  static var empty: Self { get }
+  static func <> (lhs: Self, rhs: Self) -> Self
+}
+
 /*:
  Let's make our reducer operate on state via `inout`!
 
@@ -14,15 +23,6 @@
  (A, B) -> (A, C) ~> (inout A, B) -> C
  ```
  */
-
-precedencegroup MonoidAppend {
-  associativity: left
-}
-infix operator <>
-protocol Monoid {
-  static var empty: Self { get }
-  static func <> (lhs: Self, rhs: Self) -> Self
-}
 
 struct Reducer<S, A>: Monoid {
   let reduce: (inout S, A) -> Void
@@ -40,13 +40,13 @@ struct Reducer<S, A>: Monoid {
 }
 
 class Store<S, A> {
-  let reducer: Reducer<S, A>
+  private let reducer: Reducer<S, A>
   private var currentState: S {
     didSet {
       self.subscribers.forEach { $0(self.currentState) }
     }
   }
-  var subscribers: [(S) -> Void] = []
+  private var subscribers: [(S) -> Void] = []
 
   init(reducer: Reducer<S, A>, initialState: S) {
     self.reducer = reducer
@@ -127,6 +127,10 @@ let accountReducer = Reducer<AccountState, AccountAction> { state, action in
   }
 }
 
+/*:
+ Much nicer! Now let's make an epsiode reducer
+ */
+
 let episodeReducer = Reducer<EpisodesState, EpisodesAction> { state, action in
   switch action {
   case let .tappedEpisode(episode):
@@ -143,12 +147,12 @@ let episodeReducer = Reducer<EpisodesState, EpisodesAction> { state, action in
 /*:
  Ok this doesn't work because each reducer understands only a subset of the state and actions in the entire app. We need some way to lift these reducers up to the world of global state and actions.
 
- Let's think out loud how that might work. say you have a reducer that operates on substate of some global state. how could we lift it to understand the global state? well using keypaths you can construct getters/setters for projecting into the substate:
+ Let's think out loud how that might work for state. say you have a reducer that operates on substate of some global state. how could we lift it to understand the global state? well using keypaths you can construct getters/setters for projecting into the substate:
 
  (GlobalState) -> SubState
  (GlobalState, SubState) -> GlobalState
 
- These shapes are also known as lenses!
+ These shapes are also known as lenses! We'll talk more about that soon.
 
  So when the global state comes in, we could first use the keypath to pluck out the substate and then we can hand that to our subreducer. Then the subreducers returns a new substate, which we then use the keypath to plug the substate back into the global state! Let's write this:
  */
@@ -160,6 +164,10 @@ extension Reducer {
     }
   }
 }
+
+/*:
+ Now can we use this to compose our reducers?
+ */
 
 //let appReducer =
 //  accountReducer.lift(state: \AppState.accountState)
@@ -185,6 +193,8 @@ struct Prism<A, B> {
 }
 
 /*:
+ One nice thing is that each enum case is a function/constructor, and so we get the `review` for free.
+
  And now let's define a `lift` function
  */
 
@@ -209,14 +219,14 @@ extension AppAction {
       preview: {
         if case let .accountAction(action) = $0 { return action }
         return nil
-    },
+      },
       review: AppAction.accountAction
     )
     static let episodesAction = Prism<AppAction, EpisodesAction>(
       preview: {
         if case let .episodesAction(action) = $0 { return action }
         return nil
-    },
+      },
       review: AppAction.episodesAction
     )
   }
@@ -228,7 +238,10 @@ extension AppAction {
 
 extension Reducer {
   func lift<T, B>(state: WritableKeyPath<T, S>, action: Prism<B, A>) -> Reducer<T, B> {
-    return self.lift(state: state).lift(action: action)
+    return Reducer<T, B> { stateT, actionB in
+      guard let actionA = action.preview(actionB) else { return }
+      self.reduce(&stateT[keyPath: state], actionA)
+    }
   }
 }
 
@@ -242,9 +255,9 @@ let appReducer =
  Ok! We can now finally create a store that uses this reducer and dispatch some commands to it!
  */
 
-let ep1 = Episode(id: 1, title: "Ep 1", videoUrl: "ep1.mp4")
-let ep2 = Episode(id: 2, title: "Ep 2", videoUrl: "ep2.mp4")
-let ep3 = Episode(id: 3, title: "Ep 3", videoUrl: "ep3.mp4")
+let ep1 = Episode(id: 1, title: "Functions", videoUrl: "ep1.mp4")
+let ep2 = Episode(id: 2, title: "Monoids", videoUrl: "ep2.mp4")
+let ep3 = Episode(id: 3, title: "Functors", videoUrl: "ep3.mp4")
 
 let store = Store(
   reducer: appReducer,
@@ -277,7 +290,7 @@ store.dispatch(.accountAction(.tappedNotification(on: true)))
 /*:
  Ok, i'm starting to see something weird in the state. In the main screen we had watched two episodes, yet the array of watched episodes is empty. this is because our app state isn't correctly factored, it has an overlap of data in which both the account and episodes screens contains an array of watched episodes.
 
- We can move the `watchedEpisodes` out of each of those substates and into global state that way anyone can access the list of watched episodes. However, that will break our reducers. We'd want a way to pluck out multiple pieces from the global state that we can reducer on. This shows a shortcoming in keypaths that lenses don't have.
+ We can move the `watchedEpisodes` out of each of those substates and into global state that way anyone can access the list of watched episodes. However, that will break our reducers. we could make them take global state instead of the smaller state, but that's not ideal because it was nice having the reducers focus only on the data they care about. We want a way to pluck out multiple pieces from the global state that we can reducer on. This shows a shortcoming in keypaths that lenses don't have.
 
  We want to be able to write a function like so:
 
@@ -288,31 +301,47 @@ store.dispatch(.accountAction(.tappedNotification(on: true)))
    ) -> WritableKeyPath<A, (B, C)>
  ```
 
- This is not possible to write because key paths are not constructible by us, only the compiler. Lenses, however, do not have this problem! We can define:
+ This is not possible to write because key paths are not constructible by us, only the compiler. Lenses, however, do not have this problem! I will define lenses a lil differently than i have in the past. the main reason for this is that keypaths allow us to autogenerate 99% of the lenses we use, and they work off of mutability, so i want to support that concept in lenses.
  */
 
 struct Lens<A, B> {
   let view: (A) -> B
-  let set: (A, B) -> A
+  let mutatingSet: (inout A, B) -> Void
+
+  func set(_ whole: A, _ part: B) -> A {
+    var result = whole
+    self.mutatingSet(&result, part)
+    return result
+  }
 }
 
-func both<A, B, C>(_ lhs: Lens<A, B>, _ rhs: Lens<A, C>) -> Lens<A, (B, C)> {
-  return Lens<A, (B, C)>(
-    view: { (lhs.view($0), rhs.view($0)) },
-    set: { whole, parts in rhs.set(lhs.set(whole, parts.0), parts.1) }
-  )
-}
+/*:
+ It's easy to derive a lens from any writable keypath. this is really cool because now swift can generate 99% of all our lenses.
+ */
 
 func lens<A, B>(_ keyPath: WritableKeyPath<A, B>) -> Lens<A, B> {
   return Lens<A, B>(
     view: { $0[keyPath: keyPath] },
-    set: { whole, part in var result = whole; result[keyPath: keyPath] = part; return whole }
+    mutatingSet: { whole, part in whole[keyPath: keyPath] = part }
   )
 }
 
 /*:
  Worth saying that it is not possible to go the other way, (Lens<A, B>) -> WritableKeyPath<A, B> due to not being able to construct key paths.
 
+ Now it's easy to write an operation that combines two lenses with a common source/parent:
+ */
+
+func both<A, B, C>(_ lhs: Lens<A, B>, _ rhs: Lens<A, C>) -> Lens<A, (B, C)> {
+  return Lens<A, (B, C)>(
+    view: { (lhs.view($0), rhs.view($0)) },
+    mutatingSet: { whole, parts in
+      lhs.mutatingSet(&whole, parts.0)
+      rhs.mutatingSet(&whole, parts.1)
+  })
+}
+
+/*:
  So now we get to leverage the fact that swift autogens a lens for us for every single field, and combine them in new ways:
  */
 
@@ -323,9 +352,25 @@ let episodesAndNotificationsLens: Lens<AppState, ([Episode], Bool)> =
 )
 
 /*:
- Now we get to be super expressive in how we pick up the minimal amount of state our reducers need to do its job. Let's do that now!
+ Now we get to be super expressive in how we pick up the minimal amount of state our reducers need to do its job.
+
+ Before we can move the watched episodes state out into the global state we need our reducers to understand lenses. let's make a `lift` specific to lenses
  */
 
+extension Reducer {
+  func lift<T, B>(state: Lens<T, S>, action: Prism<B, A>) -> Reducer<T, B> {
+    return Reducer<T, B> { stateT, actionB in
+      guard let actionA = action.preview(actionB) else { return }
+      var stateS = state.view(stateT)
+      self.reduce(&stateS, actionA)
+      state.mutatingSet(&stateT, stateS)
+    }
+  }
+}
+
+/*:
+ Now we're in a position to refactor our state!
+ */
 
 
 print("✅")

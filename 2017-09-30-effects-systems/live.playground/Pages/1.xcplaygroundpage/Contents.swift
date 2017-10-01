@@ -5,17 +5,10 @@
  * @mbrandonw
  */
 
-/*:
- We start with a reducer, which takes a state and an action and produce another state. I'm gonna wrap it a new type but it could also just be a generic typealias.
- */
-
+// typealias Reducer<S, A> = (S, A) -> S
 struct Reducer<S, A> {
   let reduce: (S, A) -> S
 }
-
-/*:
- The first form of composition we will encounter makes `Reducer` into a monoid!
- */
 
 precedencegroup MonoidAppend {
   associativity: left
@@ -27,37 +20,26 @@ protocol Monoid {
 }
 
 extension Reducer: Monoid {
-  static var empty: Reducer {
+  static var empty: Reducer<S, A> {
     return Reducer { s, _ in s }
   }
 
-  static func <> (lhs: Reducer, rhs: Reducer) -> Reducer {
-    return Reducer { state, action in
-      let state1 = lhs.reduce(state, action)
-      let state2 = rhs.reduce(state1, action)
-      return state2
+  // (S, A) -> S
+  // (A, S) -> S
+  // (A) -> (S) -> S
+  // (A) -> Endo(S)
+
+  static func <>(lhs: Reducer<S, A>, rhs: Reducer<S, A>) -> Reducer<S, A> {
+    return Reducer { s, a in
+      let newState = lhs.reduce(s, a)
+      return rhs.reduce(newState, a)
     }
   }
 }
 
-/*:
- Another way to think about this is to realize that `(S, A) -> S` can be written as `(A) -> Endo(S)`, and we have previously seen that `Endo(S)` is a monoid, and we know that functions into monoids are monoids, and therefore Reducers naturally form a monoid. here we've just spelled it out more explicitly.
-
- ```
- (S, A) -> S
- (A, S) -> S
- (A) -> (S) -> S
- (A) -> Endo(S)
- ```
- */
-
-/*:
- Next thing we need is a runtime thing to allow our view to dispatch action, run the reducer, save the current state, and send it out to subscribers.
- */
-
 class Store<S, A> {
   private let reducer: Reducer<S, A>
-  private var subscribers: [(S) -> Void] = [] // todo: memory management
+  private var subscribers: [(S) -> Void] = []
   private var currentState: S {
     didSet {
       self.subscribers.forEach { $0(self.currentState) }
@@ -79,6 +61,7 @@ class Store<S, A> {
   }
 }
 
+
 struct User {
   let id: Int
   let name: String
@@ -89,6 +72,7 @@ struct Episode {
   let title: String
   let videoUrl: String
 }
+
 
 struct EpisodesState {
   var episodes: [Episode] = []
@@ -105,6 +89,10 @@ struct Settings {
   var notificationsOn: Bool = false
 }
 
+enum EpisodesAction {
+  case tappedEpisode(Episode)
+}
+
 enum AccountAction {
   case login(User)
   case tappedEpisode(Episode)
@@ -112,13 +100,6 @@ enum AccountAction {
   case tappedNotification(on: Bool)
 }
 
-enum EpisodesAction {
-  case tappedEpisode(Episode)
-}
-
-/*:
- And then we put all the state and actions into a big struct and enum.
- */
 
 struct AppState {
   var episodesState: EpisodesState = .init()
@@ -130,26 +111,15 @@ enum AppAction {
   case episodesAction(EpisodesAction)
 }
 
-/*:
- Let's try defining the reducer for the account screen. 
- */
-
 let accountReducer = Reducer<AccountState, AccountAction> { state, action in
+
   switch action {
 
   case let .login(user):
-    return AccountState(
-      loggedInUser: user,
-      settings: state.settings,
-      watchedEpisodes: state.watchedEpisodes
-    )
-    
+    return AccountState.init(loggedInUser: user, settings: state.settings, watchedEpisodes: state.watchedEpisodes)
+
   case let .tappedEpisode(episode):
-    return AccountState(
-      loggedInUser: state.loggedInUser,
-      settings: state.settings,
-      watchedEpisodes: state.watchedEpisodes + [episode]
-    )
+    return AccountState.init(loggedInUser: state.loggedInUser, settings: state.settings, watchedEpisodes: state.watchedEpisodes + [episode])
 
   case .tappedLogout:
     return AccountState(
@@ -157,6 +127,7 @@ let accountReducer = Reducer<AccountState, AccountAction> { state, action in
       settings: state.settings,
       watchedEpisodes: []
     )
+
 
   case let .tappedNotification(on):
     return AccountState(
@@ -167,10 +138,39 @@ let accountReducer = Reducer<AccountState, AccountAction> { state, action in
   }
 }
 
-/*:
- Ok this reducer is got way too much in it. first of all, the state is fully private inside the store, so there's not reason to create a new state and return it. we might as well be handled an `inout` state and just mutate right in the reducer.
-
- Let's see what it would take to do that. We're going to copy-paste to a new playground page to see what happens when we change state to be an `inout`
- */
-
 print("✅")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
