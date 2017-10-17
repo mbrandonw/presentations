@@ -15,7 +15,7 @@ The backend at kickstarter was rails, and that informed a lot of what I thought 
 
 the stuff i'm going to show you today i find very exciting, and in fact is some of the coolest stuff I've worked on in awhile. there is a lot to cover, so i'm going to have to skip some details and go pretty quickly, but the best part is everything i'm talking about today is open sourced.
 
----?image=assets/pf-square@6x.png
+---?image=2017-10-31-server-side-swift-from-scratch/assets/pf-square@6x.png
 
 Note: the reason i got into this stuff is because i'm working on a new project with my colleague stephen celis, called point-free. we're creating a video series on swift and functional programming, and we wanted to build the site in server-side swift, so of course we would build a lot of stuff from scratch.
 
