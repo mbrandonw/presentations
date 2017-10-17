@@ -21,10 +21,8 @@ Note: the reason i got into this stuff is because i'm working on a new project w
 
 ---?image=2017-10-31-server-side-swift-from-scratch/assets/pf-square@6x.png&size=cover
 
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-
-> https://www.pointfree.co
-> https://www.github.com/pointfreeco
+https://www.pointfree.co
+https://www.github.com/pointfreeco
 
 Note:
 everything we have done is completely open source. if you go to our github organization page you will find a bunch of repos and libraries that we have been working on. absolutely everything in this talk is somewhere there. in fact, the full source to the site is also on github.
