@@ -21,7 +21,7 @@ Note: the reason i got into this stuff is because i'm working on a new project w
 
 ---?image=2017-10-31-server-side-swift-from-scratch/assets/pf-square@6x.png&size=cover
 
-<!-- <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br> -->
+<br><br><br><br><br><br>
 
 > https://www.pointfree.co
 > https://www.github.com/pointfreeco
