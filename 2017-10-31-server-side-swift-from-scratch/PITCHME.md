@@ -19,4 +19,12 @@ the stuff i'm going to show you today i find very exciting, and in fact is some 
 
 Note: the reason i got into this stuff is because i'm working on a new project with my colleague stephen celis, called point-free. we're creating a video series on swift and functional programming, and we wanted to build the site in server-side swift, so of course we would build a lot of stuff from scratch.
 
----
+---?image=2017-10-31-server-side-swift-from-scratch/assets/pf-square@6x.png&size=cover
+
+<!-- <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br> -->
+
+> https://www.pointfree.co
+> https://www.github.com/pointfreeco
+
+Note:
+everything we have done is completely open source. if you go to our github organization page you will find a bunch of repos and libraries that we have been working on. absolutely everything in this talk is somewhere there. in fact, the full source to the site is also on github.
