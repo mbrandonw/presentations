@@ -1,4 +1,4 @@
-highlight : black
+highlight: atom-one-dark
 slide-number: false
-theme : moon
-transition : fade
+theme: black
+transition: fade
