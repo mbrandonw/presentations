@@ -49,7 +49,13 @@ Note: There are quite a few layers to a web server framework, and this talk is p
 # Low-level layer
 
 * Socket connections
+
++++
+
 * HTTP message parsing
+
++++
+
 * SSL
 * Goal is to produce a `URLRequest`
   * `URL`, e.g. `https://www.pointfree.co/episodes/ep1-hello-world`
