@@ -1,0 +1,450 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+    <title>[ GitPitch ] mbrandonw/presentations/master</title>
+    <meta content="Markdown Presentation powered by GitPitch." name="description">
+    <meta content="GitHub, GitLab, Bitbucket, Markdown, Slideshow, Presentation, Developers, PITCHME" name="keywords">
+    
+<link rel="alternate" type="application/json+oembed" href='https://gitpitch.com/pitchme/oembed?url=https%3A%2F%2Fgitpitch.com%2Fmbrandonw%2Fpresentations%2Fmaster%3Fgrs%3Dgithub%26t%3Dwhite%26p%3D2017-10-31-server-side-swift-from-scratch&amp;format=json' title="GitPitch - Markdown Presentations for Everyone on Git" />
+<link rel="alternate" type="text/xml+oembed" href='https://gitpitch.com/pitchme/oembed?url=https%3A%2F%2Fgitpitch.com%2Fmbrandonw%2Fpresentations%2Fmaster%3Fgrs%3Dgithub%26t%3Dwhite%26p%3D2017-10-31-server-side-swift-from-scratch&amp;format=xml' title="GitPitch - Markdown Presentations for Everyone on Git" />
+
+    
+<link href="./assets/reveal.js/3.5.0/css/reveal.css" rel="stylesheet" type="text/css"/>
+<link href="./assets/reveal.js/3.5.0/css/theme/moon.css" rel="stylesheet" type="text/css" id="theme"/>
+<link href="./assets/reveal.js/3.5.0/plugin/title-footer/title-footer-mod.css" rel="stylesheet" type="text/css" id="theme"/>
+
+<link href="./assets/reveal.js/3.5.0/css/print/paper.css" rel="stylesheet" type="text/css"/>
+
+<link href="./assets/highlight.js/9.12.0/mono-blue.css" rel="stylesheet" type="text/css"/>
+<link href="./assets/octicons/3.5.0/octicons.css" rel="stylesheet" type="text/css"/>
+<link href="./assets/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+
+
+    <style>
+  .centered {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size:1.3em;
+      font-weight: bold;
+  }
+  .reveal .speaker-notes {
+      background-color: #2a76dd;
+      opacity : 0.9;
+  }
+  .reveal .controls {
+    bottom: 20px;
+  }
+  .reveal .slide-number {
+    bottom: 3px !important;
+    font-size: 11px !important;
+    color: gray !important;
+    background-color: inherit !important;
+  }
+</style>
+
+    
+<style>
+  /* GitPitch Styling */
+  .centered {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size:1.3em;
+      font-weight: bold;
+  }
+  /* GitPitch Reveal Core Styling Overrides */
+  .reveal .speaker-notes {
+      background-color: #2a76dd;
+      opacity : 0.9;
+  }
+  .reveal .controls {
+    bottom: 20px;
+  }
+  /* GitPitch Menu Styling */
+  .gp-menu-bars {
+    font-size: 24px;
+  }
+
+  div.pitch-menu {
+    width: 100%;
+    text-align: center;
+    padding-top: 40px;
+  }
+
+  div.pitch-menu-logo {
+    height: 90px;
+    margin: 0 auto;
+    background-size: 280px 90px;
+    background-repeat: no-repeat;
+    
+    background-image: url(assets/img/gp-logo-tagline.svg);
+    
+  }
+  div.pitch-menu div.section-heading {
+    display: none;
+    color: white;
+    font-size: 1.1em;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+  div.pitch-menu .git-box {
+    width: 90%;
+    margin: 0 auto;
+    border: 1px solid gray;
+    border-radius: 5px;
+  }
+  div.git-box > table:first-of-type {
+    margin-left: 8%;
+  }
+  div.git-box, div.git-octicon, .git-octicon span  {
+    font-family: 'Roboto', sans-serif;
+    font-size: 1em;
+  }
+  div.pitch-menu .git-box .short-link {
+    width: 8em;
+    font-size: 1em;
+    color: white;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: 'Roboto', sans-serif;
+  }
+  div.pitch-menu .git-box a {
+    font-size: 1em;
+    text-decoration:none;
+  }
+  div.pitch-menu .git-box a a:hover {
+    color: #e48436;
+  }
+  div.pitch-menu .git-box table th, div.pitch-menu table td {
+    text-align: left;
+    padding: 0.6em 0.3em 0.6em 0.3em;
+    border: 0;
+  }
+  div.pitch-menu .git-label {
+    color: #b3b3b3;
+    font-size: 1em;
+    font-family: 'Roboto', sans-serif;
+  }
+  div.pitch-menu .git-octicon {
+    font: normal normal normal 16px/1 octicons;
+    font-size:1.1em;
+    color: white;
+  }
+  div.pitch-menu .git-octicon .star-fork {
+    padding-left: 4px;
+    color: white;
+  }
+  span.octicon.octicon-star, span.octicon.octicon-repo-forked {
+    color: #fff;
+  }
+  span.octicon span.star-fork {
+    font-family: 'Roboto', sans-serif;
+    font-size: 90%;
+  }
+  .git-octicon span.octicon {
+    font-family: octicons;
+    /* font-weight: bold !important; */
+  }
+  div.pitch-menu ul {
+    list-style-type: none;
+    margin: 14px 0 0px 0;
+  }
+  div.pitch-menu ul li.slideshow {
+    font-size: 0.95em;
+    cursor: pointer;
+    text-align: left;
+    padding: 10px 0;
+  }
+  div.pitch-menu ul li.home-git {
+    padding: 14px 0 14px 0;
+    font-size: 1.0em;
+    letter-spacing: 1.5px;
+    text-align: center;
+  }
+  div.pitch-menu ul li.home-git a {
+    font-family: 'Roboto', sans-serif !important;
+  }
+  div.pitch-menu ul li.home-themes {
+    padding: 14px 0 14px 0;
+    font-size: 1.0em;
+    text-transform: capitalize;
+    letter-spacing: 1.5px;
+    text-align: center;
+    border-top: solid 1px #222;
+  }
+  div.pitch-menu ul li.home-themes a {
+    font-family: 'Roboto', sans-serif !important;
+  }
+  hr.fade-away {
+    border: 0;
+    height: 1px;
+    background: #999;
+    background-image: linear-gradient(to right, #666, #999, #666);
+    width: 80%;
+  }
+  div.pitch-menu ul i.fa.fa-download, div.pitch-menu ul i.fa.fa-print, div.pitch-menu ul i.fa.fa-external-link {
+    padding-right: 5px;
+  }
+</style>
+
+    
+<style>
+  #title-footer #notification {
+    font-family: 'Roboto', sans-serif;
+  }
+  #title-footer p {
+    text-align: center;
+    font-size: 0.9em;
+    line-height: 1;
+    margin: 0;
+    padding-top: 2px;
+    font-family: 'Roboto', sans-serif;
+    letter-spacing: 0;
+  }
+  #title-footer p.footer-hard {
+    
+    color: #bbb;
+    
+  }
+  #title-footer p.footer-fade {
+    
+    color: #bbb;
+    opacity: 0.9;
+    
+    font-size: 1.5vh;
+    letter-spacing: 0;
+    padding-top: 3px;
+  }
+</style>
+
+    <style>
+    .reveal .slides section .code-presenting-annotation {
+        font-size: 70%;
+    }
+    .reveal .slides section .fragment.current-only {
+        visibility: visible;
+        display: none;
+    }
+    .reveal .slides section .fragment.current-only.current-fragment {
+        display: block;
+    }
+    .line {
+        display: block;
+    }
+    .line.focus {
+        /* opacity: 1.0; */
+    }
+    </style>
+
+    
+
+
+    
+
+
+</head>
+<body>
+    
+
+
+    <div class="reveal">
+        <div class="slides">
+            
+            <section data-markdown="./assets/md/PITCHME.md"
+                     data-separator="(^---$|^---\?.*)"
+                     data-separator-vertical="(^\+\+\+$|^\+\+\+\?.*)"
+                     data-separator-notes="^Note:"
+                     data-charset="utf-8">
+            </section>
+            
+        </div>
+        
+
+<footer id="title-footer"><p id="notification"></p></footer>
+
+
+    </div>
+    <div class="gp-menu"></div>
+    
+
+
+
+    <script src="./assets/reveal.js/3.5.0/js/reveal.js"></script>
+    <script src="./assets/reveal.js/3.5.0/lib/js/head.min.js"></script>
+    <script src="./assets/jquery/2.2.4/jquery.min.js"></script>
+
+    
+
+    <script>
+        Reveal.initialize({
+            controls: true,
+            progress: true,
+            embedded: true,
+            margin: 0.0,
+            showNotes: false,
+            transition: 'slide',
+            backgroundTransition: 'slide',
+            autoSlide: 0, // autoSlide: 0,
+            loop: false,
+            center: true,
+            rtl: false,
+            shuffle: false,
+            mouseWheel: false,
+            
+              slideNumber: 'c/t', // slideNumber: false,
+            
+            history: true,
+            
+            
+            menu: {
+              custom: [
+                
+                { title: 'Home', active: true,
+                  icon: '<i class="fa fa-bookmark">',
+                  src: 'menu.html' }
+                
+              ],
+              path : "./assets/reveal.js/3.5.0/plugin/menu",
+              themes : false,
+              transitions:  false,
+              markers: true,
+              sticky: true,
+              autoOpen: true
+            },
+            
+            dependencies: [
+                { src: "./assets/reveal.js/3.5.0/plugin/markdown/marked.js",
+                  condition: function() {
+                    return !!document.querySelector( '[data-markdown]' );
+                  }},
+                { src: "./assets/reveal.js/3.5.0/plugin/markdown/markdown.js",
+                condition: function() {
+                  return !!document.querySelector( '[data-markdown]' );
+                }},
+                
+                { src:"./assets/reveal.js/3.5.0/plugin/menu/menu-mod.js",
+                  async: true},
+                
+                
+                
+                { src: "./assets/reveal.js/3.5.0/plugin/notes/notes.js",
+                  async: true },
+                
+                
+                { src: './assets/highlight.js/9.12.0/highlight.js', async: true },
+                { src: './assets/highlight.js/9.12.0/reveal-code-focus-1.0.0-mod.js',
+                  async: true,
+                  callback: function() {
+                    RevealCodeFocus();
+                  }
+                },
+                
+                
+            ]
+        });
+
+        Reveal.addEventListener('ready', function(evt) {
+          if (evt.indexh === 0 && evt.indexv === 0) {
+            pushHelpNotification();
+          } else {
+            pushFootnoteNotification();
+          }
+        });
+
+        Reveal.addEventListener('slidechanged', function(evt) {
+          if (evt.indexh === 0 && evt.indexv === 0) {
+            pushHelpNotification();
+          } else {
+            pushFootnoteNotification();
+          }
+        });
+
+        Reveal.configure({
+            keyboard: {
+                88: function() { // bind "x" key to "select" code block content
+
+                    var currentSlide = Reveal.getCurrentSlide();
+                    var preBlock = $(currentSlide).find("pre");
+
+                    if(preBlock.length > 0) {
+
+                        if (window.getSelection) {
+                            var range = document.createRange();
+                            range.selectNodeContents(preBlock[0]);
+                            var selection = window.getSelection();
+                            selection.removeAllRanges();
+                            selection.addRange(range);
+                        }
+                    }
+                }
+            }
+        });
+
+        function enterFullscreen() {
+            Reveal.triggerKey(70);
+        };
+
+        function enterOverview() {
+            Reveal.toggleOverview();
+        };
+
+        function enterBlackout() {
+            Reveal.togglePause();
+        };
+
+        function enterHelp() {
+          Reveal.toggleHelp();
+        }
+
+        function enableEvents() {
+            Reveal.addEventListeners();
+        };
+
+        function disableEvents() {
+            Reveal.removeEventListeners();
+        };
+
+    </script>
+
+    
+
+    
+<script>
+    function pushNotification(msg, fade) {
+      var notification = document.getElementById('notification')
+      if(fade) {
+        notification.className = "footer-fade";
+        notification.innerHTML = msg;
+      } else {
+        notification.className = "footer-hard";
+        notification.innerHTML = msg;
+      }
+    };
+
+    function pushHelpNotification() {
+      if(window.innerWidth < 700)
+        pushNotification("<a href='#' onclick='RevealMenu.toggle()'>Menu</a> | <a href='#' onclick='enterFullscreen()'>Fullscreen</a> | <a href='#' onclick='enterOverview()'>Overview</a> | <a href='#' onclick='enterBlackout()'>Blackout</a> | <a href='#' onclick='RevealNotes.open()'>Speaker</a> | <a href='#' onclick='enterHelp()'>Help</a>");
+      else
+        pushNotification("Navigate : Space / Arrow Keys | <a href='#' onclick='RevealMenu.toggle()'>M</a> - Menu | <a href='#' onclick='enterFullscreen()'>F</a> - Fullscreen | <a href='#' onclick='enterOverview()'>O</a> - Overview | <a href='#' onclick='enterBlackout()'>B</a> - Blackout | <a href='#' onclick='RevealNotes.open()'>S</a> - Speaker | <a href='#' onclick='enterHelp()'>?</a> - Help");
+    }
+
+    function pushFootnoteNotification() {
+      
+        pushNotification("[ GitPitch @ github/mbrandonw/presentations ]", true);
+      
+    }
+
+    function pushCodePresentingStepNotification(step, frags) {
+      pushNotification("Code Presenting - Step " + step + " / " + frags, true);
+    }
+</script>
+
+
+</body>
+</html>
