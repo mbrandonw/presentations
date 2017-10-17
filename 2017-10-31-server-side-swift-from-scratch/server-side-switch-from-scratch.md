@@ -16,13 +16,13 @@
 
 ---
 
-![](images/pf-square@6x.png)
+![](assets/pf-square@6x.png)
 
 ^ the reason i got into this stuff is because i'm working on a new project with my colleague stephen celis, called point-free. we're creating a video series on swift and functional programming, and we wanted to build the site in server-side swift, so of course we would build a lot of stuff from scratch.
 
 ---
 
-![](images/pf-square@6x.png)
+![](assets/pf-square@6x.png)
 
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
@@ -134,6 +134,7 @@
 ^ and usable in isolation... todo: say more
 
 ---
+[.build-lists: true]
 
 # Middleware
 
@@ -202,6 +203,7 @@ enum ResponseEnded {}
 func writeStatus<A>(_ status: Int)
   -> (Conn<StatusOpen, A>)
   -> Conn<HeadersOpen, A> {
+    ...
 }
 ```
 
@@ -216,10 +218,12 @@ func writeStatus<A>(_ status: Int)
 func writeHeader<A>(_ name: String, _ value: String)
   -> (Conn<HeadersOpen, A>)
   -> Conn<HeadersOpen, A> {
+    ...
 }
 
 func closeHeaders<A>(conn: Conn<HeadersOpen, A>)
   -> Conn<BodyOpen, A> {
+    ...
 }
 ```
 
@@ -236,10 +240,12 @@ func closeHeaders<A>(conn: Conn<HeadersOpen, A>)
 func send(_ data: Data?)
   -> (Conn<BodyOpen, Data?>)
   -> Conn<BodyOpen, Data?> {
+    ...
 }
 
 func end<A>(conn: Conn<HeadersOpen, A>)
   -> Conn<ResponseEnded, Data?> {
+    ...
 }
 ```
 
@@ -251,10 +257,15 @@ func end<A>(conn: Conn<HeadersOpen, A>)
 
 ```swift
 infix operator >>>
-func >>> <A, B, C>(_ f: @escaping (A) -> B,
-                   _ g: @escaping (B) -> C)
-                   -> (A) -> C {
-  return { g(f($0))}
+
+// ((A) -> B, (B) -> C) -> (A) -> C
+
+func >>> <A, B, C>(
+  _ f: @escaping (A) -> B, _ g: @escaping (B) -> C
+  )
+  -> (A) -> C {
+
+    return { g(f($0))}
 }
 ```
 
@@ -265,17 +276,12 @@ func >>> <A, B, C>(_ f: @escaping (A) -> B,
 ---
 
 ```swift
-infix operator >>>
-func >>> <A, B, C>(_ f: @escaping (A) -> B,
-                   _ g: @escaping (B) -> C)
-                   -> (A) -> C {
-  return { g(f($0))}
-}
-
 let incr: (Int) -> Int = { $0 + 1 }
 let square: (Int) -> Int = { $0 * $0 }
 
-(incr >>> square >>> incr >>> String.init)(2) // => "10"
+let f = incr >>> square >>> incr >>> String.init
+
+f(2) // => "10"
 ```
 
 ^ we can use it like so.
@@ -293,6 +299,8 @@ writeStatus(200)
 
 ^ using this operator we can compose middleware easily, and it's just pure functions. we aren't mutating any data or global state. we are free to plug stuff in and then assert what comes out the other side.
 
+^ we have just created a web page! you can pipe in a request and get a response out on the other side! also because this is so simple and built only on the principles of pure functions, you can use this with any existing web framework like vapor, kitura, perfect, etc...
+
 ---
 
 # [fit] `(URLRequest) -> URLResponse`
@@ -304,6 +312,8 @@ writeStatus(200)
 * Data fetching
 * View rendering
 
+^ And that is a very quick overview of how we want to think about middleware. There's a lot more to say but we gotta move on. Just know that this is the fundamental atomic unit that our web server is built on.
+
 ^ So, going back to our list of components that get us from a request to a response, we've just finished talking about middleware. Phew! there is even more that could be said, but we'll have to stop there.
 
 ---
@@ -312,19 +322,113 @@ writeStatus(200)
 
 ^ Next up is routing! There is a wonderful story to tell here, but it's going to have to be brief.
 
-^ The goal of routing is to transform the nebulous `URLRequest` into a first class value. This value can then be used in the next step of the serve lifecycle by making database requests to get full values.
-
 ^ Routing is a notoriously tricky problem to solve, and there are a ton of approaches. we are most interested in leveraging as much of the swift type system as possible to give us really nice features.
 
 ---
+[.build-lists: true]
 
-# Routing
+# Routing Goal: Type-safety
 
-### Type-safety
+* `(URLRequest) -> A?`
+* Changes to `A` result in compiler error
+* Changes to route result in compiler error
+
+^ The goal of routing is to transform the nebulous `URLRequest` into a first class value. Routing won't always succeed, and so it maps into an optional value. If it's `nil`, then we should show a 404 page or something.
+
+^ If the value is not `nil`, then we can use it in the next step of the middleware lifecycle by making database requests to get full values.
+
+^ there isn't a definitive definition of type-safe with respect to routing. it's more of a relative scale, where some things are safer than others. most of the routing solutions out there right now are not as safe as they could be
 
 ---
 
-# Routing
+# Routing Goal: Type-safety
+## Approaches
+
+```swift
+app.get("/episodes/:id") { req in
+    let id = req.parameters["id"] ?? ""
+    // do something with `id` to produce a response
+}
+```
+
+^ Not very safe! We aren't relating the route string to an actual value, so we don't know how many params we expect to pluck out of the route, or what their types are. In fact, we have to look at the code to determine what type `id` is, which hopefully is right here in the code, but could also be hidden elsewhere.
+
+^ If I edit this route string I will only get errors at runtime, nothing at compile time.
+
+---
+
+# Routing Goal: Type-safety
+## Approaches
+
+```swift
+router.get("/episodes/:id") { (request, id: Int) -> Response in
+  // do something with `id` to produce a response
+}
+```
+
+^ Here's another approach. Here we now have some types, since this will try to extract the `id` param and cast it to an integer somehow. However, if we add extra params to this string
+
+^ The problem with these routing solutions is that they are too inspired by the things rails and other un-typed frameworks have done rather than looking at what typed languages have accomplished.
+
+---
+
+# Routing Goal
+## Invertible
+
+* Given an `A`, produce a `URLRequest`
+* Useful for linking to parts of the site
+
+^ Another goal of routing we want is for it to be invertible. This means if we had a first class value, we could generate a request that would route to that value! This is very useful for linking to parts of a site in a type-safe way. The compiler guarantees that the links generated on the site definitely go where we expect. It should be impossible to generate an invalid link.
+
+^ Both of the previous routing approaches have no solution to this.
+
+---
+[.build-lists: true]
+
+# Routing Goal
+## Invertible
+
+* Given an `A`, produce a `URLRequest`
+* Useful for linking to parts of the site
+
+```ruby
+episode_path(@episode)
+# => /episodes/intro-to-functions
+
+episode_path(@episode, ref: "twitter")
+# => /episodes/intro-to-functions?ref=twitter
+```
+
+^ Rails does this nicely, but in an untyped and dynamic way. Every route you define gets a dynamic method created that can generate urls to pages in the site. In rails it's still 100% possible to use this in a way that generates errors at runtime.
+
+---
+
+# Routing Goal
+## Self-documenting
+
+* Given an `A`, produce a template
+
+^ And finally, another goal is to be able to automatically generate documentation on how to use the routes. It should be able to print a template string of all the params expected, their types, etc..
+
+---
+
+# Routing Goal
+## Self-documenting
+
+* Given an `A`, produce a template
+* `rake routes`
+
+```
+GET /
+GET /episodes
+GET /episodes/:id
+```
+
+^ Rails also has a nice story here, tho again not typed and entirely runtime. You can run `rake routes` and get templates of all the urls the app recognizes.
+
+---
+
+# Routing: `(URLRequest) -> A?`
 ## Demo
 
 ```swift
@@ -336,7 +440,7 @@ enum Routes {
   case episodes(order: Order?)
 
   // e.g. /episodes/intro-to-functions?ref=twitter
-  case episode(episodeParam: Either<String, Int>, ref: String?)
+  case episode(param: Either<String, Int>, ref: String?)
 }
 
 enum Order {
@@ -345,27 +449,114 @@ enum Order {
 }
 ```
 
+^ And the amazing thing I'm here to tell you is that it's possible to accomplish all of the goals, even with types like in Swift. I think a lot of people would assume that in order to get all of those neat features that rails has we would need a dynamic language and give up some of our compile type safety.
+
+^ Here we have a first class type, an enum, to describe all of the routes and their data that we want to recognize.
+
+^ We have a `root` route for just going to domain _slash_
+
+^ Then an episodes route, for getting all of the episodes on the site, that takes an optional value that describes how to sort the episodes.
+
+^ And a route for watching a particular episodes. this route needs a param, which can be either a string or an integer, and an optional "ref" that is taken from the query string, which can be used to track referrals.
+
+^ These are some very complicated routes! They take optional values, non-optional values, user-defined types, enums, etc...
+
+^ So, how do we take a `URLRequest`, pick out all the pieces of it, and map it to this type?
+
 ---
 
-# Routing
+# Routing: `(URLRequest) -> A?`
 ## Demo
 
 ```swift
-let router =
+let router = [
   Routes.iso.root
-    <¢> end,
+    <¢> get <% end,
 
   Routes.iso.episodes
-    <¢> lit("episodes") %> queryParam("order", opt(.order))
+    <¢> get %> lit("episodes") %> queryParam("order", opt(.order))
     <% end,
 
   Routes.iso.episode
-    <¢> lit("episodes") %> param(.stringOrInt)
+    <¢> get %> lit("episodes") %> param(.intOrString)
     <%> queryParam("ref", opt(.string))
     <% end
   ]
   .reduce(.empty, <|>)
 ```
+
+---
+
+# Routing: `(URLRequest) -> A?`
+
+```swift
+switch router.match(request) {
+case .some(.root):
+  // Homepage
+case .some(.episodes(order)):
+  // Episodes page
+case .some(.episode(param, ref)):
+  // Episode page
+case .none:
+  // 404
+}
+```
+
+^ Then to use the router you just attempting matching the request, and then switch on the optional route to pick apart the pieces.
+
+---
+
+# Routing: `(URLRequest) -> A?`
+## Linking URL’s for free
+
+```swift
+link(to: .episodes(order: .some(.asc)))
+// => "/episodes?order=asc"
+
+link(to: .episode(param: .left("intro-to-functions"), ref: "twitter"))
+// => "/episodes/intro-to-functions?ref=twitter"
+
+link(to: .episode(param: .right(42), ref: nil))
+// => "/episodes/42"
+```
+
+^ If i want to link to an episode I can do it like so. 
+
+---
+
+# Routing: `(URLRequest) -> A?`
+## Template URL’s for free
+
+```swift
+template(to: .root)
+// => "/"
+
+template(to: .episodes(order: nil))
+// => "/episodes?order=:optional_order"
+
+link(to: .episode(param: .left(""), ref: nil))
+// => "/episodes/:string_or_int?ref=optional_string"
+```
+
+^ there is no code generation for this! it is entirely due to the types and the way they compose!
+
+---
+[.build-lists: true]
+
+* Namespaces
+  * e.g. `/v1/`
+* Resources
+ * e.g.
+ `(GET | POST | DELETE) /episodes/:id`
+* Link helpers
+  * e.g. `link(to: route)`
+* Responsive Route
+  * e.g.
+  `/episodes/1.json`, `/episodes/1.xml`, etc...
+* And more...
+
+^ todo: the idea of applicative parsing subsumes _all_ ideas you have previously encountered when it comes to routing. EVERYTHING
+
 
 ---
 
@@ -378,11 +569,34 @@ let router =
 * Data fetching
 * View rendering
 
+^ And that's routing!
+
 ---
 
 # Data fetching
 
 ^ We aren't going to have much time to talk about this unfortunately. this is the layer where all of your side effects are going to happen. everything up to this point has been pure. it's where you will take that first class value that the router produced and then do database requests, network requests etc to gather all of the data that your view needs to do its job.
+
+---
+
+# Data fetching
+
+```swift
+(Conn<I, A>) -> IO<Conn<J, B>>
+```
+
+---
+
+# Data fetching
+
+```swift
+writeStatus(200)
+  >-> writeHeader("Set-Cookie", "foo=bar")
+  >-> writeHeader("Content-Type", "text/html")
+  >-> closeHeaders
+  >-> send(Data("<html>Hello world!</html>".utf8))
+  >-> end
+```
 
 ---
 
