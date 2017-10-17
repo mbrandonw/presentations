@@ -242,6 +242,7 @@ store.subscribe {
 
 let user = User(id: 1, name: "Blob")
 
+
 store.dispatch(.episodesAction(.tappedEpisode(ep1)))
 store.dispatch(.episodesAction(.tappedEpisode(ep3)))
 store.dispatch(.accountAction(.login(user)))
