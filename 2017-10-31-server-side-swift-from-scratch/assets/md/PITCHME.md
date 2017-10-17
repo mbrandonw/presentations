@@ -15,9 +15,7 @@ let router =
   .reduce(.empty, <|>)
 ```
 
-<span class="code-presenting-annotation fragment current-only" data-code-focus="1"></span>
-<span class="code-presenting-annotation fragment current-only" data-code-focus="2"></span>
-<span class="code-presenting-annotation fragment current-only" data-code-focus="3"></span>
-<span class="code-presenting-annotation fragment current-only" data-code-focus="4"></span>
-
----
+@[1]
+@[2]
+@[3]
+@[4]
