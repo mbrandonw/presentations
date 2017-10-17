@@ -12,4 +12,10 @@ let square: (Int) -> Int = { $0 * $0 }
 (incr >>> square >>> incr >>> String.init)(2) // => "10"
 ```
 
+@[1]
+@[2]
+@[3]
+@[4]
+@[5]
+
 ---
