@@ -28,3 +28,11 @@ Note: the reason i got into this stuff is because i'm working on a new project w
 
 Note:
 everything we have done is completely open source. if you go to our github organization page you will find a bunch of repos and libraries that we have been working on. absolutely everything in this talk is somewhere there. in fact, the full source to the site is also on github.
+
+---
+
+# The layers of a web server framework
+
+Note: There are quite a few layers to a web server framework, and this talk is primarily concerned with only one slice of the full stack. So, to get us all on the same page I'm going to describe the layers a bit.
+
+---
