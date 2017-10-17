@@ -1,3 +1,4 @@
-highlight : mono-blue
+highlight : github
 slide-number: false
 theme : moon
+transition : fade
