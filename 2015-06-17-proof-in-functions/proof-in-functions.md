@@ -36,10 +36,6 @@ autoscale: true
 * Went to grad school for math
 * Did the weird kind of math
 
-![inline](/Users/brandon/Dropbox \(Personal\)/Desktop/vb2405.gif)
-
-^ never find out about all the cool CS stuff until towards the end of grad school
-
 ---
 
 # Swift Primer

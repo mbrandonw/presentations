@@ -1,8 +1,5 @@
 build-lists: true
 
-^ hello
-
----
 
 ## Finding Happiness in Functional Programming
 

@@ -278,7 +278,7 @@ func send(_ data: Data)
     ...
 }
 
-func end<A>(conn: Conn<HeadersOpen, A>)
+func end<A>(conn: Conn<BodyOpen, A>)
   -> Conn<ResponseEnded, Data> {
     ...
 }
@@ -979,9 +979,78 @@ h1 {
 
 ^ now the interesting thing is that because it's all just swift types we get to have infinite flexibility in how we use this.
 
+---
+
+```swift
+let styles =
+  color(.red)
+    <> lineHeight(1)
+
+p([style(style)], ["Hello world!"])
+```
+
+```html
+<p style="color:#ff0000;line-height:1">
+  Hello world!
+</p>
+```
+
 ^ we can render a lil fragment directly into an inline style in an html tag.
 
+---
+
+```swift
+let styles = p % (
+  color(.red)
+    <> lineHeight(1)
+)
+
+document([
+  html([
+    head([
+      style(styles)
+    ]),
+    body(["Hello world!"])
+  ])
+])
+```
+
+<br>
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      p{color:#ff0000;line-height:1}
+    </style>
+  </head>
+  <body>
+    Hello world!
+  </body>
+</html>
+```
+
 ^ or we can render it into the style tag in a html page.
+
+---
+
+```swift
+// /styles.css
+Routes.iso.styles
+  <¢> get %> lit("styles") %> contentType(.css)
+```
+
+<br><br><br><br><br><br><br>
+
+```html
+Status 200 OK
+Expires: Sat, 03 Nov 2018 14:25:15 GMT
+Cache-Control: max-age=31536000, public
+Content-Type: text/css
+
+p{color:#ff0000;line-height:1}
+```
 
 ^ or we can make a dedicated route for serving up an external style sheet, and then put a CDN in front of it to make it nice and performant
 
@@ -1122,6 +1191,21 @@ h1 {
 ^ look to functional programming for inspiration on how to build the systems in an understandable and testable way. there is a ton of great literature out there. haskell and purescript frameworks and even academic papers. the applicative router i demoed was mostly built on the ideas i found in a paper from 2010 called "Invertible syntax descriptions: Unifying parsing and pretty printing", and it solved a real need in an amazing way. the amount of code in our router is a fraction of the amount of code in most routers out there today, and there is zero boilerplate or codegen.
 
 ^ and lastly, focus on small composable pieces. it should all just be functions. i never met a pure function i didn't like because they can also be reused and composed in ways i never could have imaged.
+
+---
+[.build-lists: true]
+
+# Future directions
+
+^ Swift.js
+
+^ look at kotlin
+
+^ data type generics. serveant and purescript libs
+
+^ codable can derive html forms kinda
+
+^ apple can be more public with their desire for swift to go beyond ios/macos. it was nice to hear chris lattner's ambitions
 
 ---
 

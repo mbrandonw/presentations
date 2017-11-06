@@ -1,7 +1,5 @@
 build-lists: true
 
----
-
 ## The Two Sides of Testing
 
 ^ Today I'm going to talk a lot about testing. We're going to dive deeply into why we want to test, and what it takes to write testable code. It turns out there are two precise things that prevent code from be testable, and in a certain sense they are "dual" versions of each other. All questions of testability come down to understanding these two sides.
