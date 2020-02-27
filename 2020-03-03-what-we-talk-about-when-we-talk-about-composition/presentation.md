@@ -37,7 +37,7 @@ build-lists: true
 
 # Definition of composition
 
-## A process that combines two objects into a third.
+## A process that combines two objects of a type into a third of the same type.
 
 ^ So let's start simple and say that composition is nothing more than a process that allows us to combine two objects into a third.
 
@@ -260,39 +260,393 @@ struct User { let name: String }
 
 ^ So already we have taken a pretty impressive tour through the zoo of composability.
 
-^ But now let's go offroad and start to consider some truly exotic things that will push the limits of what we consider to be composition.
+^ But now let's go to the other side of the zoo and look at some more exotic things that will push the limits of what we consider to be composition.
+
+---
+
+# Optionals
+
+```
+let x: A?
+let y: A?
+
+x ?? y
+```
+
+^ If we take our definition of composition to heart, as a process that combines two things into a third thing, then aren't optionals composable?
+
+^ After all, we have the double question mark operator, which simply returns the first non-`nil` value.
+
+---
+
+# Results
+
+[.code-highlight: 1-9]
+[.code-highlight: 1-14]
+```
+func choose<A, E>(
+	_ lhs: Result<A, E>,
+	_ rhs: Result<A, E>
+) -> Result<A, E> {
+	switch lhs {
+	case .success:	return lhs
+	case .failure:	return rhs
+	}
+}
+
+let x: Result<A, E>
+let y: Result<A, E>
+
+choose(x, y)
+```
+
+^ And if optionals are composable, then shouldn't results be too? Afterall they are just a slight generalization of optionals where instead of modeling the absence of something as a void value you model it with a proper error.
+
+^ Here we have defined a function that simply picks the first successful result passed in.
+
+---
+
+# Arrays
+
+```
+let xs: [A]
+let ys: [A]
+
+xs + ys
+```
+
+^ Heck, then aren't arrays composable since you can concatenate them?
+
+---
+
+# Dictionaries
+
+```
+let xs: [K: V]
+let ys: [K: V]
+
+xs.merge(ys)
+```
+
+^ And if arrays are composable then certainly dictionaries are, afterall we can merge them together.
+
+---
+
+# Streams of values
+### Combine, ReactiveSwift, RxSwift
+
+[.code-highlight: 1-2]
+[.code-highlight: 4]
+[.code-highlight: 6]
+[.code-highlight: 8]
+```
+let xs: Stream<A>
+let ys: Stream<A>
+
+xs.merge(ys)
+
+xs.concat(ys)
+
+xs.race(ys)
+```
+
+^ If we venture out of the standard library pen of the zoo we will find that there are tons of types in the community that emit lots of compositions.
+
+^ If you are comfortable with the idea of streams of values, such as publishers in combine, signals in reactive swift, and observables in rxswift, then you probably know that they are composable. 
+
+^ You can merge two streams into a third one that simply emits all the values from both.
+
+^ But the stream type is so exotic that emits lots of useful forms of composition. You can also combine two streams by concatenating one onto another, which requires that the first ends before the second one starts.
+
+^ And you can also race two streams, which waits until the first one emits and then only takes values from that stream and ignores the values from the other stream.
+
+---
+
+# Zoo of composability
+
+^ So those forms of composition were perhaps a little stranger to us, maybe not things we would typically think of composition.
+
+^ Now let's go even more exotic. Let's go offroad in the zoo and see what we find.
+
+^ In order to go offroad, we need to jump a fence...
+
+---
+
+# `zip`
+
+^ In order to jump the fence we are going to consider the `zip` function, which is going drive a wedge of uncertainty right between us and what we think composition is.
+
+---
+
+# `zip`
+
+```
+zip: ([A], [B]) -> [(A, B)]
+```
+
+^ If we strip away most of the syntax from the signature of zip in the standard library we will find this shape.
+
+^ It allows you to transform a tuple of arrays into an array of tuples. Notice the flip there, "tuple of arrays", "array of tuples"
+
+---
+
+# `zip`
+
+```
+zip: ([A], [B]) -> [(A, B)]
+
+zip: (A?, B?) -> (A, B)?
+
+zip: (Result<A, E>, Result<B, E>) -> Result<(A, B), E>
+
+zip: ([K: A], [K: B]) -> [K: (A, B)]
+
+zip: (Stream<A>, Stream<B>) -> Stream<(A, B)>
+```
+
+^ When stated that way maybe there are more zips out there.
+
+^ Zip could transform a tuple of optionals to an optional tuple
+
+^ Or transform a tuple of results into a result of a tuple
+
+^ Or transform a tuple of dictionaries into a dictionary of tuples
+
+^ Or even transform a tuple of streams into a stream of tuples
+
+^ And so have we uncovered a whole new world of composition. afterall, arent' we combining two objects into a third?
+
+---
+
+# Composition
+
+## A process that combines two objects of a type into a third of the same type.
+
+[.code-highlight: 1-99]
+[.code-highlight: 2-3]
+[.code-highlight: 4]
+```
+zip: (
+	[A], 
+	[B]
+) -> [(A, B)]
+```
+
+^ An unfortunately it does not quite fit our definition. We specifically said that composition was a process that combines two objects of the same type into a third of the same type.
+
+^ An yes, all of the values in this signature are arrays, but they are not of the same type. We have an array of `A`s and an array of `B`s and ultimate return an array of a tuple of `A`s and `B`s.
+
+^ Should we just fudge our definition of composition and not necessarily require that the objects be of the same type?
+
+^ Turns out we don't need to. Our current definition of composition is the true foundational formulation, and if we just slightly change our perspective we will be able to recognize `zip` and other things as composition.
+
+---
+
+# Is `map` compositional?
+
+```
+let xs: [Int]
+xs.map(String.init)
+
+let y: Int?
+x.map(String.init)
+
+let zs: [K: Int]
+zs.mapValues(String.init)
+
+let r: Result<Int, E>
+r.map(String.init)
+
+let ws: Stream<Int>
+ws.map(String.init)
+```
+
+^ Let's start with something simpler, `map`. Most of the things we've considered so far emit a `map` operation. Arrays, optionals, dictionaries, results and streams all have map.
+
+^ Many people would say that something is composable if it emits a `map`, but can we rectify these lines of code with our strict definition of composition is supposed to be?
+
+---
+
+# Is `map` compositional?
+
+```
+map: ((A) -> B) -> ([A]) -> [B]
+
+map: ((A) -> B) -> (A?) -> B?
+
+map: ((A) -> B) -> (Result<A, E>) -> Result<B, E>
+
+map: ((A) -> B) -> ([K: A]) -> [K: B]
+
+map: ((A) -> B) -> (Stream<A>) -> Stream<B>
+```
+
+^ It turns out yes, we can change our perspective so that we see `map` in a new light, and from that perspective we will see `map` as a compositional thing.
+
+^ Rather than thinking of `map` as some operation we call on things by doing "dot map" and passing a function, we can flip things around and see that `map` is nothing more than a way to changing functions that go between plain types so that they instead go between generic types.
+
+^ So a function from A to B becomes a function from array of As to array of Bs
+
+^ And a function from A to B becomes a function from optionals of As to optionals of Bs
+
+^ And a function from A to B becomes a function from results of As to results of Bs
+
+^ and so on
+
+---
+
+# Is `map` compositional?
+
+```
+map: ((A) -> B) -> (F<A>) -> F<B>
+```
+
+^ If we squint really hard so that all the syntax of array brackets, optional question marks and words like "result" and "stream" blur away, we will see we are left with something like this
+
+^ For a generic type `F` to support a `map` operation it must be able to implement this function.
+
+---
+
+# Is `map` compositional?
+
+[.code-highlight: 1-3]
+[.code-highlight: 5]
+```
+map: ((A) -> B) -> (F<A>) -> F<B>
+
+map: ((A) -> B) -> (G<A>) -> G<B>
+
+map: ((A) -> B) -> (F<G<A>>) -> F<G<B>>
+```
+
+^ And now let's suppose we had two such generic types. Both `F` and `G` support a map operation.
+
+^ What if we nested them, say as `F<G<A>>`, or even as `G<F<A>>`. Can we implement a `map` operation on this nested generic type?
+
+^ In concrete terms this would mean can we map on arrays of results, or streams of arrays, or dictionaries of optionals.
+
+^ And it turns out that yes, this is totally possible to do. I encourage everyone to give it a shot for some concrete types like i just described, but unfortunately we can't express this in full generality in swift
+
+^ But regardless, the principle holds. Generic types that emit a map operation are composable because we can combine them into a third generic type that also emits a map operation.
+
+---
+
+# Is `zip` compositional?
+
+```
+zip: (F<A>, F<B>) -> F<(A, B)>
+
+zip: (G<A>, G<B>) -> G<(A, B)>
+
+zip: (F<G<A>>, F<G<B>>) -> F<G<(A, B)>
+```
+
+^ Using similar reasoning we can extend what we saw for `map` to `zip`.
+
+^ If we have two types that support a `zip` operation, that is it can transform tuples of generic values to generic values of tuples, then indeed we can combine those two generic types together into a third that also supports a `zip` operation.
+
+---
+
+# Is `flatMap` compositional?
+
+^ We've been talking a bunch of `map` and `zip`, but there's a third operation that the standard library gives us on a bunch of types that completes the trio of functional capabilities
+
+^ it's flat map, and it's a little different from `map` and `zip`
+
+^ `map` allowed us to take a generic type, open it up to inspect the value it holds on the inside, transform it to a new value, and then wrap it back up in the generic type
+
+^ `zip` allowed us to do something similar, except we take many generic types, each independent from each other with no knowledge of what any other one is doing, and we get to open them all up, transform all of the values at once, and then wrap it back up in the generic type.
+
+^ whereas `flatMap` allows us to open up a generic type to inspect the value it holds on the inside, transform it into a whole new generic value. This encodes a notion of dependence or sequencing in computations
+
+---
+
+# Is `flatMap` compositional?
+
+[.code-highlight: 1-2]
+[.code-highlight: 4-5]
+[.code-highlight: 7-12]
+[.code-highlight: 14-15]
+```
+let xs: [Int]
+xs.flatMap { [$0, $0 * $0] }
+
+let y: Int?
+x.flatMap { $0.isMultiple(of: 2) ? $0 : nil }
+
+let r: Result<Int, Error>
+r.flatMap { 
+	$0.isMultiple(of: 2) 
+		? .success($0)
+		: .failure("I only like even numbers")
+}
+
+let zs: Stream<Int>
+zs.flatMap { api.isPrime($0) }
+```
+
+^ By sequencing I mean that literally when you see a chain of flatmaps you often think of it as a sequence of steps.
+
+^ Here we flatmap on an array to consider each integer it holds, and then we turn each integer into two integers, the original one and its square
+
+^ Or if we have a integer that may not exist, we can chain onto a partial function onto it that doesnt return anything if the integer isnt even
+
+^ Or if you have a failable integer, we can chain onto it with a failable function that fails with a message if the integer isnt even
+
+^ And if we have a stream of integers, then for each integer emitted we can chain on an operation that fires off an api request and feeds its values back into the stream
+
+---
+
+# Is `flatMap` compositional?
+
+[.code-highlight: 1]
+[.code-highlight: 3]
+```
+flatMap: (M<A>, (A) -> M<B>) -> M<B>
+
+flatten: M<M<A>> -> M<A>
+```
+
+^ And it turns out that flat map is compositional, but in a seemingly different manner than map or zip.
+
+^ If we the only things we knew about `flatMap` came from the standard library, we would think it's signature is this.
+
+^ It says if we have a generic type, and a function that returns that generic type, we can ultimately derive another generic type. 
+
+^ For example we can flatmap an array with a transformation that returns arrays in order to get another array.
+
+^ or we can flatmap an optional with a partial function to get another optional
+
+^ or we can flatmap a result with a failable function to get another result
+
+^ But really there's two separable units inside the concept of flatmap. You have the mapping part, which is what we already talked about, and then we have the flattening part.
+
+^ And this is the thing that flatMap brings to the table. This distinguishes it from map and zip in that those operations are incapable of doing anything like this by themselves.
+
+^ And in this form we can see that we are getting closer to this fitting our definition of composition, the combining of two things into a third thing (TODO)
+
 
 
 
 
 ---
 
-<!-- 
+# Zoo of composability
 
-how to fit map and flatmap an dzip into composability?
 
-well map means we can enhance functions betwen our types into the composable world
+^ We've now really opened pandora's box in the great outback of the zoo of composition.
 
-so does flat map
-
-and zip does this for multiple arguments
-
- -->
-
+^ If anything that emits a `map`, `zip` or `flatMap` operation is composable, and those versions of composition even require us to tilt our heads a bit to see it for what it is, what does that mean for the kind of code that we write every day?
 
 ---
 
-# Definition of composition
-
-## A process that creates a new object from an existing object and some other piece of data.
-
-^ So perhaps we should tweak our definition of composition a bit, so that it's not just combining two objects into a third, but rather taking an existing object, and some other piece of data, and from that deriving an all new object.
-
-^ This definition seems to subsume the previous definition, because that "other data" could certainly just be another object.
-
-^ And so it's more general to use this definition, and will perhaps open us up to a few new things.
-
 ---
+
+
+
+
+
+
 
 
 
@@ -324,3 +678,12 @@ Snapshotting<Value, Format>
 Reducer<State, Action>
 
 -->
+
+
+---
+
+# References
+
+* notions of computation as monoids
+
+
