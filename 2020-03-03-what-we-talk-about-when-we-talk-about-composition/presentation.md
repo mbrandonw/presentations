@@ -2,12 +2,17 @@ build-lists: true
 
 # What We Talk About When We Talk About Composition
 
-## Brandon Williams
+<br>
 
-@mbrandonw
+**Brandon Williams**
+
+[@mbrandonw](twitter.com/mbrandonw)
+
 [https://www.pointfree.co](https://www.pointfree.co)
 
-^ Hi there, my name is Brandon and today we will be discussing composition. 
+^ Hi there, my name is Brandon and thanks for having me. I'm very rarely on the west coast, i live in brooklyn, but i happen to be living in LA for the winter and i'm really glad that I was able to make it to this meet up while in the area. i've always heard very good things about it.
+
+^ Today we will be discussing composition. 
 
 ^ First here is some contact information for me, and if you find any of what I talk about tonight interesting then you may also be interested to check out this site here, Point-Free, where my co-host Stephen Celis and I talk about these kinds of things and a lot more.
 
@@ -260,7 +265,7 @@ struct User { let name: String }
 
 ^ So already we have taken a pretty impressive tour through the zoo of composability.
 
-^ But now let's go to the other side of the zoo and look at some more exotic things that will push the limits of what we consider to be composition.
+^ But we're still only at the entrance of the zoo where they put all the gift shops and obvious zoo animals. let's venture to the other side of the zoo and look at some more exotic things that will push the limits of what we consider to be composition.
 
 ---
 
@@ -347,7 +352,7 @@ xs.merge(ys)
 
 xs.concat(ys)
 
-xs.race(ys)
+xs.race(against: ys)
 ```
 
 ^ If we venture out of the standard library pen of the zoo we will find that there are tons of types in the community that emit lots of compositions.
@@ -358,7 +363,7 @@ xs.race(ys)
 
 ^ But the stream type is so exotic that emits lots of useful forms of composition. You can also combine two streams by concatenating one onto another, which requires that the first ends before the second one starts.
 
-^ And you can also race two streams, which waits until the first one emits and then only takes values from that stream and ignores the values from the other stream.
+^ And you can also race two streams against each other, which waits until the first one emits and then only takes values from that stream and ignores the values from the other stream.
 
 ---
 
@@ -392,6 +397,11 @@ zip: ([A], [B]) -> [(A, B)]
 
 # `zip`
 
+[.code-highlight: 1]
+[.code-highlight: 3]
+[.code-highlight: 5]
+[.code-highlight: 7]
+[.code-highlight: 9]
 ```
 zip: ([A], [B]) -> [(A, B)]
 
@@ -432,11 +442,11 @@ zip: (
 ) -> [(A, B)]
 ```
 
-^ An unfortunately it does not quite fit our definition. We specifically said that composition was a process that combines two objects of the same type into a third of the same type.
+^ But unfortunately it does not quite fit our definition. We specifically said that composition was a process that combines two objects of the same type into a third of the same type.
 
-^ An yes, all of the values in this signature are arrays, but they are not of the same type. We have an array of `A`s and an array of `B`s and ultimate return an array of a tuple of `A`s and `B`s.
+^ And yes, all of the values in this signature are arrays, but they are not of the same type. We have an array of `A`s and an array of `B`s and ultimate return an array of a tuple of `A`s and `B`s.
 
-^ Should we just fudge our definition of composition and not necessarily require that the objects be of the same type?
+^ It's pretty disappointing to see that this does not fall into the purview of composition. It is sooo close. Are we being too pedantic with our definition? Should we just fudge our definition of composition and not necessarily require that the objects be of the same type?
 
 ^ Turns out we don't need to. Our current definition of composition is the true foundational formulation, and if we just slightly change our perspective we will be able to recognize `zip` and other things as composition.
 
@@ -625,6 +635,10 @@ flatten: M<M<A>> -> M<A>
 
 ^ And in this form we can see that we are getting closer to this fitting our definition of composition, the combining of two things into a third thing (TODO)
 
+<!-- https://blog.merovius.de/2018/01/08/monads-are-just-monoids.html -->
+
+
+
 
 
 
@@ -638,52 +652,562 @@ flatten: M<M<A>> -> M<A>
 
 ^ If anything that emits a `map`, `zip` or `flatMap` operation is composable, and those versions of composition even require us to tilt our heads a bit to see it for what it is, what does that mean for the kind of code that we write every day?
 
----
+^ Well, it means that composition is far more pervasive than we might think, and if you are able to define some of the operations we have described above on your own types you will been at the beginning of a wonderful journey towards breaking down your problem into lots of tiny pieces that can be glued together.
+
+^ It may be hard to see this right now because pretty much everything we've considered so far exists in the standard library, and that may lead us to believe that in order to get benefit of composability it must be handed down to us from the core Swift team.
+
+^ To convince ourselves that composition is bountiful out in the world, let's consider a whole bunch of examples that do not ship with the standard library, but are imminently useful examples
 
 ---
 
+# Random Number Generators
+
+^ consider random number generators.
+
+^ You may know that Swift gave us some powerful random number API's in Swift 4.2, but what you may not know is that it's a wonderful unit of composability.
+
+^ If you only look at what we are given in the standard library you may think that randomness means that some types were blessed with some static functions so that you can just do things like `Bool.random` or `Int.random` and you get some random stuff out the other end.
+
+^ But there are lots of types of things we want to compute random versions of. random passwords, random coordinates in 3d space, random UIImages of generative art, and more.
+
+---
+
+# Random Number Generators
+
+```
+struct Gen<A> {
+	let run: (inout RandomNumberGenerator) -> A
+}
+```
+
+^ But at its essence, a random generator is something that takes a black box mechanism for generating randomness, which is literally just something that produces an integer from the huge space of UInt64, and from that black box we will produce a random `A` value.
+
+^ We are using `inout` because this black box is changed internally everytime we ask it to give us a `UInt64`
+
+---
+
+# Random Number Generators
+
+[.code-highlight: 5-99]
+```
+struct Gen<A> {
+	let run: (inout RandomNumberGenerator) -> A
+}
+
+Gen<Int>
+Gen<Bool>
+Gen<String>
+Gen<User>
+Gen<UIImage>
+Gen<(Int) -> Int>
+```
+
+---
+
+# Random Number Generators
+
+[.code-highlight: 1]
+[.code-highlight: 3-4]
+```
+map: ((A) -> B) -> (Gen<A>) -> Gen<B>
+
+let int: Gen<Int>
+int.map(ordinal) // 5th, 3rd, 1st
+```
+
+^ The `Gen` type supports all of the types of composition we have discussed so far
+
+^ You can map on a generator, so for example if you had a generator of integers you could map on it with an oridinal number formatter
+
+---
+
+# Random Number Generators
+
+[.code-highlight: 1]
+[.code-highlight: 3-5]
+[.code-highlight: 7-8]
+```
+zip: (Gen<A>, Gen<B>) -> Gen<(A, B)>
+
+let char: Gen<Character>
+let int: Gen<Int>
+zip(char, int).map(String.init(repeating:count:))
+
+let name: Gen<String>
+let user = zip(int, name).map(User.init(id:name))
+```
+
+^ The `Gen` type also supports a `zip` operation, where given two generators you can simply run them both and then bundle the results into a tuple.
+
+^ If you pair this with `map` you get all types of fun stuff.
+
+^ Like if you had a random character generator and a random int generator, you could zip them together and then hand those values off to the `String.init(repeating:count:)` initializer to instantly get the notion of a randomly sized string of a random character
+
+^ If you further had a random generator of names, you could zip the int generator and name generator and map it with a user initializer to instantly get the notion of a random user model
+
+---
+
+# Random Number Generators
+
+[.code-highlight: 1]
+[.code-highlight: 3-99]
+```
+flatMap: (Gen<A>, (A) -> Gen<B>) -> Gen<B>
+
+
+func array<A>(of element: Gen<A>,  count: Gen<Int>) -> Gen<[A]> {
+  count.flatMap { count in
+    Gen<[A]> { rng in
+      var array: [A] = []
+      for _ in 1...count {
+        array.append(self.run(&rng))
+      }
+      return array
+    }
+  }
+}
+```
+
+^ Gen also supports a flat map, which allows us to run a generator to get a random value, and then do something with that value that then produces yet another random value.
+
+^ For example, we can cook up a generator of randomly sized arrays of random values. 
+
+---
+
+# Random Number Generators
+
+[.code-highlight: 1]
+[.code-highlight: 3-8]
+```
+choose: (Gen<A>, Gen<A>) -> Gen<A>
+
+let intBetween1and10: Gen<Int>
+let intBetween100and1000: Gen<Int>
+choose(
+	intBetween1and10,
+	intBetween100and1000
+)
+```
+
+^ And finally `Gen` supports an operation that allows you to combine two generators of `A`s into a single generator of `A`s
+
+---
+
+# Random Number Generators
+
+[.code-highlight: 1-4]
+[.code-highlight: 6-8]
+[.code-highlight: 10-11]
+[.code-highlight: 13-14]
+[.code-highlight: 1-99]
+```
+"3DRe0K-Idj1k2-NL160E"
+"BWD57f-I6wHry-CF7dvo"
+"ApyA65-1s6AYS-FgqzgD"
+"Ty3Hlx-yz4WrO-VxfbQY"
+
+let alphanum = element(
+	of: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+)
+
+let passwordSegment = array(of: alphanum, count: 6)
+  .map { String($0) }
+
+let password = array(of: passwordSegment, count: 3)
+  .map { $0.joined(separator: "-") }
+```
+
+^ And this kind of composition for random generators is a great way to break a very complex problem down into simpler ones.
+
+^ if we wanted to have a generator of random passwords, like the ones you often see in safari, we could break this down into three steps
+
+^ first we get a generator of random characters that only includes alpha numeric characters
+
+^ then we take six random characters and turn them into a string so that we get one of those segments
+
+^ and then we take 3 random segments and join them with a dash so that we get the whole random password
+
+---
+
+# Parsers
+
+^ But it doesn't stop at random number generators. Parsers also emit all of the above types of composition, amazingly.
+
+^ Currently Swift does not offer a standard library solution for parsing. They provide an extremely powerful set of API's for dealing with strings, substrings and views of strings, which allow you to efficiently express transformations on strings.
+
+^ And foundation has things like scanners, formatters and failable initializers for converting strings into numbers, but many of those API's are old and crufty, though some have been updated in Swift 5, and none of them are built with composition in mind.
+
+---
+
+# Parsers
+
+```
+struct Parser<A> {
+	let run: (inout String) -> A?
+}
+```
+
+^ The essence of parsing can be expressed in this simple signature. To run a parser on some input blob of a string means to try to extract out a value of type `A` from the string. 
+
+^ Doing that may fail if the string cannot be parsed, like if you tried parsing the word "dog" into an integer, and if it does succeed you can consume a bit from the input string so that you can continue parsing the input with other parsers.
+
+---
+
+# Parsers
+
+```
+let int: Parser<Int>
+
+var input: "123dog"
+
+int.run(&input) // 123
+input           // "dog"
+```
+
+^ So if you had a parser that could parse integers off the front of a string you could run it on the string "123dog" and it would return back the integer 123, and the input string would have been changed to now only contain "dog" since the number of consumed from the front.
+
+^ The signature we stated before for a parser could also be improved by operating on substrings so that we dont create new string copies but instead just change the view of the part of the string we are looking at.
+
+---
+
+# Parsers
+
+[.code-highlight: 1]
+[.code-highlight: 3-99]
+```
+map: ((A) -> B) -> (Parser<A>) -> Parser<B>
+
+let int: Parser<Int>
+int.map(ordinal)
+
+int.run("3dog") // (3rd, "dog")
+```
+
+---
+
+[.code-highlight: 1]
+[.code-highlight: 3-99]
+```
+zip: (Parser<A>, Parser<B>) -> Parser<(A, B)>
+
+let name: Parser<String>
+let user = zip(int, name).map(User.init(id:name))
+
+user.parse("42Blob") // User(id: 42, name: "Blob")
+```
+
+---
+
+# Parsing
+
+[.code-highlight: 1]
+[.code-highlight: 3-99]
+```
+oneOf: (Parser<A>, Parser<A>) -> Parser<A>
+
+enum Location {
+  case nyc, berlin, london
+}
+
+let location: Parser<Location> = oneOf(
+  literal("New York City").map { .nyc },
+  literal("Berlin").map { .berlin },
+  literal("London").map { .london }
+ )
+```
+
+---
+
+# Parsing
+
+
+# 40.446° N, 79.982° W
+
+---
+
+[.code-highlight: 1-99]
+[.code-highlight: 1]
+[.code-highlight: 2-6]
+[.code-highlight: 3]
+[.code-highlight: 4]
+[.code-highlight: 5]
+[.code-highlight: 1-6]
+[.code-highlight: 8]
+[.code-highlight: 9-13]
+[.code-highlight: 10]
+[.code-highlight: 11]
+[.code-highlight: 12]
+[.code-highlight: 9-13]
+```
+let northSouth = char
+  .flatMap {
+    $0 == "N" ? always(1.0)
+      : $0 == "S" ? always(-1)
+      : .never
+}
+
+let eastWest = char
+  .flatMap {
+    $0 == "E" ? always(1.0)
+      : $0 == "W" ? always(-1)
+      : .never
+}
+```
+
+---
+
+[.code-highlight: 1-99]
+[.code-highlight: 1]
+[.code-highlight: 2]
+[.code-highlight: 1-2]
+[.code-highlight: 4]
+[.code-highlight: 5]
+[.code-highlight: 4-5]
+[.code-highlight: 7]
+[.code-highlight: 8-13]
+[.code-highlight: 7-13]
+```
+let latitude = zip(double, literal("° "), northSouth)
+  .map { lat, _, latSign in lat * latSign }
+
+let longitude = zip(double, literal("° "), eastWest)
+  .map { long, _, longSign in long * longSign }
+
+let coord = zip(latitude, literal(", "), longitude)
+  .map { lat, _, long in
+    Coordinate(
+      latitude: lat,
+      longitude: long
+    )
+}
+```
+
+---
+
+# Parsing
+
+```
+coord.run("40.6782° N, 73.9442° W") // {40.6782, -73.9442}
+coord.run("40.6782° S, 73.9442° W") // {-40.6782, -73.9442}
+```
+
+---
+
+# Asynchronous values
+
+---
+
+# Asynchronous values
+
+```
+struct Async<A> {
+	let run: ((A) -> Void) -> Void
+}
+```
+
+^ async coordinate
+
+---
+
+# Continuations
+
+```
+struct Continuation<R, A> {
+	let run: ((A) -> R) -> R
+}
+```
+
+^ Mixes together aspects of synchrony and asyncrony into a single package that allows you to run computations, pause them, and then resume them
+
+---
+
+# Predicates
+
+```
+struct Predicate<A> {
+	let contains: (A) -> Bool
+}
+```
+
+---
+
+# Predicates
+
+```
+💔 map: ((A) -> B) -> (Predicate<A>) -> Predicate<B>
+```
+
+^ Wouldn't it be cool if predicates had a map operation. Like if I have a predicate that works on user models i could map on it so that it works on the id integer of that user model.
+
+^ Unfortauntely that does not work, and in fact doesn't make any sense. Just because I have a predicate on users doesnt mean I should be able to derive a predicate on integers. For if someone were to hand me an integer, how would I ask the user predicate if it contains something? Construct a user from scratch with that integer has an id? That seems difficult.
+
+^ It is impossible to implement this function due to how contravariance in functions work.
+
+---
+
+# Predicates
+
+```
+😍 pullback: ((B) -> A) -> (Predicate<A>) -> Predicate<B>
+```
+
+^ But that's ok, because they thing we really want is this operation, which says that if you tell me how to transform `B`s into `A`s I'll tell you how to transform predicates on `A`s into predicates on `B`s.
+
+^ Notice that the direction flipped. On one side we have a `B` to `A` direction, and on the other side we have an `A` to `B` direction.
+
+---
+
+# Predicates
+
+```
+💔 flatMap: (Predicate<A>, (A) -> Predicate<B>) -> Predicate<B>
+```
+
+---
+
+# Predicates
+
+```
+🤷‍♀️ zip: (Predicate<A>, Predicate<B>) -> Predicate<(A, B)>
+```
+
+---
+
+# Predicates
+
+```
+😍 and: (Predicate<A>, Predicate<A>) -> Predicate<A>
+😍 or:  (Predicate<A>, Predicate<A>) -> Predicate<A>
+```
+
+---
+
+# Snapshot Testing
+
+[.code-highlight: 1-99]
+[.code-highlight: 1]
+[.code-highlight: 2]
+[.code-highlight: 3]
+[.code-highlight: 4]
+[.code-highlight: 1-5]
+[.code-highlight: 7]
+[.code-highlight: 8]
+[.code-highlight: 9]
+[.code-highlight: 10]
+[.code-highlight: 7-11]
+[.code-highlight: 1-99]
+```
+struct Diffing<Value> {
+  let diff: (Value, Value) -> (String, [XCTAttachment])?
+  let toData: (Value) -> Data
+  let fromData: (Data) -> Value
+}
+
+struct Snapshotting<Value, Format> {
+  let diffing: Diffing<Value>
+  let snapshot: (Value) -> Format
+  let pathExtension: String
+}
+```
+
+---
+
+# Snapshot Testing
+
+```
+💔 map: ((A) -> B) -> (Snapshotting<A, Format>) -> Snapshotting<B, Format>
+```
+
+---
+
+# Snapshot Testing
+
+```
+😍 pullback: ((B) -> A) -> (Snapshotting<A, Format>) -> Snapshotting<B, Format>
+```
+
+---
+
+# Snapshot Testing
+
+[.code-highlight: 1]
+[.code-highlight: 3]
+[.code-highlight: 4-7]
+[.code-highlight: 9]
+[.code-highlight: 10]
+[.code-highlight: 12]
+[.code-highlight: 13]
+[.code-highlight: 1-99]
+```
+let image: Snapshotting<UIImage, UIImage> = ...
+
+let layer: Snapshotting<CALayer, UIImage> =
+  image.pullback { layer in 
+    UIGraphicsImageRenderer(size: layer.bounds.size)
+      .image { ctx in layer.render(in: ctx.cgContext) }
+}
+
+let view: Snapshotting<UIView, UIImage> = 
+  layer.pullback { $0.layer }
+
+let viewController: Snapshotting<UIViewController, UIImage> = 
+  view.pullback { $0.view }
+```
+
+^ Here's how we can use it. Suppose we already have a snapshot strategy for `UIImage`'s in the `UIImage` format. Basically the strategy is responsible for serializing and de-serializing a `UIImage` into a PNG to be saved on disk, and it is responsible for doing a pixel-by-pixel diff on two `UIImage`s to figure out what is different about them. This strategy takes some actual work to implement so we aren't going to show it's implementation.
+
+^ But once we have that strategy, we can derive a bunch more strategies with very little work.
+
+^ For example, we can snapshot `CALayer`s. All you do is take the image snapshotting strategy, and pull it back via the transformation that turns layers into images via the `UIGraphicsImageRendered` API.
+
+^ Then once we have that we can derive a snapshot strategy on `UIView`s by taking the layer strategy and pulling it back along the transformation that simply plucks the layer out of a view.
+
+^ And finally we can derive a snapshot strategy on `UIViewController`s by just taking the strategy on views and pulling it back along the transformation that plucks the view out of a view controller.
+
+^ And this is why the operation is called `pullback`. Because we think of it as a means to take a smaller more specific snapshot strategy and _pull it back_ to a larger structure.
+
+^ Nearly all of the snapshot strategies provided by the library are pullbacks of just a few core strategies. And in fact, if you were to use this library and wanted to provide a snapshot strategy, you would most likely define it as a pullback of one of our strategies.
+
+---
+
+# App Architecture
+
+---
+
+# Reducers
+
+---
+
+# Reducers
+
+```
+struct Reducer<State, Action> {
+	let run: (inout State, Action) -> Effect<Action>
+}
+```
+
+---
+
+# Reducers
 
 
 
-
-
-
-
-
-<!--
-
-objects
-
-code generation
-
-(A) -> B
-(A) -> B?
-(A) -> Result<B, E>
-
-protocols
-
-key paths
-	can only be combined, not transformed
-
-Observable
-
-Gen<Value> = (inout RNG) -> Value
-
-Parallel<Value> = ((Value) -> Void) -> Void
-
-Parser<Value> = (inout String) -> Value?
-
-Snapshotting<Value, Format>
-
+<!-- 
 Reducer<State, Action>
-
 -->
+
+---
+
+---
+
+# Unifying composition
+
+---
+
 
 
 ---
 
 # References
 
-* notions of computation as monoids
-
-
+* Notions of Computation as Monoids
