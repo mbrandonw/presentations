@@ -24,7 +24,7 @@ build-lists: true
 
 ^ And that's a bummer because the word seems to carry a lot of weight in programming communities. As soon as someone mentions that something has composability it has somehow been blessed so that everyone knows it must be really powerful.
 
-^ It's strange that programmers don't try to settle on an accepted definition of this term. Afterall most everything they do needs to be well-defined because the compiler needs to be able to understand what they are trying to express.
+^ It's strange that programmers don't try to settle on an accepted definition of this term. After all most everything they do needs to be well-defined because the compiler needs to be able to understand what they are trying to express.
 
 ---
 
@@ -78,7 +78,7 @@ build-lists: true
 
 ## Code generation
 
-^ Even code generatino could be thought of as a process of composition. Perhaps you have a sourcery template that says when I have two types annotated with something in particular I will generate the code for a third object.
+^ Even code generation could be thought of as a process of composition. Perhaps you have a sourcery template that says when I have two types annotated with something in particular I will generate the code for a third object.
 
 ^ This is just as valid of a "process" to compose things.
 
@@ -224,7 +224,7 @@ typealias ComparableCollection
 
 ^ This is again demonstrating the spectrum of composition. We can't generically work with this composition, we can just do it in an adhoc fashion of taking two concrete protocols and smashing them together.
 
-^ There are programming concepts out there that would give us more of a handle on these kinds of things. e approach is higher-kinded types, which would allow us to create types more like we treat values. Swift will probably never get higher-kinded types directly, but we may get something that gets us close enough.
+^ There are programming concepts out there that would give us more of a handle on these kinds of things. One approach is higher-kinded types, which would allow us to create types more like we treat values. Swift will probably never get higher-kinded types directly, but we may get something that gets us close enough.
 
 ---
 
@@ -245,7 +245,7 @@ struct User { let name: String }
 🛑 (KeyPath<A, B>, KeyPath<A, C>) -> KeyPath<A, (B, C)>
 ```
 
-^ Here's another cool non-function example. Swift has the concept of key paths, which in my opinion is what of the most distinguishing features of Swift. Other languages like Haskell wish they had a native feature like key paths.
+^ Here's another cool non-function example. Swift has the concept of key paths, which in my opinion is one of the most distinguishing features of Swift. Other languages like Haskell wish they had a native feature like key paths.
 
 ^ Key paths are like little compiler generated code that bundles up the notion of a getter and setter into a single package, which allows you to write generic algorithms over the shape of data.
 
@@ -619,7 +619,7 @@ flatten: M<M<A>> -> M<A>
 
 ^ And it turns out that flat map is compositional, but in a seemingly different manner than map or zip.
 
-^ If we the only things we knew about `flatMap` came from the standard library, we would think it's signature is this.
+^ If the only things we knew about `flatMap` came from the standard library, we would think it's signature is this.
 
 ^ It says if we have a generic type, and a function that returns that generic type, we can ultimately derive another generic type. 
 
@@ -1039,7 +1039,7 @@ struct Predicate<A> {
 
 ^ Wouldn't it be cool if predicates had a map operation. Like if I have a predicate that works on user models i could map on it so that it works on the id integer of that user model.
 
-^ Unfortauntely that does not work, and in fact doesn't make any sense. Just because I have a predicate on users doesnt mean I should be able to derive a predicate on integers. For if someone were to hand me an integer, how would I ask the user predicate if it contains something? Construct a user from scratch with that integer has an id? That seems difficult.
+^ Unfortunately that does not work, and in fact doesn't make any sense. Just because I have a predicate on users doesnt mean I should be able to derive a predicate on integers. For if someone were to hand me an integer, how would I ask the user predicate if it contains something? Construct a user from scratch with that integer has an id? That seems difficult.
 
 ^ It is impossible to implement this function due to how contravariance in functions work.
 
