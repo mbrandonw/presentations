@@ -1190,13 +1190,98 @@ struct Reducer<State, Action> {
 
 # Reducers
 
+```
+💔 map: ((S) -> T) -> (Reducer<S, Action>) -> Reducer<T, Action>
+```
+
+---
+
+# Reducers
+
+```
+💔 pullback: ((T) -> S) -> (Reducer<S, Action>) -> Reducer<T, Action>
+```
+
+---
+
+# Reducers
+
+```
+😍 pullback: (WritableKeyPath<T, S>) -> (Reducer<S, Action>) -> Reducer<T, Action>
+```
+
+---
+
+# Reducers
+
+```
+💔 map: ((A) -> B) -> (Reducer<State, A>) -> Reducer<State, B>
+```
+
+---
+
+# Reducers
+
+```
+💔 pullback: ((B) -> A) -> (Reducer<State, A>) -> Reducer<State, B>
+```
+
+---
+
+# Reducers
+
+```
+💔 pullback: (???<B, A>) -> (Reducer<State, A>) -> Reducer<State, B>
+```
+
+---
+
+# Reducers
+
+```
+💔 pullback: (CasePath<B, A>) -> (Reducer<State, A>) -> Reducer<State, B>
+```
+
+---
+
+# Unifying composition
+
+^ So I hope that now you can see there is a really expansive world of composability out there.
+
+^ We seemingly have many different flavors of composition out there in the world, everything from adding a couple of integers together to zipping parsers together, to even pulling back reducers along key paths and case paths!
+
+
+
+^ But practically speaking, for you out in the audience that is just trying to make an app and trying to do it in the best way you can, what does this mean for you?
+
+^ Well, if you've ever written a generic type or a generic function in your application or library, it is worth wondering if those constructions support these kinds of compositions.
+
+^ Does your type support `map` operation? If so, it's unique. Turns out a generic type can only support a single `map` operation.
+
+^ Next, does your type support a `zip` operation? This would mean that your construction supports the idea of many instances of it running in parallel, independent of each other, in such a way that you can collect their results into a tuple once they are finished. Even if you find a `zip` operation on your type you may not be done. Some types support multiple zip-like operations, like you can do normal zip on arrays or you could take all combinations of elements from the first array with the second. You can even do the same with streams, except there it's usually called `combineLatest`.
+
+^ Next, does your type support a `flatMap` operation? This would mean your construction supports the idea of.
+
 
 
 <!-- 
-Reducer<State, Action>
--->
+
+Animations
+diagram drawing
+
+ -->
+
+
 
 ---
+
+<!-- TODO
+
+even application architecture can be broken down into units of composition. we can think of an application the same way we would think of breakdown a complex random generator or complex parser or complex snapshot strategy into simpler units.
+
+each time composition seemingly breaks and we recover it we come up with something more exotic
+
+ -->
 
 ---
 
@@ -1211,3 +1296,14 @@ Reducer<State, Action>
 # References
 
 * Notions of Computation as Monoids
+
+
+
+
+<!-- 
+
+strings
+ints
+
+
+ -->
