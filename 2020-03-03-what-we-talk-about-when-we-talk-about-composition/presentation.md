@@ -6,37 +6,50 @@ build-lists: true
 
 **Brandon Williams**
 
-[@mbrandonw](twitter.com/mbrandonw)
+twitter.com/mbrandonw
 
-[https://www.pointfree.co](https://www.pointfree.co)
+mbw234@gmail.com
 
-^ Hi there, my name is Brandon and thanks for having me. I'm very rarely on the west coast, i live in brooklyn, but i happen to be living in LA for the winter and i'm really glad that I was able to make it to this meet up while in the area. i've always heard very good things about it.
+^ Hi there, my name is Brandon and thanks for having me. I'm very rarely on the west coast, i live in brooklyn, but i happen to be living in LA for the winter and i'm really glad that I was able to make it to this meet up while in the area. i've always heard very good things about it, and thanks to everyone for coming.
 
-^ Today we will be discussing composition. 
+^ Here is some contact information for me in case you want to reach out
 
-^ First here is some contact information for me, and if you find any of what I talk about tonight interesting then you may also be interested to check out this site here, Point-Free, where my co-host Stephen Celis and I talk about these kinds of things and a lot more.
+---
+
+<!-- ![](pf-square-dark.png) -->
+![original](pf-square@6x.png)
+
+### [ **www.pointfree.co** ](#)
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+^ and if you find any of what I talk about tonight interesting then you may also be interested to check out this site here, Point-Free, a video series where my co-host Stephen Celis and I talk about these kinds of things and a lot more.
 
 ---
 
 # What is composition?
+
+
+^ We have a lot to cover, so let's get into it. Today we will be discussing composition. 
+
 
 ^ Composition is one of those words that come up quite a bit in programming, but rarely do we hear a succinct, rigorous definition of the term.
 
 ^ And that's a bummer because the word seems to carry a lot of weight in programming communities. As soon as someone mentions that something has composability it has somehow been blessed so that everyone knows it must be really powerful.
 
-^ It's strange that programmers don't try to settle on an accepted definition of this term. After all most everything they do needs to be well-defined because the compiler needs to be able to understand what they are trying to express.
+^ It's strange that programmers don't try to settle on an accepted definition of this term. After all most everything they do needs to be well-defined because the compiler needs to be able to understand what they are trying to express. Yet a word like composition is thrown around and everyone has their own personal feeling of what it means
 
 ---
 
 # What is composition?
 
-^ First we will try to formulate a definition of composition. This definition should encompass all the examples you already think about when you think about composition, but also maybe will open your eyes to other types of composition that you hadn't yet considered.
+^ So, in this talk we will first we will try to formulate a definition of composition. This definition should encompass all the examples you already think about when you think about composition, but also maybe will open your eyes to other types of composition that you hadn't yet considered.
 
-^ And we say we are going to try to formulate this because it's difficult to do properly without the formalism of matheamtics. but i want to try to expose you to as much mathematics as possible without you know it's math
+^ And we say we are going to *try* to formulate this because it's difficult to do properly without the formalism of mathematics. but i want to try to expose you to as much mathematics as possible without you knowing it's math. And even though it's very mathematically inspired, we will also see that when it comes to programming, composition exists on a spectrum, and the power of a particular type of composition largely depends where on the spectrum it sits.
 
-^ So once the stage is set for position we will then discuss a huge amount of examples. We will show that when it comes to programming, composition exists on a spectrum, and the power of a particular type of composition largely depends where on the spectrum it sits.
+^ Then once the stage is set for composition, we will then discuss a flurry of examples. Seriously. A bunch. It's going to seem like a fevered dream once we're done.
 
-^ And we hope that by going through this exercise you will see how powerful composition is TODO
+^ And we hope that by going through this seemingly pedantic exercise you will see how powerful composition is, you might see that there's more to composition than meets the eye, and you might learn how to look for composition in your code today.
 
 ---
 
@@ -44,7 +57,7 @@ build-lists: true
 
 ## A process that combines two objects of a type into a third of the same type.
 
-^ So let's start simple and say that composition is nothing more than a process that allows us to combine two objects into a third.
+^ So let's start simple and say that composition is nothing more than a process that allows us to combine two objects of a particular type into a third of the same type.
 
 ^ Well already we're in a bit of trouble because we are using two terms in this definition that themselves have not be defined: process and objects.
 
@@ -60,17 +73,19 @@ build-lists: true
 
 ^ Perhaps the most canonical example of composition is functions. When you have a function from `A` to `B` and a function from `B` to `C` you can combine them together to form a brand new function from `A` to `C`
 
+^ Here we are using functions as the "process" and types as the "objects"
+
 ---
 
 # Examples of composition
 
 ## “Composition over inheritance”
 
-^ However, for many of us the first time we probably hear the word "composition" in programming is due to this adage: prefer composition over inheritance. This is truism from OOP that says that many times when you think you want to reach for inheritance what you really want is composition. 
+^ However, for many of us the first time we probably heard the word "composition" in programming is due to this adage: prefer composition over inheritance. This is a truism from OOP that says that many times when you think you want to reach for inheritance what you really want is composition. 
 
 ^ Composition is usually not rigorously defined, but what they mean is that instead of having class `A` inherit from class `B`, you can create a third class `C` that holds instances of `A` and `B` and exposes an interface that mixes their functionality together in some way.
 
-^ So, when said that way this kind of "object composition" does fit our definition. We have two classes and we decide to create a third class that holds the functionality of the other two.
+^ So, when said that way this kind of "object composition" does fit our definition. The "process" is the creating of a new class that wraps two other classes, and the "objects" are classes.
 
 ---
 
@@ -116,7 +131,7 @@ build-lists: true
 
 # Zoo of composability
 
-^ Let's begin exploring the zoo of composability that exists in Swift.
+^ Let's begin exploring the zoo of composability that exists in the programming world.
 
 ---
 
@@ -152,6 +167,8 @@ func compose<A, B, C>(
 
 ^ Partial functions are ones that have optionals as their output. They are called partial because for some inputs you get a real output, but sometimes you get nothing.
 
+^ Partial functions compose just as easily as normal functions. Here we are using optional `flatMap` under the hood to be succint, but we could have also written this with an explicit `if let` dance.
+
 ---
 
 # Failable/exceptional Functions
@@ -183,11 +200,11 @@ func compose<A, B, C, E>(
 ```
 class LocationManager { ... }
 
-class LocationSearcher { ... }
+class POISearcher { ... }
 
 class RecommendationsManager { 
 	let manager: LocationManager
-	let search: LocationSearch
+	let search: POISearch
 }
 ```
 
@@ -195,15 +212,15 @@ class RecommendationsManager {
 
 ^ Say we had a class that encapsulated the behavior of getting a person's current location.
 
-^ And a class that encapsulated the behavior of searching for locations
+^ And a class that encapsulated the behavior of searching for points of interest
 
 ^ And from those we wanted to derive something more domain specific for our application, which is a class that encapsulates the behavior of getting a person's location and searching for some recommendations nearby.
 
-^ If our minds only thought of things in terms of inheritance we may be convince ourselves that we could use inheritance so that we take a base class and enchance its functionality. So we inherit from the location manager to enhance its functionality with the idea of being able to search locations, and then we inherit from that to enchance its functionality with the idea of being able to layer in user recomendations.
+^ If our minds only thought of things in terms of inheritance we may be able to convince ourselves that we could use inheritance so that we take a base class and enchance its functionality. So we inherit from the location manager to enhance its functionality with the idea of being able to search for points of interest, and then we inherit from that to enchance its functionality with the idea of being able to layer in user recomendations.
 
 ^ Alternatively, we could just create a third class that holds instances of the other two classes, and then only expose an API that makes sense for that wrapper, and under the hood it can use the other two classes as much as we want.
 
-^ It's worth noting that "composition over inheritance" in OOP is only a guideline, and cannot be codified into a program like we could for function composition. This is demonstrating that spectrum I mentioned before, certain types of composition are simpler than others.
+^ It's worth noting that "composition over inheritance" in OOP is only a guideline, and cannot be codified into a program that takes two classes and produces the third composed class. This is demonstrating that spectrum I mentioned before, certain types of composition are simpler than others, and some are more ad hoc than others.
 
 ---
 
@@ -224,7 +241,7 @@ typealias ComparableCollection
 
 ^ This is again demonstrating the spectrum of composition. We can't generically work with this composition, we can just do it in an adhoc fashion of taking two concrete protocols and smashing them together.
 
-^ There are programming concepts out there that would give us more of a handle on these kinds of things. One approach is higher-kinded types, which would allow us to create types more like we treat values. Swift will probably never get higher-kinded types directly, but we may get something that gets us close enough.
+^ There are programming concepts out there that would give us more of a handle on these kinds of things. One approach is higher-kinded types, which would allow us to treat types more like we treat values. Swift will probably never get higher-kinded types directly, but we may get something that gets us close enough.
 
 ---
 
@@ -255,7 +272,7 @@ struct User { let name: String }
 
 ^ This form of composition is much closer to function composition on the spectrum, but it's not quite there. For example, we could never implement the `appending` method ourselves. And there are other key path compositions we might want to do but can't since the compiler is mostly responsible for creating these things.
 
-^ One example is if you had a key path from `A` to `B` and a key path from `A` to `C` you cannot generically construct a key path from `A` to the tuple of `B` and `C`.
+^ One example is if you had a key path from `A` to `B` and a key path from `A` to `C` you cannot generically construct a key path from `A` to the tuple of `B` and `C`. You can get pretty close to this using some tricks in Swift, but it's still more awkward than just composing functions.
 
 ^ So again, certain parts of key paths are out of our hands, whereas with functions everything is in our control and can be defined in user land as opposed to compiler land.
 
@@ -269,6 +286,44 @@ struct User { let name: String }
 
 ---
 
+# Integers
+
+[.code-highlight: 1-4]
+[.code-highlight: 1-99]
+```
+let x = 1
+let y = 2
+
+x + y
+
+x * y
+```
+
+^ If we take our definition of composition to heart, as a process that combines two things into a third thing, then aren't integers composable since you can add them?
+
+^ In fact, they are even doubly composable because you can also multiply them?
+
+---
+
+# Strings
+
+```
+let x = "Hello"
+let y = "World"
+
+x + y
+```
+
+^ But can't you combine two strings together to form a third too? Does that mean strings are in some sense composable?
+
+^ Seeing these examples in our imaginary zoo of composability is like like having a dedicated exhibit for pigeons at a real zoo. Like sure they are animals, but I see them every day on the streets of new york. Why would I come to a zoo for this? 
+
+^ One might think we are in some way degenerating the concept of composition by letting these examples into our zoo. 
+
+^ It turns out that is not the case, but let's keep pushing for to understand why.
+
+---
+
 # Optionals
 
 ```
@@ -278,7 +333,7 @@ let y: A?
 x ?? y
 ```
 
-^ If we take our definition of composition to heart, as a process that combines two things into a third thing, then aren't optionals composable?
+^ Perhaps a little more interesting than strings and integers, but are optionals composable?
 
 ^ After all, we have the double question mark operator, which simply returns the first non-`nil` value.
 
@@ -305,7 +360,7 @@ let y: Result<A, E>
 choose(x, y)
 ```
 
-^ And if optionals are composable, then shouldn't results be too? Afterall they are just a slight generalization of optionals where instead of modeling the absence of something as a void value you model it with a proper error.
+^ And if optionals are composable, then shouldn't results be too? Afterall they are just a slight generalization of optionals.
 
 ^ Here we have defined a function that simply picks the first successful result passed in.
 
@@ -355,7 +410,7 @@ xs.concat(ys)
 xs.race(against: ys)
 ```
 
-^ If we venture out of the standard library pen of the zoo we will find that there are tons of types in the community that emit lots of compositions.
+^ If we venture out of the standard library area of our imaginary zoo we will find that there are tons of types in the community that emit lots of compositions.
 
 ^ If you are comfortable with the idea of streams of values, such as publishers in combine, signals in reactive swift, and observables in rxswift, then you probably know that they are composable. 
 
@@ -414,7 +469,7 @@ zip: ([K: A], [K: B]) -> [K: (A, B)]
 zip: (Stream<A>, Stream<B>) -> Stream<(A, B)>
 ```
 
-^ When stated that way maybe there are more zips out there.
+^ When stated that way maybe there are more zips out there besides on just arrays.
 
 ^ Zip could transform a tuple of optionals to an optional tuple
 
@@ -422,9 +477,9 @@ zip: (Stream<A>, Stream<B>) -> Stream<(A, B)>
 
 ^ Or transform a tuple of dictionaries into a dictionary of tuples
 
-^ Or even transform a tuple of streams into a stream of tuples
+^ Or even transform a tuple of streams into a stream of tuples. Even though the standard library doesnt define  all of these zips, it is true that reactive libraries ship with zips for their stream types.
 
-^ And so have we uncovered a whole new world of composition. afterall, arent' we combining two objects into a third?
+^ And so have we uncovered a whole new world of composition. after all, aren't we combining two objects into a third?
 
 ---
 
@@ -434,12 +489,14 @@ zip: (Stream<A>, Stream<B>) -> Stream<(A, B)>
 
 [.code-highlight: 1-99]
 [.code-highlight: 2-3]
-[.code-highlight: 4]
+[.code-highlight: 5]
+[.code-highlight: 1-99]
 ```
 zip: (
-	[A], 
-	[B]
-) -> [(A, B)]
+  [A], 
+  [B]
+) 
+-> [(A, B)]
 ```
 
 ^ But unfortunately it does not quite fit our definition. We specifically said that composition was a process that combines two objects of the same type into a third of the same type.
@@ -448,7 +505,7 @@ zip: (
 
 ^ It's pretty disappointing to see that this does not fall into the purview of composition. It is sooo close. Are we being too pedantic with our definition? Should we just fudge our definition of composition and not necessarily require that the objects be of the same type?
 
-^ Turns out we don't need to. Our current definition of composition is the true foundational formulation, and if we just slightly change our perspective we will be able to recognize `zip` and other things as composition.
+^ Turns out we don't need to. Our current definition of composition is the true foundational formulation, and if we just slightly change our perspective we will be able to recognize `zip` and other things as composition with our more strict definition
 
 ---
 
@@ -471,7 +528,7 @@ let ws: Stream<Int>
 ws.map(String.init)
 ```
 
-^ Let's start with something simpler, `map`. Most of the things we've considered so far emit a `map` operation. Arrays, optionals, dictionaries, results and streams all have map.
+^ To figure that out, let's start with something simpler, `map`. Most of the things we've considered so far emit a `map` operation. Arrays, optionals, dictionaries, results and streams all have map.
 
 ^ Many people would say that something is composable if it emits a `map`, but can we rectify these lines of code with our strict definition of composition is supposed to be?
 
@@ -493,7 +550,7 @@ map: ((A) -> B) -> (Stream<A>) -> Stream<B>
 
 ^ It turns out yes, we can change our perspective so that we see `map` in a new light, and from that perspective we will see `map` as a compositional thing.
 
-^ Rather than thinking of `map` as some operation we call on things by doing "dot map" and passing a function, we can flip things around and see that `map` is nothing more than a way to changing functions that go between plain types so that they instead go between generic types.
+^ Rather than thinking of `map` as some operation we call on things by doing "dot map" and passing a function, we can flip things around and see that `map` is nothing more than a way to changing functions that go between plain types into ones that instead go between generic types.
 
 ^ So a function from A to B becomes a function from array of As to array of Bs
 
@@ -514,6 +571,8 @@ map: ((A) -> B) -> (F<A>) -> F<B>
 ^ If we squint really hard so that all the syntax of array brackets, optional question marks and words like "result" and "stream" blur away, we will see we are left with something like this
 
 ^ For a generic type `F` to support a `map` operation it must be able to implement this function.
+
+^ In your mind you can replace `F` with any of the generic types we've considered so far, optionals, arrays, results, dictionaries, streams, etc.
 
 ---
 
@@ -582,12 +641,12 @@ let xs: [Int]
 xs.flatMap { [$0, $0 * $0] }
 
 let y: Int?
-x.flatMap { $0.isMultiple(of: 2) ? $0 : nil }
+x.flatMap { $0.isMultiple(of: 2) ? $0 * $0 : nil }
 
 let r: Result<Int, Error>
 r.flatMap { 
 	$0.isMultiple(of: 2) 
-		? .success($0)
+		? .success($0 * $0)
 		: .failure("I only like even numbers")
 }
 
@@ -633,15 +692,7 @@ flatten: M<M<A>> -> M<A>
 
 ^ And this is the thing that flatMap brings to the table. This distinguishes it from map and zip in that those operations are incapable of doing anything like this by themselves.
 
-^ And in this form we can see that we are getting closer to this fitting our definition of composition, the combining of two things into a third thing (TODO)
-
-<!-- https://blog.merovius.de/2018/01/08/monads-are-just-monoids.html -->
-
-
-
-
-
-
+^ And in this form we can see that we are getting closer to this fitting our definition of composition, the combining of two things into a third thing. The two things we have don't come in the normal form of a pair of objects, but rather come as a nesting of this generic type. But nonetheless, this shows we are in some sense squashing two things into one.
 
 ---
 
@@ -652,7 +703,7 @@ flatten: M<M<A>> -> M<A>
 
 ^ If anything that emits a `map`, `zip` or `flatMap` operation is composable, and those versions of composition even require us to tilt our heads a bit to see it for what it is, what does that mean for the kind of code that we write every day?
 
-^ Well, it means that composition is far more pervasive than we might think, and if you are able to define some of the operations we have described above on your own types you will been at the beginning of a wonderful journey towards breaking down your problem into lots of tiny pieces that can be glued together.
+^ Well, it means that composition is far more pervasive than we might think, and if you are able to define some of the operations we have described above on your own types you will be at the beginning of a wonderful journey towards breaking down your problem into lots of tiny pieces that can be glued together.
 
 ^ It may be hard to see this right now because pretty much everything we've considered so far exists in the standard library, and that may lead us to believe that in order to get benefit of composability it must be handed down to us from the core Swift team.
 
@@ -676,7 +727,7 @@ flatten: M<M<A>> -> M<A>
 
 ```
 struct Gen<A> {
-	let run: (inout RandomNumberGenerator) -> A
+  let run: (inout RandomNumberGenerator) -> A
 }
 ```
 
@@ -701,6 +752,10 @@ Gen<User>
 Gen<UIImage>
 Gen<(Int) -> Int>
 ```
+
+^ And from this single type we can create values that represent the ability to create:
+• random integers and booleans, nothing new there really
+• but also random strings, random users if we had a `User` model, random `UIImage`s where we randomly draw into a context, and heck even randomly generated functions
 
 ---
 
@@ -741,7 +796,7 @@ let user = zip(int, name).map(User.init(id:name))
 
 ^ If you pair this with `map` you get all types of fun stuff.
 
-^ Like if you had a random character generator and a random int generator, you could zip them together and then hand those values off to the `String.init(repeating:count:)` initializer to instantly get the notion of a randomly sized string of a random character
+^ Like if you had a random character generator and a random int generator, you could zip them together and then hand those values off to the `String.init(repeating:count:)` initializer to instantly get the notion of a repeating randomly sized string of a random character
 
 ^ If you further had a random generator of names, you could zip the int generator and name generator and map it with a user initializer to instantly get the notion of a random user model
 
@@ -789,7 +844,7 @@ choose(
 )
 ```
 
-^ And finally `Gen` supports an operation that allows you to combine two generators of `A`s into a single generator of `A`s
+^ And finally `Gen` supports an operation that allows you to combine two generators of `A`s into a single generator of `A`s. It works by just randomly choosing one of the generators we were handed, and then runs it
 
 ---
 
@@ -866,8 +921,6 @@ input           // "dog"
 
 ^ So if you had a parser that could parse integers off the front of a string you could run it on the string "123dog" and it would return back the integer 123, and the input string would have been changed to now only contain "dog" since the number of consumed from the front.
 
-^ The signature we stated before for a parser could also be improved by operating on substrings so that we dont create new string copies but instead just change the view of the part of the string we are looking at.
-
 ---
 
 # Parsers
@@ -880,8 +933,14 @@ map: ((A) -> B) -> (Parser<A>) -> Parser<B>
 let int: Parser<Int>
 int.map(ordinal)
 
-int.run("3dog") // (3rd, "dog")
+var input = "3dog"
+int.run("3dog") // "3rd"
+input           // "dog"
 ```
+
+^ And amazingly parsers emit all the compositions we have been discussing so far.
+
+^ It supports a map operation, which means we can take our lowly parser that produces integers into a parser that produces ordinals
 
 ---
 
@@ -895,6 +954,35 @@ let user = zip(int, name).map(User.init(id:name))
 
 user.parse("42Blob") // User(id: 42, name: "Blob")
 ```
+
+^ It also supports the zip operation, where you simply run both of the parsers, and if they both successfully produce a value you bundle them up in a tuple
+
+^ So if we had a parser of integers and strings, we could zip them together to get a parser of users
+
+---
+
+# Parsing
+
+[.code-highlight: 1]
+[.code-highlight: 3-99]
+```
+flatMap: (Parser<A>, (A) -> Parser<B>) -> Parser<B>
+
+let version: Parser<String>
+
+version
+  .flatMap {
+    $0 == "v1" ? v1Parser
+      : $0 == "v2" ? v2Parser
+      : legacyParser
+}
+```
+
+^ It also supports flatmap, which allows you to parse a little bit, inspect the value you parsed in order to them decide how you want to continue parsing.
+
+^ For example, say the string we are parsing started with a little bit of metadata that described what "version" the data was in. Like maybe right at the beginning there's a little `"v1"` or `"v2"` string.
+
+^ Well, if we had a parser to extract just that little bit of info from the string, we could then flat map on it in order to determine which parser we want to use.
 
 ---
 
@@ -916,14 +1004,23 @@ let location: Parser<Location> = oneOf(
  )
 ```
 
+^ Further, parser support the notion of combining two parsers into a single one, and it's called the one of parser.
+
+^ We simply run the first parser on the input string, if it succeeds we take that result, and otherwise we run the second parser
+
 ---
 
 # Parsing
 
-
 # 40.446° N, 79.982° W
 
+^ And just like randomness, when we have all of these little forms of composition at our disposal we can break down a large, complex parsing problem into a bunch of tiny problems
+
+^ Take this string format for describing latitude and longitude coordinates. we need to be able to parse the double value from the front, and then the little degree sign, and then an N or S character, which determines if the coordinate is positive or negative, and then we have to do it all over again.
+
 ---
+
+# Parsing
 
 [.code-highlight: 1-99]
 [.code-highlight: 1]
@@ -932,12 +1029,7 @@ let location: Parser<Location> = oneOf(
 [.code-highlight: 4]
 [.code-highlight: 5]
 [.code-highlight: 1-6]
-[.code-highlight: 8]
-[.code-highlight: 9-13]
-[.code-highlight: 10]
-[.code-highlight: 11]
-[.code-highlight: 12]
-[.code-highlight: 9-13]
+[.code-highlight: 8-13]
 ```
 let northSouth = char
   .flatMap {
@@ -954,14 +1046,18 @@ let eastWest = char
 }
 ```
 
+^ So let's break it down.
+
+^ We'll start with the parsers that are responsible for turn the N and S characters into a positive or negative one, and the same for the E and W characters.
+
+^ We do this by flat mapping on the character to inspect it, and depending on its value we will return a positive or negative one, but if the character doesnt match a value we expect we can just fail the parser.
+
 ---
 
 [.code-highlight: 1-99]
 [.code-highlight: 1]
 [.code-highlight: 2]
 [.code-highlight: 1-2]
-[.code-highlight: 4]
-[.code-highlight: 5]
 [.code-highlight: 4-5]
 [.code-highlight: 7]
 [.code-highlight: 8-13]
@@ -982,6 +1078,12 @@ let coord = zip(latitude, literal(", "), longitude)
 }
 ```
 
+^ Next we construct the parser for the latitude part of the coordinate. This means to first parser the double, then the degree sign, and then the north/south sign, and once we have that info we can just multiply the latitude value with its sign. Notice that we are zipping 3 things, but that's easy to do once you know how to zip two things.
+
+^ We do the same for the longitude, it's pretty much identical.
+
+^ And then we construct the final parser by parsing off the latitude from the beginning of the string, then parsing the comma, and then parsing the longitude.
+
 ---
 
 # Parsing
@@ -989,11 +1091,17 @@ let coord = zip(latitude, literal(", "), longitude)
 ```
 coord.run("40.6782° N, 73.9442° W") // {40.6782, -73.9442}
 coord.run("40.6782° S, 73.9442° W") // {-40.6782, -73.9442}
+
+coord.run("40.6782° X, 73.9442° W") // nil
 ```
+
+^ And we can run our parser on some well-formed and malformed coordinates to make sure it behaves correctly. notice that the negative signs are inserted corretly.
 
 ---
 
 # Asynchronous values
+
+^ But it keeps going, asynchronous values also fit into this compositional world.
 
 ---
 
@@ -1005,7 +1113,11 @@ struct Async<A> {
 }
 ```
 
-^ async coordinate
+^ You may already have a lot of experience with this because this is basically a promise.
+
+^ The essence of an asynchronous value is the ability to hand off control for someone else to tell us when a value is produced. This is the signature that allows for that, where a 3rd party is given the inside `(A) -> Void` callback function, and then they invoke it whenever they want.
+
+^ This type supports all of the same compositions we have been discuss, but we aren't going to spell it out in excruciating detail like we have been
 
 ---
 
@@ -1017,7 +1129,9 @@ struct Continuation<R, A> {
 }
 ```
 
-^ Mixes together aspects of synchrony and asyncrony into a single package that allows you to run computations, pause them, and then resume them
+^ Generalizing the asynchronous value concept is the concept of continuations. If we plug in `R = Void` then we just get an async value, but if we use a non-void `R` value we will get a type that kind of mixes together aspects of synchronous computation and asynchronous computation into a single package. It allows you to run computations, pause them, and then resume them.
+
+^ And of course this type supports all the types of compositions we have been discussing.
 
 ---
 
@@ -1028,6 +1142,8 @@ struct Predicate<A> {
 	let contains: (A) -> Bool
 }
 ```
+
+^ But then there are types like this. It seems simple enough, it wraps a predicate function from `A` to `Bool`.
 
 ---
 
@@ -1051,9 +1167,13 @@ struct Predicate<A> {
 😍 pullback: ((B) -> A) -> (Predicate<A>) -> Predicate<B>
 ```
 
-^ But that's ok, because they thing we really want is this operation, which says that if you tell me how to transform `B`s into `A`s I'll tell you how to transform predicates on `A`s into predicates on `B`s.
+^ But that's ok, because the thing we really want is this operation, which says that if you tell me how to transform `B`s into `A`s I'll tell you how to transform predicates on `A`s into predicates on `B`s.
 
 ^ Notice that the direction flipped. On one side we have a `B` to `A` direction, and on the other side we have an `A` to `B` direction.
+
+^ So if I had a predicate on integers, like say "is even", then I could _pull it back_ to work on users by project a user to its id. And then I'd have a predicate on users that checks if their user id is even.
+
+^ This is a whole new type of composition that we haven't yet considered. It's closely related to `map`, yet different.
 
 ---
 
@@ -1063,6 +1183,8 @@ struct Predicate<A> {
 💔 flatMap: (Predicate<A>, (A) -> Predicate<B>) -> Predicate<B>
 ```
 
+^ Predicates also don't support `flatMap`, and it's not clear if we can find a closely related example of `flatMap` that does play nicely with predicates.
+
 ---
 
 # Predicates
@@ -1071,14 +1193,75 @@ struct Predicate<A> {
 🤷‍♀️ zip: (Predicate<A>, Predicate<B>) -> Predicate<(A, B)>
 ```
 
+^ And this is even trickier. Technically we can define this operation, but if we dig a little deeper we would find that it's not quite like the `zip` that we know an love from arrays. Instead of it "zipping" things together, it actually divides things apart. So I'll just say that there is a composition story to be told here, but we don't have time to tell it.
+
+^ And what we are really seeing here is that predicates are "contravariant" things, and all the other types we have been considering were covariant. It turns out that we can repeat almost all of the work we did for composition of covariant types, but instead do it for contravariant types, and we'd uncover a whole new world of composition.
+
+^ This is so bizarre that it's hard to relate it to the very strained analogy of a zoo that I've been using so far. If we introduce some sci-fi elements to our zoo, it would be like if there was a magical mirror in the zoo that showed a dual, alternate reality for which everything we know and love in our world has been flipped
+
+^ we would have structs, they would have enums
+
+^ we would have map, they would have pullback
+
+^ we would have zippable things, they would divisible things
+
 ---
 
-# Predicates
+# Snapshot Testing
 
+[.code-highlight: 0]
 ```
-😍 and: (Predicate<A>, Predicate<A>) -> Predicate<A>
-😍 or:  (Predicate<A>, Predicate<A>) -> Predicate<A>
+struct Diffing<Format> {
+  let diff: (Format, Format) -> (String, [XCTAttachment])?
+  let toData: (Format) -> Data
+  let fromData: (Data) -> Format
+}
+
+struct Snapshotting<Value, Format> {
+  let diffing: Diffing<Format>
+  let snapshot: (Value) -> Async<Format>
+  let pathExtension: String
+}
 ```
+
+^ So predicates are even weirder than some of the things we've discuss so far, and you may not even think that a dedicated predicate type isn't useful enough to define.
+
+^ So here's an example that is just as weird as predicates, but is definitely useful. It's some types that define the basis for a snapshot testing library that my collaborator Stephen Celis and I created and open sourced a few years ago.
+
+^ You may be familiar with snapshot testing a means for verifying the correctness of UI's. You create a test that loads up a view, you snapshot it to an image on disk, and then subsequent runs of the test will take a new snapshot and compare it with what is on disk. And if a single pixel is off you will get a test failure so that you can check if you really meant for that change to happen
+
+^ But snapshot testing goes well beyond just snapshotting views into images. You can snapshot any kind of value into any kind of format.
+
+---
+
+# Snapshot Testing
+
+[.code-highlight: 0]
+```
+struct Diffing<Format> {
+  let diff: (Format, Format) -> (String, [XCTAttachment])?
+  let toData: (Format) -> Data
+  let fromData: (Data) -> Format
+}
+
+struct Snapshotting<Value, Format> {
+  let diffing: Diffing<Format>
+  let snapshot: (Value) -> Async<Format>
+  let pathExtension: String
+}
+```
+
+^ Stephen and I personally have experience snapshotting
+
+^ * URLRequests into strings so that you can verify that query params, headers and authorizations are added correctly
+
+^ * Server middleware into a string representation request-to-response lifecycle that shows the exact response that would be output from the server, along with its body
+
+^ * We even snapshot server middlewares into an image of what the website would be rendered to using `WKWebView`
+
+^ * And we have snapshot test animations by snapshotting them into gifs
+
+^ And users of our library have done even more interesting things, like the creator of a PDF library would snapshot his data structures into an actual PDF so that he has proof of what kind of documents his library produces.
 
 ---
 
@@ -1087,28 +1270,74 @@ struct Predicate<A> {
 [.code-highlight: 1-99]
 [.code-highlight: 1]
 [.code-highlight: 2]
-[.code-highlight: 3]
-[.code-highlight: 4]
+[.code-highlight: 3-4]
 [.code-highlight: 1-5]
 [.code-highlight: 7]
 [.code-highlight: 8]
 [.code-highlight: 9]
 [.code-highlight: 10]
-[.code-highlight: 7-11]
 [.code-highlight: 1-99]
 ```
-struct Diffing<Value> {
-  let diff: (Value, Value) -> (String, [XCTAttachment])?
-  let toData: (Value) -> Data
-  let fromData: (Data) -> Value
+struct Diffing<Format> {
+  let diff: (Format, Format) -> (String, [XCTAttachment])?
+  let toData: (Format) -> Data
+  let fromData: (Data) -> Format
 }
 
 struct Snapshotting<Value, Format> {
-  let diffing: Diffing<Value>
-  let snapshot: (Value) -> Format
+  let diffing: Diffing<Format>
+  let snapshot: (Value) -> Async<Format>
   let pathExtension: String
 }
 ```
+
+^ So snapshot testing can be super versatile
+
+^ And this is how we designed the libary. We have a type that represents the process for diffing a format. To construct this you have to fill in a few requirements. You have to describe how to take two values of the format, like two images or two strings, and determine if they are the same. If they are, you return nil, and otherwise you return a string with an error message and an array of XCTAttachments, both of which are displayed in Xcode.
+
+^ You also need to describe how to serialize the format value into data so that it can be saved to disk, and how to deserialize the data from disk so that it can be resurrected from disk.
+
+^ You can construct values of this thing to have notions of diffing images, diffing strings, and more.
+
+^ Once you have a few instances of diffing you can start to think about snapshotting. This type expresses the idea of values that can be snapshot into a particular format. First you provide the diffing instance you want to use to do diffs, then you provide a function that can turn your values into formats that can be diffed, and this needs to be done asynchronously because some values require time to be constructed, like web views. And finally you describe the path extension for the snapshot that is saved to disk, like png, html, json, or whatever 
+
+---
+
+# Snapshot Testing
+
+[.code-highlight: 1]
+[.code-highlight: 3]
+[.code-highlight: 5]
+[.code-highlight: 7]
+[.code-highlight: 9]
+[.code-highlight: 11]
+```
+assertSnapshot(matching: user, as: .dump)
+
+assertSnapshot(matching: user, as: .json)
+
+assertSnapshot(matching: request, as: .curl)
+
+assertSnapshot(matching: viewController, as: .image)
+
+assertSnapshot(matching: document, as: .pdf)
+
+assertSnapshot(matching: canvas, as: .gif(of: animation, duration: 1))
+```
+
+^ And once you have a snapshotting value you can start to use the `assertSnapshot` helper. You just say what you want to snapshot and what strategy you want to use, and the helper will take care of the rest
+
+^ you can snapshot any value, no matter what it is, as a dump, which just uses reflection to find all the properties inside the value to print them out
+
+^ but if your value is encodable you can snapshot as json
+
+^ you can also snapshot a URLRequest as a curl representation of the url, so that not only do you verify that the value was constructed correctly but you also get something that you can just copy and paste into terminal
+
+^ of course you can snapshot controllers and views into images
+
+^ but as we mentioned some people have made it possible to snapshot their own types into custom formats, like snapshotting a document data structure into a pdf
+
+^ and we have even done snapshot testing of animations into gifs
 
 ---
 
@@ -1118,6 +1347,12 @@ struct Snapshotting<Value, Format> {
 💔 map: ((A) -> B) -> (Snapshotting<A, Format>) -> Snapshotting<B, Format>
 ```
 
+^ And so if we were able to snapshot such a wide variety of values into many different formats, we might also hope it's a composable thing.
+
+^ Like if we can transform `A`s into `B`s could we also transform snapshottings of `A`s into snapshottings of `B`s?
+
+^ But unfortunately this is not possible, because like predicates, `Snapshotting` is also a contravariant type.
+
 ---
 
 # Snapshot Testing
@@ -1125,6 +1360,12 @@ struct Snapshotting<Value, Format> {
 ```
 😍 pullback: ((B) -> A) -> (Snapshotting<A, Format>) -> Snapshotting<B, Format>
 ```
+
+^ But snapshotting does support `pullback`, so we just have to flip our perspective. 
+
+^ If we can transform `B`s into `A`s then we can transform snapshottings of `A`s into `B`s. And although it may seem weird that the direction is flipped, this is the correct way it should be
+
+^ If we have a snapshot strategy on a specific type, we should be able to pull it back to a larger type by projecting out of that larger type and then snapshotting
 
 ---
 
@@ -1154,7 +1395,7 @@ let viewController: Snapshotting<UIViewController, UIImage> =
   view.pullback { $0.view }
 ```
 
-^ Here's how we can use it. Suppose we already have a snapshot strategy for `UIImage`'s in the `UIImage` format. Basically the strategy is responsible for serializing and de-serializing a `UIImage` into a PNG to be saved on disk, and it is responsible for doing a pixel-by-pixel diff on two `UIImage`s to figure out what is different about them. This strategy takes some actual work to implement so we aren't going to show it's implementation.
+^ For example, suppose we already have a snapshot strategy for `UIImage`'s in the `UIImage` format. Basically the strategy is responsible for serializing and de-serializing a `UIImage` into a PNG to be saved on disk, and it is responsible for doing a pixel-by-pixel diff on two `UIImage`s to figure out what is different about them. This strategy takes some actual work to implement so we aren't going to show it's implementation, but it's pretty straightforward.
 
 ^ But once we have that strategy, we can derive a bunch more strategies with very little work.
 
@@ -1172,9 +1413,19 @@ let viewController: Snapshotting<UIViewController, UIImage> =
 
 # App Architecture
 
+^ Ok, and one final example of composition in the wild outback of our zoo: application architecture
+
+^ If you have found any of the things discussed so far interesting, but perhaps not directly applicable to your day-to-day job, then this might perk you up a bit.
+
+^ What if we could apply all of these wild ideas of composition and breaking large problems into smaller ones to the domain of architecture?
+
 ---
 
 # Reducers
+
+^ And in fact we can, as long as we settle on a base unit of our architecture that is composable.
+
+^ Turns out there is something called a reducer that is a pretty popular way to structure applications.
 
 ---
 
@@ -1186,6 +1437,33 @@ struct Reducer<State, Action> {
 }
 ```
 
+^ In Swift, the shape of a reducer for an application could look like this
+
+^ It's a struct with two generics, one for the state that your application is currently in, and one for the set of actions that can be performed in your application
+
+^ It wraps a function, that takes an inout state and action. This represents the idea of an action coming into the system, like a user tapping on a button, and from that action we want to run some logic which will ultimately evolve the application's state to its next value. 
+
+^ Further, while executing that business logic we may need to perform some side effects, like fire off an API request or track some analytics, and rather than doing that directly in the reducer we return this effect value, which can be thought of as a publisher/signal/observable that goes out into the real world, executes some work, and feeds more actions back into the system
+
+^ You can totally build an entire application that is run off a single one of these things. just one big ole reducer
+
+---
+
+```
+func combine<State, Action>(
+  _ lhs: Reducer<State, Action>,
+  _ rhs: Reducer<State, Action>
+) -> Reducer<State, Action> {
+  ...
+}
+```
+
+^ But of course we wouldn't want to do that, so we would hope there are certain types of composition we could uncover.
+
+^ And indeed, reducers emit many of the kinds of compositions we've been studying.
+
+^ There's a combine function that takes two reducers and return a third. It simply runs the first reducer, then runs the next, and then merges the effects produced by both.
+
 ---
 
 # Reducers
@@ -1193,6 +1471,12 @@ struct Reducer<State, Action> {
 ```
 💔 map: ((S) -> T) -> (Reducer<S, Action>) -> Reducer<T, Action>
 ```
+
+^ And we'd hope there are more types of compositions, like maybe a `map`.
+
+^ If we have a transformation from state `S` to state `T` could we transform reducers on `S` to reducers on `T`.
+
+^ Well sadly, this is impossible to implement.
 
 ---
 
@@ -1202,6 +1486,12 @@ struct Reducer<State, Action> {
 💔 pullback: ((T) -> S) -> (Reducer<S, Action>) -> Reducer<T, Action>
 ```
 
+^ Even worse, our beloved pullback operator is also impossible to implement
+
+^ So if we flipped our arrow so that we were given a transformation from state `T` to state `S` we _still_ can't transform reducers on `S` to reducers on `T`
+
+^ Does that mean this type isn't as composable as the other ones?
+
 ---
 
 # Reducers
@@ -1209,6 +1499,30 @@ struct Reducer<State, Action> {
 ```
 😍 pullback: (WritableKeyPath<T, S>) -> (Reducer<S, Action>) -> Reducer<T, Action>
 ```
+
+^ Well, luckily i'm here to tell you that reducers do support a pullback operation, it just doesn't look quite like what we've seen so far
+
+^ It turns out that we can't pullback via a simple function, we need something a little more exotic
+
+^ We need a key path from state `T` to state `S`, and once we have that we can finally transform our `Reducer` on `S` to a reducer on `T`.
+
+^ In practice this means if you have a reducer that works on a lil piece of local state you can _pull it back_ to a reducer that works on a larger piece of state, provided you describe how to get and set local state in the global state
+
+---
+
+# Reducers
+
+```
+💔 (               (T) -> S ) -> (Reducer<S, Action>) -> Reducer<T, Action>
+
+😍 (WritableKeyPath<T,    S>) -> (Reducer<S, Action>) -> Reducer<T, Action>
+```
+
+^ We are seeing yet another exotic form of composition, where we can't even pullback along simple functions, we've gotta use key paths. Should we even allow that?
+
+^ Well yeah definitely, because all of the transformations we've performed in this talk don't intrinsically depend on the exact concept of function, but rather they only depend on the concept that we have some kind of "process" that moves us from type `A` to type `B`. could be a function, could be a key path, could be something else.
+
+^ And here I've used the nebulous term "process" again, but unfortunately without digging into the math that's all i can give you
 
 ---
 
@@ -1218,6 +1532,10 @@ struct Reducer<State, Action> {
 💔 map: ((A) -> B) -> (Reducer<State, A>) -> Reducer<State, B>
 ```
 
+^ But that isn't even the end of composition for reducers. If we are going to transform reducers by their state, we would hope we could do the same for their actions.
+
+^ You can't do it in the simple map way, this is impossible to implement
+
 ---
 
 # Reducers
@@ -1226,13 +1544,17 @@ struct Reducer<State, Action> {
 💔 pullback: ((B) -> A) -> (Reducer<State, A>) -> Reducer<State, B>
 ```
 
+^ Even the pullback is impossible to implement
+
 ---
 
 # Reducers
 
 ```
-💔 pullback: (???<B, A>) -> (Reducer<State, A>) -> Reducer<State, B>
+💔 pullback: (?????<B, A>) -> (Reducer<State, A>) -> Reducer<State, B>
 ```
+
+^ So the question is, is there something like a key path that we could use here to restore composability for reducers and actions?
 
 ---
 
@@ -1242,6 +1564,16 @@ struct Reducer<State, Action> {
 💔 pullback: (CasePath<B, A>) -> (Reducer<State, A>) -> Reducer<State, B>
 ```
 
+^ And it turns out there is, but it requires yet another concept
+
+^ If key paths are great for allowing us to abstract pick apart and analyze fields of a struct, then we would expect there should be some kind of similar tool for enums.
+
+^ And one can easily discover what the shape of this tool is, and we have called it `CasePath`, and it's the perfect tool for us to pick apart enums and analyze their cases in isolation
+
+^ That's all the time we have to talk about case paths, but suffice it to say once you have that concept you restore composability of reducers
+
+^ And these pullback operations are the key to modularity in application architecture. It says that if you have a reducer that works on a small bit of domain it can be _pulled back_ to work on a large domain. This means you can break down your mega app reducer into a bunch of tiny reducers, each of which lives in its own module, each module only builds the domain and dependencies it cares about, while stil leaving itself open to be pulled back and combined with a whole bunch of other reducers, thus reforming the mega app reducer.
+
 ---
 
 # Unifying composition
@@ -1250,44 +1582,67 @@ struct Reducer<State, Action> {
 
 ^ We seemingly have many different flavors of composition out there in the world, everything from adding a couple of integers together to zipping parsers together, to even pulling back reducers along key paths and case paths!
 
+---
 
+# Composition for the working programmer
 
 ^ But practically speaking, for you out in the audience that is just trying to make an app and trying to do it in the best way you can, what does this mean for you?
 
 ^ Well, if you've ever written a generic type or a generic function in your application or library, it is worth wondering if those constructions support these kinds of compositions.
 
-^ Does your type support `map` operation? If so, it's unique. Turns out a generic type can only support a single `map` operation.
+^ Next, does your type support combine two values of it into a third? This is the key to allowing yourself to break large, complex instances of your type down into smaller pieces that glue back together. Your type might even support multiple ways to combine, which means there's even more things to explore that we didn't get a chance to discuss. Like if you have to ways to combine your type, then how do those two ways interact with each other? For example integers have addition and multiplication, but we don't think of them as independent operations. They are intimately related via distribution, `a * (b + c) = a*b + a*c`.
+
+^ Does your type support `map` operation? If so, it's unique. Turns out a generic type can only support a single `map` operation. If it doesn't support `map`, then does it support `pullback`?
 
 ^ Next, does your type support a `zip` operation? This would mean that your construction supports the idea of many instances of it running in parallel, independent of each other, in such a way that you can collect their results into a tuple once they are finished. Even if you find a `zip` operation on your type you may not be done. Some types support multiple zip-like operations, like you can do normal zip on arrays or you could take all combinations of elements from the first array with the second. You can even do the same with streams, except there it's usually called `combineLatest`.
 
-^ Next, does your type support a `flatMap` operation? This would mean your construction supports the idea of.
+^ Next, does your type support a `flatMap` operation? This would mean your construction supports the idea of sequencing it's work. That is, you can run the construction to produce a result, then do some TODO
+
+---
+
+^ There is also significant inspiration to be had by looking at existing libraries and trying to find the compositions lurking in the shadows.
+
+^ The snapshot testing library that Stephen and I built is not the first snapshot testing library out there. We were directly inspired by the very famous snapshot testing library that Facebook made back in the day, which was then transfered to Uber for maintenance. 
+
+^ One thing we could have done was to simply port it to Swift since the library is still in Objective-C. Then we could have put a new coat of paint on it by making it "swifty", which would mean giving it better API names that take advantage of Swift's features.
+
+^ Then we could kick it up a notch by trying to abstract the library by introducing some protocols. This would allow 3rd parties to opt into the snapshotting machinery that we provide so that others can snapshot their own types, not just the ones we provide.
+
+^ And this is exactly what we did, and it worked well enough, but it lacked composition. As we have seen, there is definitely the concept of taking a snapshot strategy on a particular type, and then pulling it back so that it works on a completely different type. In fact, the library ships with about 20 snapshot strategies, and every single one of them is a pullback of one of 2 strategies: an image strategy and a string strategy.
+
+^ So we scrapped the protocols and provided the interface that you saw before. That revealed to us that there was a `pullback` operation lurking in the shadows that we just couldn't see before because protocols do not allow for that.
+
+---
+
+## [fit] What We Talk About When We Talk About Composition
+
+![](pf-square-dark.png)
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+# [https://www.pointfree.co](https://www.pointfree.co)
+
+^ So this is what the everyday, working programmer can take away from these topics. You are already creating types and functions in order to solve your problems, but if take a new look at those constructions with an eye on composition you may uncover some new tools that you can use. You may be able to break your problems down into even smaller, more understandable units, and you may find ways to apply your solutions to even more problems than you first imagined.
+
+^ So that's the talk. If you find this kind of stuff interesting you might also like to checkout Point-Free, and educational video series. In fact, this talk is really just a fevered re-telling of many things we've discussed in Point-Free, we just haven't yet explicitly drawn a line to connect all of the seemingly disparate topics.
+
 
 
 
 <!-- 
+ TODO
 
 Animations
 diagram drawing
 
- -->
+protocols are not transformable
 
-
-
----
-
-<!-- TODO
 
 even application architecture can be broken down into units of composition. we can think of an application the same way we would think of breakdown a complex random generator or complex parser or complex snapshot strategy into simpler units.
 
 each time composition seemingly breaks and we recover it we come up with something more exotic
 
  -->
-
----
-
-# Unifying composition
-
----
 
 
 
