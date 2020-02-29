@@ -1267,16 +1267,6 @@ struct Snapshotting<Value, Format> {
 
 # Snapshot Testing
 
-[.code-highlight: 1-99]
-[.code-highlight: 1]
-[.code-highlight: 2]
-[.code-highlight: 3-4]
-[.code-highlight: 1-5]
-[.code-highlight: 7]
-[.code-highlight: 8]
-[.code-highlight: 9]
-[.code-highlight: 10]
-[.code-highlight: 1-99]
 ```
 struct Diffing<Format> {
   let diff: (Format, Format) -> (String, [XCTAttachment])?
@@ -1293,13 +1283,7 @@ struct Snapshotting<Value, Format> {
 
 ^ So snapshot testing can be super versatile
 
-^ And this is how we designed the libary. We have a type that represents the process for diffing a format. To construct this you have to fill in a few requirements. You have to describe how to take two values of the format, like two images or two strings, and determine if they are the same. If they are, you return nil, and otherwise you return a string with an error message and an array of XCTAttachments, both of which are displayed in Xcode.
-
-^ You also need to describe how to serialize the format value into data so that it can be saved to disk, and how to deserialize the data from disk so that it can be resurrected from disk.
-
-^ You can construct values of this thing to have notions of diffing images, diffing strings, and more.
-
-^ Once you have a few instances of diffing you can start to think about snapshotting. This type expresses the idea of values that can be snapshot into a particular format. First you provide the diffing instance you want to use to do diffs, then you provide a function that can turn your values into formats that can be diffed, and this needs to be done asynchronously because some values require time to be constructed, like web views. And finally you describe the path extension for the snapshot that is saved to disk, like png, html, json, or whatever 
+^ And this is how we designed the libary. We don't have time to discuss the API in detail, but suffice it to say you construct values of these types to describe how you want to turn your values into some format that can be diffed, and then describe how to do the diffing.
 
 ---
 
@@ -1425,7 +1409,7 @@ let viewController: Snapshotting<UIViewController, UIImage> =
 
 ^ And in fact we can, as long as we settle on a base unit of our architecture that is composable.
 
-^ Turns out there is something called a reducer that is a pretty popular way to structure applications.
+^ Turns out there is something called a reducer that is a pretty popular way to structure applications, and it is super composable.
 
 ---
 
