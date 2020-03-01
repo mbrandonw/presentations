@@ -37,13 +37,13 @@ mbw234@gmail.com
 
 ^ And that's a bummer because the word seems to carry a lot of weight in programming communities. As soon as someone mentions that something has composability it has somehow been blessed so that everyone knows it must be really powerful.
 
-^ It's strange that programmers don't try to settle on an accepted definition of this term. After all most everything they do needs to be well-defined because the compiler needs to be able to understand what they are trying to express. Yet a word like composition is thrown around and everyone has their own personal feeling of what it means
+^ so it's strange that programmers don't try to settle on an accepted definition of this term. After all most everything they do needs to be well-defined because the compiler needs to be able to understand what they are trying to express. Yet a word like composition is thrown around and everyone has their own personal feeling of what it means
 
 ---
 
 # What is composition?
 
-^ So, in this talk we will first we will try to formulate a definition of composition. This definition should encompass all the examples you already think about when you think about composition, but also maybe will open your eyes to other types of composition that you hadn't yet considered.
+^ So, in this talk we will first try to formulate a definition of composition. This definition should encompass all the examples you already think about when you think about composition, but also maybe will open your eyes to other types of composition that you hadn't yet considered.
 
 ^ And we say we are going to *try* to formulate this because it's difficult to do properly without the formalism of mathematics. but i want to try to expose you to as much mathematics as possible without you knowing it's math. And even though it's very mathematically inspired, we will also see that when it comes to programming, composition exists on a spectrum, and the power of a particular type of composition largely depends where on the spectrum it sits.
 
@@ -61,7 +61,7 @@ mbw234@gmail.com
 
 ^ Well already we're in a bit of trouble because we are using two terms in this definition that themselves have not be defined: process and objects.
 
-^ However we're going to lean on our experience and intuition to tell ourselves what those things mean. To me process just means function, but to you it may mean some other things.
+^ However we're going to lean on our experience and intuition to tell ourselves what those things mean. To me process just means function, but to you it may mean some other things. we'll see a few different kinds of processes.
 
 ---
 
@@ -214,7 +214,7 @@ class RecommendationsManager {
 
 ^ And a class that encapsulated the behavior of searching for points of interest
 
-^ And from those we wanted to derive something more domain specific for our application, which is a class that encapsulates the behavior of getting a person's location and searching for some recommendations nearby.
+^ And from those we wanted to derive something more domain specific for our application, which is a class that encapsulates the behavior of getting a person's recommendations near where they are right now.
 
 ^ If our minds only thought of things in terms of inheritance we may be able to convince ourselves that we could use inheritance so that we take a base class and enchance its functionality. So we inherit from the location manager to enhance its functionality with the idea of being able to search for points of interest, and then we inherit from that to enchance its functionality with the idea of being able to layer in user recomendations.
 
@@ -485,11 +485,10 @@ zip: (Stream<A>, Stream<B>) -> Stream<(A, B)>
 
 # Composition
 
-## A process that combines two objects of a type into a third of the same type.
+## A process that combines two objects of the **same type** into a third of the **same type**.
 
 [.code-highlight: 1-99]
-[.code-highlight: 2-3]
-[.code-highlight: 5]
+[.code-highlight: 2-3, 5]
 [.code-highlight: 1-99]
 ```
 zip: (
@@ -707,7 +706,7 @@ flatten: M<M<A>> -> M<A>
 
 ^ It may be hard to see this right now because pretty much everything we've considered so far exists in the standard library, and that may lead us to believe that in order to get benefit of composability it must be handed down to us from the core Swift team.
 
-^ To convince ourselves that composition is bountiful out in the world, let's consider a whole bunch of examples that do not ship with the standard library, but are imminently useful examples
+^ To convince ourselves that composition is bountiful out in the world, let's consider a whole bunch of examples that do not ship with the standard library, but are imminently useful 
 
 ---
 
@@ -731,7 +730,7 @@ struct Gen<A> {
 }
 ```
 
-^ But at its essence, a random generator is something that takes a black box mechanism for generating randomness, which is literally just something that produces an integer from the huge space of UInt64, and from that black box we will produce a random `A` value.
+^ But at its essence, a random generator is a function that takes a base unit of randomness, in this case a black box that can generate random values in the huge space of `UInt64`, and from that black box we will produce a random `A` value.
 
 ^ We are using `inout` because this black box is changed internally everytime we ask it to give us a `UInt64`
 
@@ -779,14 +778,9 @@ int.map(ordinal) // 5th, 3rd, 1st
 # Random Number Generators
 
 [.code-highlight: 1]
-[.code-highlight: 3-5]
-[.code-highlight: 7-8]
+[.code-highlight: 3-4]
 ```
 zip: (Gen<A>, Gen<B>) -> Gen<(A, B)>
-
-let char: Gen<Character>
-let int: Gen<Int>
-zip(char, int).map(String.init(repeating:count:))
 
 let name: Gen<String>
 let user = zip(int, name).map(User.init(id:name))
@@ -796,9 +790,7 @@ let user = zip(int, name).map(User.init(id:name))
 
 ^ If you pair this with `map` you get all types of fun stuff.
 
-^ Like if you had a random character generator and a random int generator, you could zip them together and then hand those values off to the `String.init(repeating:count:)` initializer to instantly get the notion of a repeating randomly sized string of a random character
-
-^ If you further had a random generator of names, you could zip the int generator and name generator and map it with a user initializer to instantly get the notion of a random user model
+^ Like if you had a random int generator and a random generator of names, you could zip the int generator and name generator and map it with a user initializer to instantly get the notion of a random user model
 
 ---
 
@@ -1004,7 +996,7 @@ let location: Parser<Location> = oneOf(
  )
 ```
 
-^ Further, parser support the notion of combining two parsers into a single one, and it's called the one of parser.
+^ Further, parsers support the notion of combining two parsers into a single one, and it's called the one of parser.
 
 ^ We simply run the first parser on the input string, if it succeeds we take that result, and otherwise we run the second parser
 
@@ -1171,7 +1163,7 @@ struct Predicate<A> {
 
 ^ Notice that the direction flipped. On one side we have a `B` to `A` direction, and on the other side we have an `A` to `B` direction.
 
-^ So if I had a predicate on integers, like say "is even", then I could _pull it back_ to work on users by project a user to its id. And then I'd have a predicate on users that checks if their user id is even.
+^ So if I had a predicate on integers, like say "is even", then I could _pull it back_ to work on users by projecting a user into its id. And then I'd have a predicate on users that checks if their user id is even.
 
 ^ This is a whole new type of composition that we haven't yet considered. It's closely related to `map`, yet different.
 
@@ -1421,7 +1413,7 @@ struct Reducer<State, Action> {
 }
 ```
 
-^ In Swift, the shape of a reducer for an application could look like this
+^ The shape of a reducer for an application could look like this
 
 ^ It's a struct with two generics, one for the state that your application is currently in, and one for the set of actions that can be performed in your application
 
@@ -1497,7 +1489,7 @@ func combine<State, Action>(
 # Reducers
 
 ```
-💔 (               (T) -> S ) -> (Reducer<S, Action>) -> Reducer<T, Action>
+💔                ((T) -> S ) -> (Reducer<S, Action>) -> Reducer<T, Action>
 
 😍 (WritableKeyPath<T,    S>) -> (Reducer<S, Action>) -> Reducer<T, Action>
 ```
@@ -1535,6 +1527,18 @@ func combine<State, Action>(
 # Reducers
 
 ```
+💔 pullback: (WriteableKeyPath<B, A>) -> (Reducer<State, A>) -> Reducer<State, B>
+```
+
+^ Even doing a pullback along a key path isn't quote right! it's possible to implement, but it can be shown that it isn't very useful.
+
+^ so what gives??
+
+---
+
+# Reducers
+
+```
 💔 pullback: (?????<B, A>) -> (Reducer<State, A>) -> Reducer<State, B>
 ```
 
@@ -1550,7 +1554,7 @@ func combine<State, Action>(
 
 ^ And it turns out there is, but it requires yet another concept
 
-^ If key paths are great for allowing us to abstract pick apart and analyze fields of a struct, then we would expect there should be some kind of similar tool for enums.
+^ If key paths are great for allowing us to abstractly pick apart and analyze fields of a struct, then we would expect there should be some kind of similar tool for enums.
 
 ^ And one can easily discover what the shape of this tool is, and we have called it `CasePath`, and it's the perfect tool for us to pick apart enums and analyze their cases in isolation
 
@@ -1564,7 +1568,9 @@ func combine<State, Action>(
 
 ^ So I hope that now you can see there is a really expansive world of composability out there.
 
-^ We seemingly have many different flavors of composition out there in the world, everything from adding a couple of integers together to zipping parsers together, to even pulling back reducers along key paths and case paths!
+^ We seemingly have many different flavors of composition out there in the world, everything from adding a couple of integers together to zipping parsers together, to even pulling back reducers along key paths and case paths
+
+^ But they are all unified under the umbrella of a single,strict definition of composition, which is the act of combining two objects of the same type into a third object of the same type.
 
 ---
 
@@ -1574,15 +1580,18 @@ func combine<State, Action>(
 
 ^ Well, if you've ever written a generic type or a generic function in your application or library, it is worth wondering if those constructions support these kinds of compositions.
 
-^ Next, does your type support combine two values of it into a third? This is the key to allowing yourself to break large, complex instances of your type down into smaller pieces that glue back together. Your type might even support multiple ways to combine, which means there's even more things to explore that we didn't get a chance to discuss. Like if you have to ways to combine your type, then how do those two ways interact with each other? For example integers have addition and multiplication, but we don't think of them as independent operations. They are intimately related via distribution, `a * (b + c) = a*b + a*c`.
+^ first, does your type support combine two values of it into a third? This is the key to allowing yourself to break large, complex instances of your type down into smaller pieces that glue back together. Your type might even support multiple ways to combine, which means there's even more things to explore that we didn't get a chance to discuss. Like if you have to ways to combine your type, then how do those two ways interact with each other? For example integers have addition and multiplication, but we don't think of them as independent operations. They are intimately related via distribution, `a * (b + c) = a*b + a*c`.
 
-^ Does your type support `map` operation? If so, it's unique. Turns out a generic type can only support a single `map` operation. If it doesn't support `map`, then does it support `pullback`?
+^ next, does your type support `map` operation? If so, it's unique. Turns out a generic type can only support a single `map` operation. If it doesn't support `map`, then does it support `pullback`?
 
-^ Next, does your type support a `zip` operation? This would mean that your construction supports the idea of many instances of it running in parallel, independent of each other, in such a way that you can collect their results into a tuple once they are finished. Even if you find a `zip` operation on your type you may not be done. Some types support multiple zip-like operations, like you can do normal zip on arrays or you could take all combinations of elements from the first array with the second. You can even do the same with streams, except there it's usually called `combineLatest`.
+^ Next, does your type support a `zip` operation? This would mean that your construction supports the idea of many instances of it running in parallel, independent of each other, in such a way that you can collect their results into a tuple once they are finished. Even if you find a `zip` operation on your type you may not be done. Some types support multiple zip-like operations, for example streams can be zipped in the standard way of waiting until both streams emit a value and then pairing the values. but you can also zip them with the "combineLatest" operator, which gives you the latest value from each stream anytime one of them emits a value.
 
-^ Next, does your type support a `flatMap` operation? This would mean your construction supports the idea of sequencing it's work. That is, you can run the construction to produce a result, then do some TODO
+^ finally, does your type support a `flatMap` operation? This would mean your construction supports the idea of sequencing it's work. that is, you can break down a large task into many small ones that feed off the result of the previous task.
 
 ---
+
+# Composition for the working programmer
+
 
 ^ There is also significant inspiration to be had by looking at existing libraries and trying to find the compositions lurking in the shadows.
 
@@ -1604,45 +1613,8 @@ func combine<State, Action>(
 
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
-# [https://www.pointfree.co](https://www.pointfree.co)
+# https://www.pointfree.co
 
 ^ So this is what the everyday, working programmer can take away from these topics. You are already creating types and functions in order to solve your problems, but if take a new look at those constructions with an eye on composition you may uncover some new tools that you can use. You may be able to break your problems down into even smaller, more understandable units, and you may find ways to apply your solutions to even more problems than you first imagined.
 
 ^ So that's the talk. If you find this kind of stuff interesting you might also like to checkout Point-Free, and educational video series. In fact, this talk is really just a fevered re-telling of many things we've discussed in Point-Free, we just haven't yet explicitly drawn a line to connect all of the seemingly disparate topics.
-
-
-
-
-<!-- 
- TODO
-
-Animations
-diagram drawing
-
-protocols are not transformable
-
-
-even application architecture can be broken down into units of composition. we can think of an application the same way we would think of breakdown a complex random generator or complex parser or complex snapshot strategy into simpler units.
-
-each time composition seemingly breaks and we recover it we come up with something more exotic
-
- -->
-
-
-
----
-
-# References
-
-* Notions of Computation as Monoids
-
-
-
-
-<!-- 
-
-strings
-ints
-
-
- -->
