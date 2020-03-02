@@ -10,7 +10,7 @@ twitter.com/mbrandonw
 
 mbw234@gmail.com
 
-^ Hi there, my name is Brandon and thanks for having me. I'm very rarely on the west coast, i live in brooklyn, but i happen to be living in LA for the winter and i'm really glad that I was able to make it to this meet up while in the area. i've always heard very good things about it, and thanks to everyone for coming.
+^ Hi there, my name is Brandon and thanks for having me. Today we'll be talking about composition.
 
 ^ Here is some contact information for me in case you want to reach out
 
@@ -23,21 +23,19 @@ mbw234@gmail.com
 
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
-^ and if you find any of what I talk about tonight interesting then you may also be interested to check out this site here, Point-Free, a video series where my co-host Stephen Celis and I talk about these kinds of things and a lot more.
+^ If you don't know anything about me, I do consulting with companies under my company Point-Free, which I run with my collaborator Stephen Celis. We also run an educational video series here, and you might want to check it out if you find any of what i'm going to talk about tonight interesting.
 
 ---
 
 # What is composition?
 
-
-^ We have a lot to cover, so let's get into it. Today we will be discussing composition. 
-
+^ We have a lot to cover, so let's get into it.
 
 ^ Composition is one of those words that come up quite a bit in programming, but rarely do we hear a succinct, rigorous definition of the term.
 
 ^ And that's a bummer because the word seems to carry a lot of weight in programming communities. As soon as someone mentions that something has composability it has somehow been blessed so that everyone knows it must be really powerful.
 
-^ so it's strange that programmers don't try to settle on an accepted definition of this term. After all most everything they do needs to be well-defined because the compiler needs to be able to understand what they are trying to express. Yet a word like composition is thrown around and everyone has their own personal feeling of what it means
+^ so it's strange that programmers don't try to settle on an accepted definition of this term. After all most of their time is trying to describe in clearest terms possible what the compiler or computer should do. Yet a word like composition is thrown around and everyone has their own personal feeling of what it means
 
 ---
 
@@ -1424,6 +1422,8 @@ struct Reducer<State, Action> {
 ^ You can totally build an entire application that is run off a single one of these things. just one big ole reducer
 
 ---
+
+# Reducers
 
 ```
 func combine<State, Action>(
