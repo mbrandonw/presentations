@@ -513,7 +513,7 @@ let xs: [Int]
 xs.map(String.init)
 
 let y: Int?
-x.map(String.init)
+y.map(String.init)
 
 let zs: [K: Int]
 zs.mapValues(String.init)
@@ -638,7 +638,7 @@ let xs: [Int]
 xs.flatMap { [$0, $0 * $0] }
 
 let y: Int?
-x.flatMap { $0.isMultiple(of: 2) ? $0 * $0 : nil }
+y.flatMap { $0.isMultiple(of: 2) ? $0 * $0 : nil }
 
 let r: Result<Int, Error>
 r.flatMap { 
