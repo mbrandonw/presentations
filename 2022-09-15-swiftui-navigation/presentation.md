@@ -136,7 +136,7 @@ func sheet<Item, Content>(
 
 ^ Sheets can be shown with the following API. It's a view modifier, and you hand a binding of an optional value to it. 
 
-^ It detects when the binding flips to a non-`nil` value, and with that honest value invokes the `content` closure to get a view for the sheet, and does the work of animating the view onto the screen from the bottom of the screen.
+^ It detects when the binding flips to a non-`nil` value, and with that honest value invokes the `content` closure to get a view for the sheet, which means the view can depend on the data, and then does the work of animating the view onto the screen from the bottom of the screen.
 
 ^ Further, once it detects that the binding flips back to `nil`, it automatically dismisses the sheet.
 
@@ -194,6 +194,10 @@ func fullScreenCover<Item, Content>(
 ) -> some View
 ```
 
+^ and it turns out that a lot of navigation APIs in SwiftUI follow this form.
+
+^ here's what it looks like to show a full screen cover. again it takes a binding of an optional state so that when it detects the state becomes non-nil the view is presented, and then once the state goes `nil` it is dismissed.
+
 ---
 
 ```
@@ -202,6 +206,12 @@ func popover<Item, Content>(
     content: (Item) -> Content
 ) -> some View
 ```
+
+^ popovers also follow this model.
+
+^ again it takes a binding of an optional and simply detects when the binding becomes non-nil and nil so that it can present and dismiss.
+
+^ if i quickly cycle between these three APIs we will see they are basically identically except for their name
 
 ---
 
@@ -212,16 +222,9 @@ func bottomMenu<Item, Content>(
 ) -> some View
 ```
 
+^ further, your _own_ UI components can and probably should follow this pattern.
 
----
-
-```
-func toast<Item, Content>(
-    item: Binding<Item?>,
-    content: (Item) -> Content
-) -> some View
-```
-
+^ so you wanted your own little bottom menu UI that pops up at the bottom of the screen. then a great way to model the showing and hiding of that content is through a binding of an optional value.
 
 ---
 
@@ -232,16 +235,12 @@ func sheet<Content>(
 ) -> some View
 ```
 
----
-
 ```
 func fullScreenCover<Content>(
     isPresented: Binding<Bool>,
     content: @escaping () -> Content
 ) -> some View
 ```
-
----
 
 ```
 func popover<Content>(
@@ -250,7 +249,274 @@ func popover<Content>(
 ) -> some View
 ```
 
+^ It's worth mentioning that there are alternate versions of the sheet, full screen cover and popover APIs that take bindings of booleans. 
 
+^ this is for situations where the content of the thing being presented is static, meaning it doesn't need to depend on dynamic data that comes into existence.
+
+^ and this still fits into our mental model of navigation as a mode change where data comes into existence because a boolean can represent the absence or presence of data, it's just that there isn't really anything interesting about the data.
+
+
+---
+
+```
+func sheet<Content>(
+    isPresented: Binding<Void?)>,
+    content: @escaping () -> Content
+) -> some View
+```
+
+```
+func fullScreenCover<Content>(
+    isPresented: Binding<Void?)>,
+    content: @escaping () -> Content
+) -> some View
+```
+
+```
+func popover<Content>(
+    isPresented: Binding<Void?)>,
+    content: @escaping () -> Content
+) -> some View
+```
+
+^ in fact, we can think of booleans as just being optional Void values, afterall both types have exactly two values just with different labels.
+
+^ and thinking of things in that way we can think of the boolean binding APIs as being equivalent to using the optional binding style but just with an optional void value.
+
+^ so, at the end of the day, all of this really is modeling navigation as a mode change when data comes into existence or out of existence. and it can be very powerful to be able to model so many different types of animation in such a consistent manner.
+
+---
+
+# Deep-linking
+## as easy as 1-2-3
+
+^ but the benefits to thinking of navigation in this way far exceed just simple aesthetics of API design.
+
+^ for example, deep linking
+
+^ just so that we are all on the same page, when I say "deep linking" i mean the ability to instantly open the application in a particular state. deep linking is most often associated with _URL_ deep linking where you map certain known URLs to parts of your application, but the idea is far more general than that.
+
+^ deep linking can also be important for handling push notifications, where if a specific notification is opened you may want to put your app in a very specific state, such as being drilled down to a screen with a popover open.
+
+^ it can also be useful for state restoration where you record the state of the application when it is closed so that next time you open it up you can restore the UI to how it was last time.
+
+^ when navigation is driven off of state, then deep linking basically comes for free with no additional work.
+
+---
+
+# Step 1
+### Define the model
+
+<br>
+
+```
+class Model: ObservableObject {
+  @Published var child: ChildModel?
+}
+class ChildModel: Identifiable, ObservableObject {
+  @Published var popoverIsPresented: Bool
+}
+```
+
+^ let's quickly go through the steps. the first two steps are just things you have to do no matter what, whether you support deep linking or not.
+
+^ you will define some observable objects that hold the state, logic and behavior of your features. 
+
+^ here i've modeled a kind of "parent" feature that holds onto an optional "child" feature. the optionality of the child model is what determines whether or not we are currently navigated to the child feature.
+
+^ and in the child domaion we hold a boolean that further determines if a popover is being shown.
+
+^ all of this code is of course very basic and not very real world oriented, but these are the basic shapes of problems you would encounter in the real world.
+
+---
+
+# Step 2
+### Define the view
+
+[.code-highlight: all]
+[.code-highlight: 2]
+[.code-highlight: 5]
+[.code-highlight: 6-8]
+```
+struct ContentView: View {
+  @StateObject private var model = Model()
+
+  var body: some View {
+    Button("Show sheet") { self.model.child = ChildModel() }
+      .sheet(item: self.$model.child) { childModel in
+        ChildView(model: childModel)
+      }
+  }
+}
+```
+
+^ then we define the views for the parent and child features using the models we defined before.
+
+^ for example, in the parent feature we can hold onto a state object for the model
+
+^ and then when a button is pressed we can instantiate the child model to indicate that we want to navigate to the child feature
+
+^ and we can handle that navigation even by using the `.sheet` view modifier to listen to when the child mode becomes non-nil, and when it does display a `ChildView`
+
+^ and that `ChildView` is implemented in basically the same way...
+
+---
+
+# Step 2
+### Define the view
+
+[.code-highlight: all]
+[.code-highlight: 2]
+[.code-highlight: 5]
+[.code-highlight: 6-8]
+```
+struct ChildView: View {
+  @ObservedObject var model: ChildModel
+
+  var body: some View {
+    Button("Show popover") { self.model.popoverIsPresented = true }
+      .popover(isPresented: self.$model.popoverIsPresented) {
+        Text("Hello from popover!")
+      }
+  }
+}
+```
+
+^ where we hold onto the child model
+
+^ have a button to flip its boolean to true in order to activate a navigation event
+
+^ and then listen to that boolean in order to show a popover
+
+---
+
+# Step 3
+### Construct state to deep link
+
+```
+ContentView(
+  model: Model(
+    child: ChildModel(
+      popoverIsPresented: true
+    )
+  )
+)
+```
+
+^ and then the final step to deep link into a very particular state of the application, and the thing we basically get for free by properly modeling navigation as state:
+
+^ we can just construct a piece of state that represents where we want to navigate
+
+^ thanks to the fact that the sheet and popover and driven off of this state it all just magically works. swiftui detects that the `childModel` is non-nil and so slides up a sheet, and then it detects that the boolean is `true` and so shows a popover
+
+---
+
+# Deep linking
+## Demo
+
+^ let's demo this real quick.
+
+^ i have a project with all of this code already written, as well as a few small additional details that i'm omitting in order to not clutter what we are talking about here
+
+^ go to SheetThenPopoverView and demo
+
+---
+
+# Sheets, 
+# covers,
+# & popovers
+
+^ and so we have no seen that sheets, full screen covers and popovers all have very similar APIs.
+
+^ they all require you to hand it a binding of some optional data so that the navigation can be driven off of state
+
+^ technically they also have a variation that takes a binding of a boolean, but as we saw a moment ago that is really just a special case of the optinal binding style.
+
+---
+
+# Navigation links
+
+^ and that now brings us to navigation links, which is the thing that probably everybody really thinks of when they think of navigation
+
+^ considering that all other forms of navigation encountered so far were easily expressible with bindings of optional state, we might hope that navigation links worked the same
+
+---
+
+# Navigation odd duck 🦆
+
+[.code-highlight: all]
+[.code-highlight: 2]
+[.code-highlight: 3]
+[.code-highlight: 8]
+[.code-highlight: 9]
+[.code-highlight: 10]
+```
+NavigationLink(
+  isActive: Binding<Bool>,
+  destination: () -> View, 
+  label: () -> View
+)
+
+NavigationLink(
+  tag: Hashable, 
+  selection: Binding<Hashable?>, 
+  destination: () -> View, 
+  label: () -> View
+)
+```
+
+^ Well, unfortunately that is not the case, and in my opinion is one of the reasons why navigation links seemed so difficult to use since SwiftUI's inception.
+
+^ there is one API that will seem familiar to us, and that is the `isActive` initializer that accepts a binding of a boolean. the idea of this state-driven API is that the link will listen for when the boolean becomes `true`, and when it detects that it will perform the drill down animation to the destination view.
+
+^ so that allows us to drive navigation off of boolean state.
+
+^ however, the API for driving navigtion off of optional state looks very strange.
+
+^ it takes something called a tag, which is some hashable data. it's intended to be some kind of identifier for the destination you want to navigate to. for example, if you were capable of navigating to a user screen you might use an optional user id for the tag.
+
+^ then it takes a binding of some optional hashable data. this what drives the navigation. it listens for when the binding's wrapped value becomes non-nil, and when it does cross references it with the tag, and if those two things equal, it triggers the drill down to the destination.
+
+---
+
+# [fit] What NavigationLink could have been
+
+```
+NavigationLink(
+  item: Binding<Item?>,
+  destination: (Item) -> View, 
+  label: () -> View
+)
+```
+
+---
+
+```
+NavigationLink(
+  item: Binding<Item?>,
+  destination: (Item) -> View, 
+  label: () -> View
+)
+
+func sheet<Content>(
+    item: Binding<Item?)>,
+    content: @escaping (Item) -> Content
+) -> some View
+
+func fullScreenCover<Content>(
+    item: Binding<Item?)>,
+    content: @escaping (Item) -> Content
+) -> some View
+
+func popover<Content>(
+    item: Binding<Item?)>,
+    content: @escaping (Item) -> Content
+) -> some View
+```
+
+---
+
+# Destination coupling
 
 
 
@@ -263,3 +529,25 @@ func popover<Content>(
 ---
 
 # URL routing
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

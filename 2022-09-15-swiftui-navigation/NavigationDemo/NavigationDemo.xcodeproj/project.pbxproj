@@ -14,6 +14,7 @@
 		CA1D281728C1334F0015B019 /* NavigationDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1D281628C1334F0015B019 /* NavigationDemoTests.swift */; };
 		CA1D282128C1334F0015B019 /* NavigationDemoUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1D282028C1334F0015B019 /* NavigationDemoUITests.swift */; };
 		CA1D282328C1334F0015B019 /* NavigationDemoUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1D282228C1334F0015B019 /* NavigationDemoUITestsLaunchTests.swift */; };
+		CA1D283028C6BFE30015B019 /* SheetThenPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1D282F28C6BFE30015B019 /* SheetThenPopover.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +45,7 @@
 		CA1D281C28C1334F0015B019 /* NavigationDemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NavigationDemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA1D282028C1334F0015B019 /* NavigationDemoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationDemoUITests.swift; sourceTree = "<group>"; };
 		CA1D282228C1334F0015B019 /* NavigationDemoUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationDemoUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		CA1D282F28C6BFE30015B019 /* SheetThenPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetThenPopover.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,8 +96,9 @@
 		CA1D280428C1334D0015B019 /* NavigationDemo */ = {
 			isa = PBXGroup;
 			children = (
-				CA1D280528C1334D0015B019 /* NavigationDemoApp.swift */,
 				CA1D280728C1334D0015B019 /* ContentView.swift */,
+				CA1D280528C1334D0015B019 /* NavigationDemoApp.swift */,
+				CA1D282F28C6BFE30015B019 /* SheetThenPopover.swift */,
 				CA1D280928C1334E0015B019 /* Assets.xcassets */,
 				CA1D280B28C1334E0015B019 /* Preview Content */,
 			);
@@ -259,6 +262,7 @@
 			files = (
 				CA1D280828C1334D0015B019 /* ContentView.swift in Sources */,
 				CA1D280628C1334D0015B019 /* NavigationDemoApp.swift in Sources */,
+				CA1D283028C6BFE30015B019 /* SheetThenPopover.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
