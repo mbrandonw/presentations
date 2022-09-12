@@ -1,6 +1,6 @@
 import SwiftUI
 
-enum SheetThenPopoverView {
+enum DrillDownThenSheetThenPopover {
   class Model: ObservableObject {
     @Published var child: ChildModel?
     init(child: ChildModel? = nil) {
