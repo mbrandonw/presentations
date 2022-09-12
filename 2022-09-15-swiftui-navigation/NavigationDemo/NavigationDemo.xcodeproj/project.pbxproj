@@ -7,16 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CA1D280628C1334D0015B019 /* NavigationDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1D280528C1334D0015B019 /* NavigationDemoApp.swift */; };
+		CA1D280628C1334D0015B019 /* 0-App.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1D280528C1334D0015B019 /* 0-App.swift */; };
 		CA1D280828C1334D0015B019 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1D280728C1334D0015B019 /* ContentView.swift */; };
 		CA1D280A28C1334E0015B019 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA1D280928C1334E0015B019 /* Assets.xcassets */; };
 		CA1D280D28C1334E0015B019 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA1D280C28C1334E0015B019 /* Preview Assets.xcassets */; };
 		CA1D281728C1334F0015B019 /* NavigationDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1D281628C1334F0015B019 /* NavigationDemoTests.swift */; };
 		CA1D282128C1334F0015B019 /* NavigationDemoUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1D282028C1334F0015B019 /* NavigationDemoUITests.swift */; };
 		CA1D282328C1334F0015B019 /* NavigationDemoUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1D282228C1334F0015B019 /* NavigationDemoUITestsLaunchTests.swift */; };
-		CA1D283028C6BFE30015B019 /* SheetThenPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1D282F28C6BFE30015B019 /* SheetThenPopover.swift */; };
-		CAE104A428CF8E780036FBB7 /* DrillDownThenSheetThenPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE104A328CF8E780036FBB7 /* DrillDownThenSheetThenPopover.swift */; };
+		CA1D283028C6BFE30015B019 /* 1-SheetThenPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1D282F28C6BFE30015B019 /* 1-SheetThenPopover.swift */; };
+		CAE104A428CF8E780036FBB7 /* 2-DrillDownThenSheetThenPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE104A328CF8E780036FBB7 /* 2-DrillDownThenSheetThenPopover.swift */; };
 		CAE104A628CF8E930036FBB7 /* Internal.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE104A528CF8E930036FBB7 /* Internal.swift */; };
+		CAE104A928CF9D2B0036FBB7 /* NestedDrillDown.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE104A828CF9D2B0036FBB7 /* NestedDrillDown.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,7 +39,7 @@
 
 /* Begin PBXFileReference section */
 		CA1D280228C1334D0015B019 /* NavigationDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NavigationDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		CA1D280528C1334D0015B019 /* NavigationDemoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationDemoApp.swift; sourceTree = "<group>"; };
+		CA1D280528C1334D0015B019 /* 0-App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "0-App.swift"; sourceTree = "<group>"; };
 		CA1D280728C1334D0015B019 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		CA1D280928C1334E0015B019 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CA1D280C28C1334E0015B019 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -47,9 +48,10 @@
 		CA1D281C28C1334F0015B019 /* NavigationDemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NavigationDemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA1D282028C1334F0015B019 /* NavigationDemoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationDemoUITests.swift; sourceTree = "<group>"; };
 		CA1D282228C1334F0015B019 /* NavigationDemoUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationDemoUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		CA1D282F28C6BFE30015B019 /* SheetThenPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetThenPopover.swift; sourceTree = "<group>"; };
-		CAE104A328CF8E780036FBB7 /* DrillDownThenSheetThenPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrillDownThenSheetThenPopover.swift; sourceTree = "<group>"; };
+		CA1D282F28C6BFE30015B019 /* 1-SheetThenPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "1-SheetThenPopover.swift"; sourceTree = "<group>"; };
+		CAE104A328CF8E780036FBB7 /* 2-DrillDownThenSheetThenPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "2-DrillDownThenSheetThenPopover.swift"; sourceTree = "<group>"; };
 		CAE104A528CF8E930036FBB7 /* Internal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Internal.swift; sourceTree = "<group>"; };
+		CAE104A828CF9D2B0036FBB7 /* NestedDrillDown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NestedDrillDown.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,11 +102,11 @@
 		CA1D280428C1334D0015B019 /* NavigationDemo */ = {
 			isa = PBXGroup;
 			children = (
-				CA1D280728C1334D0015B019 /* ContentView.swift */,
-				CAE104A328CF8E780036FBB7 /* DrillDownThenSheetThenPopover.swift */,
-				CAE104A528CF8E930036FBB7 /* Internal.swift */,
-				CA1D280528C1334D0015B019 /* NavigationDemoApp.swift */,
-				CA1D282F28C6BFE30015B019 /* SheetThenPopover.swift */,
+				CAE104A728CF9B7E0036FBB7 /* Internal */,
+				CA1D280528C1334D0015B019 /* 0-App.swift */,
+				CA1D282F28C6BFE30015B019 /* 1-SheetThenPopover.swift */,
+				CAE104A328CF8E780036FBB7 /* 2-DrillDownThenSheetThenPopover.swift */,
+				CAE104A828CF9D2B0036FBB7 /* NestedDrillDown.swift */,
 				CA1D280928C1334E0015B019 /* Assets.xcassets */,
 				CA1D280B28C1334E0015B019 /* Preview Content */,
 			);
@@ -134,6 +136,15 @@
 				CA1D282228C1334F0015B019 /* NavigationDemoUITestsLaunchTests.swift */,
 			);
 			path = NavigationDemoUITests;
+			sourceTree = "<group>";
+		};
+		CAE104A728CF9B7E0036FBB7 /* Internal */ = {
+			isa = PBXGroup;
+			children = (
+				CA1D280728C1334D0015B019 /* ContentView.swift */,
+				CAE104A528CF8E930036FBB7 /* Internal.swift */,
+			);
+			path = Internal;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -268,9 +279,10 @@
 			files = (
 				CAE104A628CF8E930036FBB7 /* Internal.swift in Sources */,
 				CA1D280828C1334D0015B019 /* ContentView.swift in Sources */,
-				CA1D280628C1334D0015B019 /* NavigationDemoApp.swift in Sources */,
-				CA1D283028C6BFE30015B019 /* SheetThenPopover.swift in Sources */,
-				CAE104A428CF8E780036FBB7 /* DrillDownThenSheetThenPopover.swift in Sources */,
+				CAE104A928CF9D2B0036FBB7 /* NestedDrillDown.swift in Sources */,
+				CA1D280628C1334D0015B019 /* 0-App.swift in Sources */,
+				CA1D283028C6BFE30015B019 /* 1-SheetThenPopover.swift in Sources */,
+				CAE104A428CF8E780036FBB7 /* 2-DrillDownThenSheetThenPopover.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

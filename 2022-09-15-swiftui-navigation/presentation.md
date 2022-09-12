@@ -336,10 +336,10 @@ func popover<Content>(
 
 ```
 class Model: ObservableObject {
-  @Published var child: ChildModel?
+  @Published var sheet: SheetModel?
 }
 
-class ChildModel: Identifiable, ObservableObject {
+class SheetModel: Identifiable, ObservableObject {
   @Published var popoverValue: Int?
 }
 ```
@@ -348,9 +348,9 @@ class ChildModel: Identifiable, ObservableObject {
 
 ^ you will define some observable objects that hold the state, logic and behavior of your features.
 
-^ here i've modeled a kind of "parent" feature that holds onto an optional "child" feature. the optionality of the child model is what determines whether or not we are currently navigated to the child feature.
+^ here i've modeled a kind of "parent" feature that holds onto an optional "sheet" feature. the optionality of the sheet model is what determines whether or not we are currently navigated to the sheet feature.
 
-^ and in the child domaion we hold a value that determines if a popover is shown. presumably that value is used to drive the initial state of the popover somehow.
+^ and in the sheet domain we hold a value that determines if a popover is shown. presumably that value is used to drive the initial state of the popover somehow.
 
 ^ all of this code is of course very basic and not very real world oriented, but these are the basic shapes of problems you would encounter in the real world.
 
@@ -370,23 +370,23 @@ struct ContentView: View {
   @ObservedObject var model: Model
 
   var body: some View {
-    Button("Show sheet") { self.model.child = ChildModel() }
-      .sheet(item: self.$model.child) { childModel in
-        ChildView(model: childModel)
+    Button("Show sheet") { self.model.sheet = SheetModel() }
+      .sheet(item: self.$model.sheet) { sheetModel in
+        SheetView(model: sheetModel)
       }
   }
 }
 ```
 
-^ With the domain modeled and the logic implemented, we define the views for the parent and child features using the models we defined before.
+^ With the domain modeled and the logic implemented, we define the views for the parent and sheet features using the models we defined before.
 
 ^ for example, in the parent feature we can hold onto an observed object for the model
 
-^ and then when a button is pressed we can instantiate the child model to indicate that we want to navigate to the child feature
+^ and then when a button is pressed we can instantiate the sheet model to indicate that we want to navigate to the sheet feature
 
-^ and we can handle that navigation even by using the `.sheet` view modifier to listen to when the child mode becomes non-nil, and when it does display a `ChildView`
+^ and we can handle that navigation even by using the `.sheet` view modifier to listen to when the sheet mode becomes non-nil, and when it does display a `SheetView`
 
-^ and that `ChildView` is implemented in basically the same way...
+^ and that `SheetView` is implemented in basically the same way...
 
 ---
 
@@ -398,8 +398,8 @@ struct ContentView: View {
 [.code-highlight: 5-7]
 [.code-highlight: 8-10]
 ```
-struct ChildView: View {
-  @ObservedObject var model: ChildModel
+struct SheetView: View {
+  @ObservedObject var model: SheetModel
 
   var body: some View {
     Button("Show popover") {
@@ -412,7 +412,7 @@ struct ChildView: View {
 }
 ```
 
-^ where we hold onto the child model
+^ where we hold onto the sheet model
 
 ^ have a button to the optional state into something non-`nil`, in this case we are just choosing a random number.
 
@@ -499,7 +499,7 @@ struct PopoverView: View {
 ```
 ContentView(
   model: Model(
-    child: ChildModel(
+    sheet: SheetModel(
       popoverValue: 42
     )
   )
@@ -512,7 +512,7 @@ ContentView(
 
 ^ we can just construct a piece of state that represents where we want to navigate
 
-^ thanks to the fact that the sheet and popover and driven off of this state it all just magically works. swiftui detects that the `childModel` is non-nil and so slides up a sheet, and then it detects that the value is non-`nil` and then shows a sheet.
+^ thanks to the fact that the sheet and popover and driven off of this state it all just magically works. swiftui detects that the `sheetModel` is non-nil and so slides up a sheet, and then it detects that the value is non-`nil` and then shows a sheet.
 
 ---
 
@@ -648,11 +648,11 @@ NavigationLink(
 
 ^ this initailizer only takes builder closures for describing the destination and label for the link. there's no binding whatsoever.
 
-^ this kind of link works in a "fire-and-forget" fashion. if the user taps the link, a drill down animation happens to the destination, but there is no change whatsoever in state to represent this fact. the navigation link manages all of that state internally and we never get to see it.
+^ This kind of link works in a "fire-and-forget" fashion. If the user taps the link, a drill down animation happens to the destination, but there is no change whatsoever in state to represent this fact. The navigation link manages all of that state internally and we never get to see it.
 
-^ this kind of link can be really handy in a pinch because it's so simple to use, but it also means you have no way whatsoever to programmatically deep link into the destination screen. truly the only way to invoke the drill down is for the user to literally tap on the link. so, if you ever need to navigate to the destination via a deep link URL or a push notification or some other mechanism, this type of link is not for you.
+^ this kind of link can be really handy in a pinch because it's so simple to use, but it also means you have no way whatsoever to programmatically deep link into the destination screen. Truly the only way to invoke the drill down is for the user to literally tap on the link. So, if you ever need to navigate to the destination via a deep link URL or a push notification or some other mechanism, this type of link is not for you.
 
-^ that's just the trade off for using this kind of navigation.
+^ That's just the trade off for using this kind of navigation.
 
 ---
 
@@ -727,50 +727,39 @@ struct ContentView: View {
 
 ^ and then inside the `List` and `ForEach`  you can construct a navigation link whose tag is the user id that corresponds to the row you are rendering, and then hand it the binding from the root that determines which id is currently selected.
 
+^ And so if you build you application using these state-driven navigation APIs, you will instantly unlock deep-linking capabilities, even if your navigation includes a mixture of drill downs, sheets, covers and popovers.
 
 ---
 
 # Demo
 
-<!-- todo: demo -->
+^ to see this, let's demo it.
+
+^ i have an application prebuilt that is basically identical to what I demo'd a moment ago for a sheet and popover, but now I have put a drill down before those two other types of navigation.
+
+^ so now you can drill down, then open a sheet, and then open a popover.
+
+^ however, if we wanted to open the application so that it is immediately in the state of being drilled down, sheet up and popover open, it's as simple as constructing a piece of state, handing it to SwiftUI, and letting SwiftUI do the rest.
 
 ---
 
-**What NavigationLink could have been**
+# Navigation problems
 
-```
-NavigationLink(
-  item: Binding<Item?>,
-  action: () -> Void,
-  destination: (Item) -> Destination, 
-  label: () -> Label)
+^ So, theoretically deep linking is as easy as constructing a piece of state, handing it off to SwiftUI and letting SwiftUI do its thing.
 
-func sheet<Content>(
-    item: Binding<Item?>,
-    content: @escaping (Item) -> Content) -> some View
+^ but in practice it didn't always work out exactly like that. there were a few problems.
 
-func fullScreenCover<Content>(
-    item: Binding<Item?>,
-    content: @escaping (Item) -> Content) -> some View
+^ first there are some bugs in SwiftUI that make it impossible to drill down more than 2 levels deep. I have a very simple demo to show  this (do that: NestedDrillDown)
 
-func popover<Content>(
-    item: Binding<Item?>,
-    content: @escaping (Item) -> Content) -> some View
-```
-
-^ before moving on i just want to push all the sheet/cover/popover APIs next to the theoretical navigation link API
-
-^ they all would basically work the same. they are all driven by a binding to a piece of optional state where the navigation is triggered once the binding flips to a non-`nil` value.
-
-^ this shows that can be a great deal of consistency when thinking about navigation. basically 4 very different forms of navigation have been unified under the same umbrella, and there's even more types of navigation that fit this pattern
+^ so that was one problem
 
 ---
 
 # Destination coupling
 
-^ but swiftui didn't go that route, and maybe for good reason.
+^ and there was another major probllem
 
-^ as we've seen just now, driving navigation from state can be incredibly powerful. by putting a bit of upfront work into modeling your domain and properly using the available apis, you instantly unlock the ability to link into basically any state of your application. And it also makes it possible to test navigation logic, which is something we're not going to even have the chance to discuss.
+^ as we've seen just now, driving navigation from state can be incredibly powerful. by putting a bit of upfront work into modeling your domain and properly using the available apis, you instantly unlock the ability to link into basically any state of your application and even write tests on that navigation logic.
 
 ^ state driven navigation is one of _the_ most important concepts to internalize.
 
@@ -802,7 +791,7 @@ func popover<Content>(
 
 ^ there is something about these API signatures that isn't quite ideal.
 
-^ in all 4, the very act of invoking the API inextricably couples the parent view that wants to perform the navigation to the destination you are navigating to.
+^ in all 4, the very act of invoking the API inextricably couples the source view that wants to perform the navigation to the destination you are navigating to.
 
 ^ This means if you have a feature that can navigate to a settings screen, your feature must be able to build the settings feature in order to use these APIs.
 
@@ -862,11 +851,11 @@ func popover<Content>(
 
 # Navigation stacks
 
-^ So, why are we talking so much about navigation coupling?
+^ So, the two problems we just mentioned, the bugs that plagued SwiftUI navigation links and the coupling of sources and destinations, seems to have led Apple to completely reconsider the navigation API.
 
-^ Well, because iOS 16 introduced a brand new API for drill-down navigations that can help decouple navigation destinations. It's called navigation stack, and Apple is so happy with this API that they deprecated all of the navigation link APIs we discussed a moment ago.
+^ iOS 16 introduced a brand new API for drill-down navigations that can help decouple navigation destinations. It's called navigation stack, and Apple is so happy with this API that they deprecated all of the navigation link APIs we discussed a moment ago.
 
-^ It's worth mentioning that even with navigation stacks the coupling problem we discussed a moment ago is still possible. For example, suppose the settings feature was not a drill down from the users list feature, but instead poppped up in a sheet. Then you have no choice but to use the `.sheet` view modifier to do that, and once you have done that you have coupled the users list feature to the settings feature.
+^ It's worth mentioning that even with navigation stacks the coupling problem we discussed a moment ago is still possible with all other forms of navigation. For example, suppose the settings feature was not a drill down from the users list feature, but instead poppped up in a sheet. Then you have no choice but to use the `.sheet` view modifier to do that, and once you have done that you have coupled the users list feature to the settings feature.
 
 ^ so, it's still on you if you want to decouple your features for all of the other kinds of navigation we have discussed in this talk. But at least for drill-down animations, Apple has provided a tool
 

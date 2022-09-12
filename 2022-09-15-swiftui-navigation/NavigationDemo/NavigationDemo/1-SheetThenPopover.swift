@@ -1,14 +1,14 @@
 import SwiftUI
 
-enum DrillDownThenSheetThenPopover {
+enum SheetThenPopoverView {
   class Model: ObservableObject {
-    @Published var child: ChildModel?
-    init(child: ChildModel? = nil) {
-      self.child = child
+    @Published var sheet: SheetModel?
+    init(sheet: SheetModel? = nil) {
+      self.sheet = sheet
     }
   }
 
-  class ChildModel: Identifiable, ObservableObject {
+  class SheetModel: Identifiable, ObservableObject {
     @Published var popoverValue: Int?
     init(popoverValue: Int? = nil) {
       self.popoverValue = popoverValue
@@ -18,21 +18,21 @@ enum DrillDownThenSheetThenPopover {
     }
   }
 
-  struct ParentView: View {
+  struct ContentView: View {
     @ObservedObject var model: Model
 
     var body: some View {
       Button("Show sheet") {
-        self.model.child = ChildModel()
+        self.model.sheet = SheetModel()
       }
-      .sheet(item: self.$model.child) { childModel in
-        ChildView(model: childModel)
+      .sheet(item: self.$model.sheet) { sheetModel in
+        SheetView(model: sheetModel)
       }
     }
   }
 
-  struct ChildView: View {
-    @ObservedObject var model: ChildModel
+  struct SheetView: View {
+    @ObservedObject var model: SheetModel
 
     var body: some View {
       Button("Show popover") {
