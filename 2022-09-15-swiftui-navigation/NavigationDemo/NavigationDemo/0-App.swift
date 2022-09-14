@@ -5,9 +5,9 @@ struct NavigationDemoApp: App {
   var body: some Scene {
     WindowGroup {
       // 1️⃣
-//      SheetThenPopoverViewDemo.ContentView(
-//        model: .init()
-//      )
+      SheetThenPopoverViewDemo.ContentView(
+        model: .init()
+      )
 
       // 2️⃣
 //      NavigationView {
@@ -28,9 +28,9 @@ struct NavigationDemoApp: App {
 //      .navigationViewStyle(.stack)
 
       // 4️⃣
-      NavigationStackDemo.ContentView(
-        model: .init()
-      )
+//      NavigationStackDemo.ContentView(
+//        model: .init()
+//      )
     }
   }
 }
