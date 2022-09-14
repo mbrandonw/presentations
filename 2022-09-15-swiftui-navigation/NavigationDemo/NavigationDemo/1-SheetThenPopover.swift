@@ -1,6 +1,6 @@
 import SwiftUI
 
-enum SheetThenPopoverView {
+enum SheetThenPopoverViewDemo {
   class Model: ObservableObject {
     @Published var sheet: SheetModel?
     init(sheet: SheetModel? = nil) {

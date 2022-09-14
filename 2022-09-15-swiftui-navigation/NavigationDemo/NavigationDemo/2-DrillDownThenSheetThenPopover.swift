@@ -1,6 +1,6 @@
 import SwiftUI
 
-enum DrillDownThenSheetThenPopover {
+enum DrillDownThenSheetThenPopoverDemo {
   class Model: ObservableObject {
     @Published var child: ChildModel?
     init(child: ChildModel? = nil) {
@@ -8,16 +8,10 @@ enum DrillDownThenSheetThenPopover {
     }
   }
 
-  class ChildModel: ObservableObject, Hashable {
+  class ChildModel: ObservableObject {
     @Published var sheet: SheetModel?
     init(sheet: SheetModel? = nil) {
       self.sheet = sheet
-    }
-    func hash(into hasher: inout Hasher) {
-      hasher.combine(ObjectIdentifier(self))
-    }
-    static func == (lhs: ChildModel, rhs: ChildModel) -> Bool {
-      lhs === rhs
     }
   }
 

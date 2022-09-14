@@ -1,6 +1,6 @@
 import SwiftUI
 
-enum NestedDrillDown {
+enum NestedDrillDownDemo {
   class Model: ObservableObject {
     @Published var child: Model?
     init(child: Model? = nil) {
@@ -12,6 +12,7 @@ enum NestedDrillDown {
     @ObservedObject var model: Model
 
     var body: some View {
+      // TODO: why can't i move NavigationView in here?
       NavigationLink(
         "Go to child feature",
         isActive: Binding(

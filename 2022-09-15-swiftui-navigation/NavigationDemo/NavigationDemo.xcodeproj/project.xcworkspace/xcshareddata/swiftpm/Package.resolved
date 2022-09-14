@@ -1,0 +1,41 @@
+{
+  "pins" : [
+    {
+      "identity" : "swift-case-paths",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-case-paths",
+      "state" : {
+        "revision" : "7346701ea29da0a85d4403cf3d7a589a58ae3dee",
+        "version" : "0.9.2"
+      }
+    },
+    {
+      "identity" : "swift-parsing",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-parsing",
+      "state" : {
+        "branch" : "swift-5-7",
+        "revision" : "c14c1d2a5753c986cfec72c38826271ea7c30f00"
+      }
+    },
+    {
+      "identity" : "swift-url-routing",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-url-routing.git",
+      "state" : {
+        "branch" : "swift-5-7",
+        "revision" : "649411ac9326c4b48e7fb3c0b22edfdc575e22c4"
+      }
+    },
+    {
+      "identity" : "xctest-dynamic-overlay",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
+      "state" : {
+        "revision" : "38bc9242e4388b80bd23ddfdf3071428859e3260",
+        "version" : "0.4.0"
+      }
+    }
+  ],
+  "version" : 2
+}

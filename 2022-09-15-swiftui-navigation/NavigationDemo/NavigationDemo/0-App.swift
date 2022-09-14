@@ -4,37 +4,33 @@ import SwiftUI
 struct NavigationDemoApp: App {
   var body: some Scene {
     WindowGroup {
-//      SheetThenPopoverView.ContentView(
-//        model: SheetThenPopoverView.Model(
-//          sheet: .init(popoverValue: 42)
-//        )
+      // 1️⃣
+//      SheetThenPopoverViewDemo.ContentView(
+//        model: .init()
 //      )
-//
+
+      // 2️⃣
 //      NavigationView {
 //        EmptyView()
-//
-//        DrillDownThenSheetThenPopover.ContentView(
-//          model: .init(
-//            child: .init(
-//              sheet: .init(popoverValue: 42)
-//            )
-//          )
+//        DrillDownThenSheetThenPopoverDemo.ContentView(
+//          model: .init()
 //        )
-//        .navigationViewStyle(.stack)
 //      }
+//      .navigationViewStyle(.stack)
 
-      NavigationView {
-        EmptyView()
+      // 3️⃣
+//      NavigationView {
+//        EmptyView()
+//        NestedDrillDownDemo.ContentView(
+//          model: .init()
+//        )
+//      }
+//      .navigationViewStyle(.stack)
 
-        NestedDrillDown.ContentView(
-          model: .init(
-            child: .init(child: .init(child: .init(child: .init())))
-          )
-        )
-        .navigationViewStyle(.stack)
-      }
-
-//      ScreenC()
+      // 4️⃣
+      NavigationStackDemo.ContentView(
+        model: .init()
+      )
     }
   }
 }

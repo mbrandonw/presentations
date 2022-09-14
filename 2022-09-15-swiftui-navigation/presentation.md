@@ -1,3 +1,5 @@
+autoscale: true
+
 # SwiftUI Navigation & URL Routing
 
 * Brandon Williams
@@ -27,9 +29,9 @@
 
 # What is navigation?
 
-^ Now, the talk today is about SwiftUI navigation, and then to a lesser extent, URL routing within SwiftUI navigation.
+^ Now, the talk today is primary about SwiftUI navigation. We are going to go really deep into the topic. And then at the end we will sprinkle in a bit of URL routing. We aren't going to spend a ton of time on that because we will see that if you approach navigation a particular way, then URL routing basically comes for free, which is awesome to see.
 
-^ but I think the word "navigation" can mean a lot of different things to different people.
+^ But, let's start with basics, because I think the word "navigation" can mean a lot of different things to different people.
 
 ---
 
@@ -116,6 +118,8 @@
 
 ^ And then when that state switches back to not existing, it represents us undoing that navigation and returning back to the previous mode.
 
+<!-- todo: tie this back to NavigationStack and tab view -->
+
 ^ And the cool thing is that these mode changes can build upon each other. So if you want to navigate two layers deep, it just means there are two pieces of state that come into existence, and the second piece of state is stored inside the first.
 
 
@@ -192,8 +196,6 @@ struct UsersView: View {
 
 ^ That causes the `.sheet` modifier to see the data is not present, and so the sheet's view builder is invoked with that data.
 
-^ What's also cool about this is that you are free to execute some logic before the sheet appears. For example, suppose tapping the button executes a network request to first fetch the newest data for the user, and then once that completes you show the sheet. That would be incredibly simply to do with this API.
-
 ---
 
 # Sheets
@@ -206,6 +208,8 @@ Button("Edit") {
   }
 }
 ```
+
+^ What's also cool about this is that you are free to execute some logic before the sheet appears. For example, suppose tapping the button executes a network request to first fetch the newest data for the user, and then once that completes you show the sheet. That would be incredibly simply to do with this API.
 
 ^ That might look something like this.
 
@@ -310,7 +314,7 @@ func popover<Content>(
 
 ^ and thinking of things in that way we can think of the boolean binding APIs as being equivalent to using the optional binding style but just with an optional void value.
 
-^ so, at the end of the day, all of this really is modeling navigation as a mode change when data comes into existence or out of existence. and it can be very powerful to be able to model so many different types of animation in such a consistent manner.
+^ so, at the end of the day, all of this really is modeling navigation as a mode change when data comes into existence or out of existence. and it can be very powerful to be able to model so many different types of navigation in such a consistent manner.
 
 ---
 
@@ -354,7 +358,9 @@ class SheetModel: Identifiable, ObservableObject {
 
 ^ all of this code is of course very basic and not very real world oriented, but these are the basic shapes of problems you would encounter in the real world.
 
-^ now, you may be wondering: "what if i store my state in `@State` variables? or even `@StateObject`s instead of `@ObservedObject`s?" Well, sadly in such cases the options for deep linking are quite limited. The whole point of those property wrappers is to have the source of truth lie locally in the views that holds that value, and hence doesn't exactly mix with the idea of some more root. that's just a trade off you must make when using those tools.
+^ now, you may be wondering: "what if i store my state in `@State` variables? or even `@StateObject`s instead of `@ObservedObject`s?" Well, sadly in such cases the options for deep linking are quite limited. The whole point of those property wrappers is to have the source of truth lie locally in the views that holds that value, and hence doesn't exactly mix with the idea of some more root state. that's just a trade off you must make when using those tools.
+
+<!-- todo: clean up above paragraph -->
 
 ---
 
@@ -444,6 +450,8 @@ struct PopoverView: View {
 
 ^ i want it to have some basic functionality, so it manages a little piece of internal state, and exposes some buttons for mutating that state.
 
+<!-- todo: potentially cut this digression -->
+
 ^ now this little bit of code may cause a little tingle in the back of some of y'alls brains. i am specifically leaving this `@State` as uninitialized and allowing its initial state to be determined by the outside.
 
 ^ you may have heard somewhere that this is a bad idea. I will say that it has its subtle edge cases, but there really is no perfect way for interacting with `@State`, and the same with `@StateObject`, due to its very nature.
@@ -487,6 +495,8 @@ struct PopoverView: View {
 ^ and from the outside this code looks exactly the same as the previous code i had. both can be initialized simply with a single integer. there is no indiciation that something tricky is happening under the hood.
 
 ^ so to me I rather use the previous code since there are fewer moving parts and since it has the exact same behavior as this. i say that if you need a view to hold onto `@State` or `@StateObject` and it needs to be initialized with some seed data from the outside, just pass it through directly, but know the caveats forwards and backwards. But, that is just my opinion, not a universal fact.
+
+<!-- todo: talk about how there are more workarounds for this but they are weird and one-directional -->
 
 ---
 
@@ -562,7 +572,7 @@ NavigationLink(
 
 ^ further, the view that shown for that drill down animation would be handed that non-`nil` state so that it could be dynamic based on that state.
 
-^ this sounds great in theory, but it has a problem. this can't possibly work because unlike sheets/covers/popovers, navigation links are meant to be tapped to start the drill down.
+^ this sounds great in theory, but it has a problem. this can't possibly work because unlike sheets/covers/popovers, navigation links are meant to be tapped to start the drill down. They are basically buttons.
 
 ^ so the action that causes the state to become non-`nil` needs to be somehow baked into the navigation link's api
 
@@ -855,46 +865,52 @@ func popover<Content>(
 
 ^ iOS 16 introduced a brand new API for drill-down navigations that can help decouple navigation destinations. It's called navigation stack, and Apple is so happy with this API that they deprecated all of the navigation link APIs we discussed a moment ago.
 
-^ It's worth mentioning that even with navigation stacks the coupling problem we discussed a moment ago is still possible with all other forms of navigation. For example, suppose the settings feature was not a drill down from the users list feature, but instead poppped up in a sheet. Then you have no choice but to use the `.sheet` view modifier to do that, and once you have done that you have coupled the users list feature to the settings feature.
+^ It's worth mentioning that even with navigation stacks the coupling problem we discussed a moment ago is still possible with all other forms of navigation. For example, suppose the settings feature from a moment ago was not a drill down from the users list feature, but instead poppped up in a sheet. Then you have no choice but to use the `.sheet` view modifier to do that, and once you have done that you have coupled the users list feature to the settings feature.
 
-^ so, it's still on you if you want to decouple your features for all of the other kinds of navigation we have discussed in this talk. But at least for drill-down animations, Apple has provided a tool
+^ So, it's still on you if you want to decouple your features for all of the other kinds of navigation we have discussed in this talk. But at least for drill-down animations, Apple has provided a tool
 
 ---
 
 * `NavigationStack`
 * `NavigationLink`
-* `navigationDestination`
+* `.navigationDestination`
 
-^ In order to accomplish this decoupling the API for navigation had to be spread across 3 APIs. And that makes sense. If it was all in one single API like it is with the now deprecated `NavigationLink` initializers, then how could things be decoupled?
+^ In order to accomplish this decoupling the API for navigation had to be spread across 3 APIs: two are views and one is a view modifier.
+
+^  And it makes sense that it would need to be spread across a few APIs. If it was all in one single API like it is with the now deprecated `NavigationLink` initializers, then how could things be decoupled?
 
 ---
 
 ## Decoupling navigation: Data
 
 [.code-highlight: 1-4]
-[.code-highlight: 6]
+[.code-highlight: 6-8]
 ```
 NavigationLink(
-  <#String#>, 
-  value: <#Hashable?#>
+  value: Hashable?,
+  label: () -> Label
 )
 
-NavigationLink("Edit user", value: user.id)
+NavigationLink(value: user.id) {
+  Text("Edit user")
+}
 ```
 
 ^ In order to decouple the source and destination of a drill-down navigation, we need the ability to specify a piece of data that _describes_ the navigation without specifying the actual destination view of the navigation.
 
-^ this is doing with a new initializer of `NavigationLink` that takes a string to use for the title of the navigation button, and some hashable value. It can be any hashable value.
+^ This is done with a new initializer on `NavigationLink` that takes a piece of data that can be any hashable value, as well as the label for the link button.
 
-^ there's a few other variations of this initializer too, like one that takes a view builder for the label of the navigation link.
+^ There's a few other variations of this initializer too for different ways to specify the label.
 
-^ So, with this initializer we do not describe at all _where_ we are navigating to. We only describe a piece of data that represents where we want to go to. When you tap the link, the data is sent through every view layer all the way up to the root, and that data can be intercepted at any point to actually perform the navigation to the destination.
+^ So, with this initializer we do not describe at all the view we want to navigate to. We only describe a piece of data that represents where we want to go to.
 
-^ This is one part to the key for decoupling the source of navigation from the destination. We can see plain as day here that the source view holding this navigation link to edit a user does not need to compile the "edit user" feature. There is no mention of any of its symbols.
+^ When you tap the link, the data is sent through every view layer all the way up to the root, and that data can be intercepted at any point to actually interpret the data and then decide which destination we should navigate to. This data flows even to siblings of parent views, and most likely the feature is powered by `PreferenceKey`s if you are familiar with that.
+
+^ This is one part to the key for decoupling the source of navigation from the destination: the separation of data from interpretation of that data. We can see plain as day here that the view holding this navigation link to edit a user does not need to compile the "edit user" feature. There is no mention of any of its symbols.
 
 ---
 
-## Decoupling navigation: Destination
+## Decoupling navigation: Interpretation
 
 ```
 .navigationDestination(for: User.ID.self) { userID in 
@@ -902,13 +918,19 @@ NavigationLink("Edit user", value: user.id)
 }
 ```
 
-^ Then, somewhere up the view heirarchy we can intercept the data that is sent from a navigation link. This can happen in pretty much _any_ parent view.
+^ Then, somewhere up the view heirarchy we can intercept the data that is sent from a navigation link and interpret it. This can happen in pretty much _any_ parent view.
+
+^ We first specify the _type_ of data we want to intercept, because technically we are allowed to make each navigation link in our application send up a different kind of data.
+
+^ Then, once SwiftUI sees a piece of navigation data going up the view heirarchy that matches the type, it intercepts that data, passes it to the trailing closure, and whatever view we return from there will be the view that is drilled down to. We can hand that data to the next view and let it do its thing.
 
 ^ This is the second part to the key for decoupling source and destinations in navigation. Here we are able to intercept this simple user id so that we can trigger a drill-down to the edit user view.
 
-^ We do not need to build the source of the navigation in order for us to describe the destination. The previous slide where we constructed the navigation link, that lives in a view that can be compiled completely independently of this view.
+---
 
-^ this style of navigation has fully decoupled source and destination.
+![200%](assets/coupling-3.png)
+
+^ So, we can now see that this new form of navigation does accomplish this type of dependency tree. All of the destination features, B through G, can be built in full isolation without building any of the other features.
 
 ---
 
@@ -924,101 +946,486 @@ NavigationLink("Edit user", value: user.id)
 
 ^ So, we have now shown how drill-down navigation can be fully decoupled, but technically what we have described still falls in the "fire-and-forget" category of navigation rather than the "state-drive".
 
-^ It may seem state driven because after all we are using data to trigger the navigation. But, with the code we have sketched so far, the only way to actually trigger the navigation is for the user to literally tap on a link.
+^ It may seem state driven because after all we are using data to trigger the navigation, but really that data is only used for interpretation to figure out which destination to go to.
 
-^ there is no way to simply construct a piece of state, hand it over to SwiftUI, and have SwiftUI do its thing to present the final view.
+^ Still the only real way to trigger navigation is for the user to literally tap on a navigation link. That means it is not quote-unquote "state-driven" since there is no way to simply construct a piece of state, hand it over to SwiftUI, and have SwiftUI do its thing to present the final view.
 
-
-
-
-
-
-
-
-
-
----
-
-## Fire-and-forget navigation
-
-```
-NavigationStack {
-  NavigationLink("Go to settings") {
-    SettingsView()
-  }
-}
-```
-
-^ Before doing that we should remark that fire-and-forget navigation, that is, navigation that does not use state to drive presenting and dismissal, still works the same with navigation stacks.
-
-^ This style of initializer for `NavigationLink` is not deprecated. It just creates a button such that when you tap it, it triggers a drill-down animation to the settings view.
-
----
-
-## Fire-and-forget navigation
-
-```
-NavigationStack {
-  List {
-    ForEach(self.users) { user in 
-      NavigationLink("Edit user", value: user.id)
-    }
-  }
-  .navigationDestination(of: User.ID.self) { userID in 
-    EditUser(id: userID)
-  }
-}
-```
-
-^ There's even a new kind of fire-and-forget navigation.
-
-^ 
-
+^ And we've seen a few times now, that can be incredibly powerful.
 
 ---
 
 ## State-driven `NavigationStack`
 
+^ This is where the new `NavigationStack` comes into play.
 
+^ It supplants `NavigationView` as the entry point into drill down navigation on iOS, and `NavigationView` is now "soft" deprecated. Soft deprecated means that it is actually deprecated. If you look in the docs it will have the big yellow warning about that.
+
+^ But if you look at the actual interface file of the SwiftUI framework you will see that the deprecated version of `NavigationView` is set to 100,000, which means it doesn't cause a warning message in Xcode today. Presumably someday in the future they will bring that 100,000 down, like maybe for iOS 17, 18 or 19.
+
+---
+
+[.code-highlight: all]
+[.code-highlight: 1-9]
+```
+NavigationStack(
+  path: Binding<Data>,
+  root: () -> Root
+) 
+where 
+  Data: MutableCollection 
+      & RandomAccessCollection 
+      & RangeReplaceableCollection, 
+  Data.Element: Hashable
+
+NavigationStack(
+  path: Binding<NavigationPath>,
+  root: () -> Root
+)
+```
+
+^ And these are the two main ways you can create a state-driven navigation stack.
+
+^ First there's the seemingly complex one that takes a binding of some data, where that data has a bunch of constraints. At the end of the day, the `Data` generic is almost certainly going to be just an array of some hashable values.
+
+---
+
+[.code-highlight: 1-5]
+```
+NavigationStack(
+  path: Binding<[Element]>,
+  root: () -> Root
+) 
+where Element: Hashable
+
+NavigationStack(
+  path: Binding<NavigationPath>,
+  root: () -> Root
+)
+```
+
+^ So let's just make our lives easier and put that explicitly. Know that technically you can use fancier, more exotic collection types than just plain arrays, but that is kind of clouding what is really going on here.
+
+^ So, the idea behind this binding is now when a user taps a navigation link, the data associated to that link will be appended to this array. And further, when the user taps a back button or does a swipe gesture, the value will be popped off the array.
+
+^ In parallel with that, SwiftUI will also listen for changes to this array of elements, and when it detects something changed it will update the UI accordingly. It automatically figures out if values were added or removed and performs the appropriate pushing and popping animations.
+
+^ This allows us to programmatically drive navigation. If a push notification comes in, or we detect a deep link URL was opened, we just have to interpret that incoming data and add elements to this array, and SwiftUI will take care of the rest.
+
+^ It is worth noting that when using this form of binding, then the data associated with navigation links must all be of the same. It all needs to be homogenous.
+
+
+<!-- todo: this is the first time we see coupling of features. the feature that contains the NavigationStack is the first time that we need to build multiple child features before we can run this feature.  -->
+
+---
+
+[.code-highlight: 7-99]
+```
+NavigationStack(
+  path: Binding<[Element]>,
+  root: () -> Root
+) 
+where Element: Hashable
+
+NavigationStack(
+  path: Binding<NavigationPath>,
+  root: () -> Root
+)
+```
+
+^ The second type of initializer takes a binding of something called a `NavigationPath`. 
+
+^ This is a wild type. It is something that acts like a collection, in that it has methods for appending to the end and removing from the end, and you can count the number of elements, but then that's it.
+
+^ You can't iterate over the elements, you can't access a particular element. The internals of the quote-unquote "collection" are completely opaque to us. The elements are even type erased under the hood because you are allowed to append _any_ hashable data to this thing.
+
+^ Other than it's weird type erasedness, it mostly works as the other initializer. If a navigation link is tapped, that data is appended to the collection. The `.navigationDestination` still listens for data flowing up the view heirarchy in order to intercept certain pieces of data and interpret it. And finally, if the `NavigationStack` observes a change in the path it will do pushes and pops accordingly.
+
+---
+
+[.code-highlight: 1-4]
+[.code-highlight: 5-99]
+```
+var path = NavigationPath()
+path.append(42)
+path.append("Hello")
+path.append(false)
+
+var encodedData = try JSONEncoder().encode(path.codable!)
+
+var decodedPath = NavigationPath(
+  try JSONDecoder().decode(
+    NavigationPath.CodableRepresentation.self,
+    encodedData
+  )
+)
+```
+
+^ I'm not going to go super in depth into `NavigationPath`, but I do want to give you a preview of just how wild this type is.
+
+^ So you can append an integer, then a string, and then a boolean, and it will happily take it all. This is perhaps one of the reasons that you cannot iterate over this "collection", but honestly I think it'd still be useful, even if the element it exposed was just an `any Hashable` that we could cast ourselves.
+
+^ Even more wild though, you can encode this collection of nebulous, type erased elements into some data that can be saved to disk or sent over the network, and then somehow magically it can turn it back into a navigation path, which can then be plugged into a SwiftUI view causing the navigation stack to be restored.
+
+^ That is really bizarre to think about because in order for that restoration process to happen the `.navigationDestination` view modifiers must be invoked, which means somehow real, strongly typed data is produced from this nebulous, type erased data that was just resurrected from raw bytes. 
+
+^ It's honestly pretty cool, and seems to solve state restoration in a simple 1-2-3 step proces, but sadly in its current for is not actually usable in production. If you restore a navigation stack with decoded navigation path data, you will eventually get a crash deep in the SwiftUI framework, and sadly that was not fixed before the final iOS 16 release.
+
+---
+
+# Pros and cons 
+# of the two initializers
+
+^ So, Apple has provided two flavors of state-driven `NavigationStack`, so which should we use.
+
+^ There are pros and cons to each, so let's enumerate a few real quick.
+
+---
+[.build-lists: true]
+
+### Binding<[Element]>
+### Pros
+
+* Strongly typed elements
+* Full access to collection API
+* Instant testability
+* Codable with no runtime crashes
+
+^ The pros of using a binding of a strongly typed collection is that, well... you get strongly typed elements! This means there is no ambiguity whatsoever is what data is being presented, you always know.
+
+^ You also get full access to the collection API. For example, suppose, for whatever reason, a feature of your application is that you could literally shuffle the current navigation stack. That is quite easy here because you have access to the actual collection of elements. Or say you want to aggregate the states in the stack in some way, like add up all the counter values on each screen. again that is quite easy.
+
+^ You also get instant testability. You can write a test for your observable object model thing that says the user tapped this button, and async effect executed and fed data back into the model, and that caused a new value to be appended to the navigation stack. And because SwiftUI is state-driven, if that test passes then you can be reasonably sure that that would actually happen on the device. No need to run a UI test.
+
+^ And finally, it's very easy to make this array of elements codable, which gives you instant state restoration with no crashes. In fact, now that enums can automatically synythesize codable this is easier than ever.
+
+---
+[.build-lists: true]
+
+### Binding<[Element]>
+### Cons
+
+* Some light coupling with `NavigationLink`
+* Single point of handling destinations
+
+^ So, that all sounds good, but there are also some downsides.
+
+<!-- todo: talk about navigation link specifically -->
+
+^ First, having such a strongly typed collection of elements does lead to a little bit of coupling.
+
+^ For example, the only way for a strongly typed collection to work is if you handle _all_ destinations from a single `.navigationDestination` view modifier. You're not allowed to handle some destinations over here and others over there.
+
+^ I personally think this is an artificial restriction. I think SwiftUI could have a version of `.navigationDestination` that allows you to say "i don't want to handle this data, keep sending it up the view heirarchy to set someone else try".
+
+---
+[.build-lists: true]
+
+### Binding<NavigationPath>
+### Pros
+
+* Extremely easy to get started with
+* Maximum decoupling
+
+^ Navigation path has some really great pros.
+
+^ First of all, it is extremely easy to get started with. You can just sprinkle in some navigation links with data throughout your views, add a few `.navigationDestination` view modifiers to handle the data, and off you go. It's honestly pretty incredible.
+
+^ It also maximizes the amount of decoupling. Because you can navigate to _any_ kind of hashable data you aren't forced to handle all destinations in a single `.navigationDestination` view modifier. you can handle user id navigation data over here, and then photo id navigation data over there in some other view, and on and on. This allows you to decouple things in a very extreme sense.
+
+
+---
+[.build-lists: true]
+
+### Binding<NavigationPath>
+### Cons
+
+* Not testable
+* Not inspectable
+* Crashes in codable interface
+
+^ So it's an amazing tool, but it also has its cons.
+
+^ The moment you use navigation path you pretty much eject yourself from any hope of testing logic around navigation. Because NavigationPath is so opaque and because they offer no APIs for accessing the elements inside, even if they were exposed erased `any Hashable` values, means you can hit a method on your model observable object and then assert eventually something is appended to the path.
+
+^ Now I think technically you could probably maintain your own array of any hashable values and pass that around to every view, and then synchronize changes to it over to the real navigation path, but it would be an absolute pain, it would mean cannot use NavigationLink and you must use just plain buttons, and i just don't see anyone really doing that.
+
+^ And kind of a corollary to not being testable, it's not inspectable which means you can't do cool things with your navigation stack like aggregate values.
+
+^ And also, as of iOS 16.0, its codable interface crashes, so that's just not really usable right now.
+
+---
+
+# Which initializer to use?
+
+^ So which one to use?
+
+^ Well, unfortunately I think that's a very personal decision that I do not want to force on you.
+
+^ When I look at that previous list of pros and cons, I really resonate with the features that give me strong types, inspectability and testability, and the short comings at least have somewhat decent workarounds. So I lean more towards the explicit collection binding style.
+
+^ But it cannot be overstated just how powerful `NavigationPath` is at giving you state-driven navigation without going all in to everything being 100% static and well typed. In my mind it lies somewhere between the fire-and-forget navigation and the fully typed navigation. It is state driven, so not fire-and-forget, but at the same time it has forgotten about some things, like the types of the data elements in the collection.
+
+^ But no matter which you use, with everything set up you will have instant access to easy deep linking into your application by just constructing a piece of state and handing it to SwiftUI, and even cooler, it also plays nicely with all the other forms of navigation we have discussed previously.
+
+---
+
+# Demo
+
+^ Let's give a quick demo of this.
 
 ---
 
 # URL routing
 
+^ Ok, in the negative amount of time I have left I will quickly talk about URL routing.
+
+^ Since we now know how to deep link into our applications by simply constructing a piece of data and handing it to SwiftUI, URL routing really just boils down to: how do we transform a nebulous URL request into that data that we can hand to SwiftUI
+
+---
+
+# URL routing
+
+[.code-highlight: all]
+[.code-highlight: 1-3]
+[.code-highlight: 5]
+[.code-highlight: 6]
+[.code-highlight: 8]
+```
+/screenA -> ScreenA
+/screenB -> ScreenB
+/screenC -> ScreenC
+
+/screenC/sheet    -> ScreenC w/ sheet open
+/screenC/sheet/42 -> ScreenC w/ sheet and popover open
+
+/screenA/screenB/screenC/sheet/42 -> stack of screen
+```
+
+^ For example, here are some URLs we might want to recognize for our application.
+
+^ The first few are quite simple. If you go to our domain _slash_ screen A, B or C, then we expect to be drilled down to that respective feature.
+
+^ And if on the screenC path component you further append a sheet path component, then screen C should start with the sheet open.
+
+^ And if further a numeric path component is added we would like the popover to be opened with that value pre-populated
+
+^ And finally, you may want to have a whole bunch of these URL fragments stacked on top of each other so that you open the application drilled into A and then B and then C with the sheet up and the popover open
+
+---
+
+# github.com/pointfreeco/
+# swift-url-routing
+
+^ There are lots of libraries out there whose entire purpose is to interpret a nebulous URL request so that you can pick it apart, match on it, and then do something when it matches.
+
+^ The all have their pros and cons, and it just so happens that Stephen and I also have one. I am not at all recommending you use this. In fact, it probably isn't appropriate for if you are just starting to dip your toes into URL routing because it uses some pretty heavy machinery to do its job.
+
+^ You should definitely use whatever routing library you prefer, or maybe you make your own, or maybe you just split your URLs path on the slashes and pick apart the URL yourself.
+
+^ But, I will quickly show the code that allows to transform the URLs we want to support in our application. 
+
+---
+
+```
+enum Destination: Hashable {
+  // /screenA
+  case screenA
+  // /screenB
+  case screenB
+  // /screenC/:sheet
+  case screenC(destination: ScreenCDestination? = nil)
+}
+
+// /sheet/:int?
+enum ScreenCDestination: Hashable {
+  case sheet(popoverValue: Int? = nil)
+}
+```
+
+^ The is the type that we want to transform a nebulous URL into, when possible. I've added little sample URLs to each case so that we can remember what it is we are trying to parse.
+
+^ With URL routers its always easiest to start at the leaf nodes of your routes and work your way backwards to the root.
+
+^ So we could first start parsing a little URL fragment into the `ScreenCDestination` enum
+
+---
+
+[.code-highlight: all]
+[.code-highlight: 3, 6-11]
+```
+import URLRouting
+
+// /sheet/:int?
+struct ScreenCRouter: Parser {
+  var body: some Parser<URLRequestData, ScreenCDestination> {
+    Parse(ScreenCDestination.sheet(popoverValue:)) {
+      Path {
+        "sheet"
+        Optionally { Int.parser() }
+      }
+    }
+  }
+}
+```
+
+^ And this is what it takes.
+
+^ Now it's a lot, but I want you to focus only on these few lines here. This is the actual description of how our parser will process an incoming URL request
+
+^ It wants to parse a `ScreenCDestination`, which is a case of an enum, so it says that upfront
+
+^ The first thing we want to parse is "sheet" from the first path component. If that fails, then whole parser fails.
+
+^ Next, we want to try to parse an integer from the path component, but it isn't required. It's totally fine to recognize the URL of just "/sheet" with no further integer, so we express this by saying that the integer is optional
+
+---
+
+[.code-highlight: all]
+[.code-highlight: 5-20]
+[.code-highlight: 6-9]
+[.code-highlight: 10-13]
+[.code-highlight: 14-18]
+```
+import URLRouting
+
+struct DestinationRouter: Parser {
+  var body: some Parser<URLRequestData, Destination> {
+    OneOf {
+      // screenA
+      Parse(Destination.screenA) {
+        Path { "screenA" }
+      }
+      // screenB
+      Parse(Destination.screenB) {
+        Path { "screenB" }
+      }
+      // screenC/sheet/42
+      Parse(Destination.screenC(destination:)) {
+        Path { "screenC" }
+        Optionally { ScreenCRouter() }
+      }
+    }
+  }
+}
+```
 
 
+^ With that defined, we move up one layer to a router that can parse into the `Destination` type. 
+
+^ Again, just focus on the middle part. We are saying that we are going to try to parse one of a few different' kinds of URLs
+
+^ First, we try parsing the "screenA" path component, and if that succeeds we stop and bundle that up into the `screenA` case of the destination enum. And similarly for screenB.
+
+^ For screen C we first try parsing the "screenC" path component, and if that succeeds we further try parsing the screen C destination, which is the router we defined 2 slides ago. But also that is not required. It's totally fine to recognize the URL "/screenC". You dont _need_ to have "sheet". So again we wrap that work in `Optionally` to signify that.
+
+---
+
+[.code-highlight: all]
+[.code-highlight: 6-8]
+```
+import URLRouting
+
+// screenA/screenB/screenA/screenB
+struct Router: Parser {
+  var body: some Parser<URLRequestData, [Destination]> {
+    Many {
+      DestinationRouter()
+    }
+  }
+}
+```
+
+^ And finally, the full router for the application we just need to run the `DestinationRouter` as many times posssible in order to get an array of destinations.
+
+^ We can do that by using the `Many` parser, and it's quite simple.
+
+<!-- ^ With very little work we could also turn all of these parsers into printers. This allows us to convert one of our Destination enum values back into a URL request, which can be useful for all types of things. -->
 
 
+---
+
+# URL Routing
+
+```
+let router = Router()
+try router.match(path: "/screenA") ➡️ [.screenA]
+try router.match(path: "/screenB") ➡️ [.screenB]
+try router.match(path: "/screenC") ➡️ [.screenC(destination: nil)]
+
+try router.match(path: "/screenC/sheet") 
+  ➡️ [.screenC(destination: .sheet(popoverValue: nil))]
+
+try router.match(path: "/screenC/sheet")
+  ➡️ [.screenC(destination: .sheet(popoverValue: 42))]
+```
+
+^ With that router defined we can use it to match URLs to values in the `Destination` enum. Here are some example usages.
 
 
+---
 
+# URL Routing
 
+```
+.onOpenURL { url in
+  do {
+    self.model.path = try Router().match(url: url)
+  }
+  catch {}
+}
+```
 
+^ But the really amazing thing is that with that router defined, URL routing in your application can be done in just these few lines.
 
+^ We use the `onOpenURL` view modifier to be notified when someone opens the app via a URL. This can be done via a custom URL scheme or setting up an app-site association file on your web server.
 
+^ Then we feed that URL to the router, which produces an array of destinations.
 
+^ And that array of destinations is literally what our model uses for navigation. If we slap that value into the model, it will notify SwiftUI that something has changed in the binding, and it will do the rest push or pop stuff onto the stack.
 
+---
 
+# Demo
 
+^ Let's show how this works in a demo
 
+---
 
+# SwiftUI Navigation & URL Routing
 
+* Brandon Williams
+  * brandon@pointfree.co
+  * @mbrandonw
 
+^ Phew, ok!
 
+^ That's all there is to my talk. 
 
+^ We covered a ton of stuff, such as pinning down a more universal definition for what exactly is "navigation".
 
+^ Showing that SwiftUI technically ships quite a few different types of navigation APIs. 
 
+^ We also showed how state-driven navigation gives you the ability to instantly unlock deep-linking in your application, which is applicable not just for URL deep linking, but also push notifications and more.
+
+^ And the finally we should how URL routing can be broken down as the process of turning a nebulous URL into well-structured data, and then handing that data over to SwiftUI for it to do its thing.
 
 <!-- 
-
-todo: there are two things that get conflated when talking about navigation. there is the idea of driving navigation from state, and the idea of decoupling destinations from sources.
-
-these are two completely separate topics. each one can be solved without even thinking about the other.
-
-
 todo: talk more about how state-driven navigation makes it possible to test navigation without resorting to UI tests.
-
  -->
+
+<!-- 
+  todo: talk about navigationDestination(isPresented: Binding<Bool>)? 
+    - another odd duck
+
+  todo: tighten up dependencies
+ -->
+
+
+
+
+
+
+
 
 
 
