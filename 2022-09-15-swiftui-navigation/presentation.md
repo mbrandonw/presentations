@@ -1376,6 +1376,32 @@ try router.match(path: "/screenC/sheet")
 
 ^ And the finally we should how URL routing can be broken down as the process of turning a nebulous URL into well-structured data, and then handing that data over to SwiftUI for it to do its thing.
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---
+
+---
+---
+---
+---
+---
+
 <!-- 
   todo: talk about navigationDestination(isPresented: Binding<Bool>)? 
     - another odd duck
@@ -1384,31 +1410,6 @@ try router.match(path: "/screenC/sheet")
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
----
-
----
----
----
----
----
 
 <!-- 
 
@@ -1459,3 +1460,6 @@ struct PopoverView: View {
 
 
  -->
+
+
+ 
