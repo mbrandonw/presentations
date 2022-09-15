@@ -6,7 +6,7 @@ autoscale: true
   * brandon@pointfree.co
   * @mbrandonw
 
-^ Hello, my name is Brandon Williams, and today I will be discussing SwiftUI navigation and URL routing.
+^ Hello, my name is Brandon Williams, and today I will be discussing SwiftUI navigation and URL routing. The title changed a little bit since I first told Luis about my talk.
 
 ^ Here's some of my contact information for you all in case you want to reach out with some questions.
 
@@ -29,7 +29,7 @@ autoscale: true
 
 # What is navigation?
 
-^ Now, the talk today is primary about SwiftUI navigation. We are going to go really deep into the topic. And then at the end we will sprinkle in a bit of URL routing. We aren't going to spend a ton of time on that because we will see that if you approach navigation a particular way, then URL routing basically comes for free, which is awesome to see.
+^ Now, the talk today is primarily about SwiftUI navigation. We are going to go really deep into the topic. And then at the end we will sprinkle in a bit of URL routing. We aren't going to spend a ton of time on that because we will see that if you approach navigation a particular way, then URL routing basically comes for free, which is awesome to see.
 
 ^ But, let's start with basics, because I think the word "navigation" can mean a lot of different things to different people.
 
@@ -39,7 +39,7 @@ autoscale: true
 
 ![autoplay inline mute fit loop](assets/navigation-drill-down.mov)
 
-^ I think we can all agree that this is navigation. This is perhaps the most prototypical version of navigation. We drill down from one screen to another, and we can then pop back to the first screen.
+^ I think we can all agree that this is navigation. This is perhaps the most prototypical version of navigation and has been in iOS since the very beginning. We drill down from one screen to another, and  we can then pop back to the first screen.
 
 ^ The APIs for performing this kind of navigation even have the word "navigation" right in them, such as `NavigationView`, or `NavigationStack`, or `NavigationLink`, and even back in UIKit we have `UINavigationController`.
 
@@ -95,18 +95,15 @@ autoscale: true
 
 ^ and you could even define your own notions of navigation. it doesn't have to be confined only to the tools that Apple gives us in SwiftUI.
 
-^ To me, navigation is a mode change in the application. whether that is drilling down to a new screen, or a sheet flying up, or a popover taking control of the screen, or even an alert appearing.
-
-
 ---
 
 # What is navigation?
 
 > A change of mode in the application.
 
-^ So, this is the loose definition we will use for navigation, but what does it in mean in more technical terms? How can we turn this nebulous idea into actual code?
+^ So, for the purposes of this talk, the loose definition of "navigation" will be that it is a mode change in the application. Whether that is drilling down to a new screen, or a sheet flying up, or a popover taking control of the screen, or even an alert appearing.
 
-^ Well, I will further define a "change of mode" as meaning that some piece of state went from not existing to existing.
+^ But what does it in mean in more technical terms? How can we turn this nebulous idea into actual code?
 
 ---
 
@@ -114,21 +111,20 @@ autoscale: true
 
 > It’s when a piece of state goes from not existing to existing, or the opposite, existing to not existing.
 
+^ Well, I will further refine a "change of mode" as meaning that some piece of state went from not existing to existing, 
+
 ^ So, when a piece of state switches from not existing to existing, that represents a navigation to a new mode of the application. 
 
 ^ And then when that state switches back to not existing, it represents us undoing that navigation and returning back to the previous mode.
 
-<!-- todo: tie this back to NavigationStack and tab view -->
-
 ^ And the cool thing is that these mode changes can build upon each other. So if you want to navigate two layers deep, it just means there are two pieces of state that come into existence, and the second piece of state is stored inside the first.
 
 
-^ For example, you could have a drill down to a screen that immediately shows a sheet. There's one piece of state that represents the drill down, and then another piece of state that represents the sheet.
+^ For example, you could have a drill down to a screen that then shows a sheet. There's one piece of state that represents the drill down, and then another piece of state that represents the sheet.
 
 ^ I'm using the nebuluous term "existing" here because there are a few ways in which existence of state can be represented in Swift. One of the most prototypical ways is to use optionals, so that `nil` represents no state, and when it switches to something that is non-`nil` that triggers the navigation.
 
-^ but there are also other ways to represent this idea, and we'll be getting more into that later.
-
+^ but there are also other ways to represent this idea, such as booleans, arrays and enums, and we'll be getting more into that later.
 
 ---
 
@@ -209,12 +205,13 @@ Button("Edit") {
 }
 ```
 
-^ What's also cool about this is that you are free to execute some logic before the sheet appears. For example, suppose tapping the button executes a network request to first fetch the newest data for the user, and then once that completes you show the sheet. That would be incredibly simply to do with this API.
-
-^ That might look something like this.
+^ What's also cool about this is that you are free to execute some logic before the sheet appears. For example, suppose tapping the button executes a network request to first fetch the newest data for the user, and then once that completes you show the sheet. That would be incredibly simple to do with this API.
 
 ^ This kind of navigation is just very flexible. You can execute effects or perform validation before showing the sheet, and it all just works since the sheet's presentation and dismissal is all driven off of this one piece of state.
 
+^ This kind of navigation is also very easy to unit test. You have to do the upfront work of moving your logic out of the view, like say to an observable object, but once you do that you can construct that object in the test, invoke the method that represents the user tapping on the edit button, do some awaiting while the view model does its thing, and then assert that some `nil` piece of state flipped to be non-`nil`.
+
+^ If you trust SwiftUI to interpret that non-`nil` data correctly and show your sheet, then you have just written a unit test for navigation. No need to mess around with slow, flakey UI tests.
 
 ---
 
@@ -259,21 +256,19 @@ func bottomMenu<Item, Content>(
 
 ---
 
+[.code-highlight: all]
+[.code-highlight: 2,3]
 ```
 func sheet<Content>(
     isPresented: Binding<Bool>,
     content: @escaping () -> Content
 ) -> some View
-```
 
-```
 func fullScreenCover<Content>(
     isPresented: Binding<Bool>,
     content: @escaping () -> Content
 ) -> some View
-```
 
-```
 func popover<Content>(
     isPresented: Binding<Bool>,
     content: @escaping () -> Content
@@ -289,21 +284,19 @@ func popover<Content>(
 
 ---
 
+[.code-highlight: all]
+[.code-highlight: 2,3]
 ```
 func sheet<Content>(
     isPresented: Binding<Void?>,
     content: @escaping () -> Content
 ) -> some View
-```
 
-```
 func fullScreenCover<Content>(
     isPresented: Binding<Void?>,
     content: @escaping () -> Content
 ) -> some View
-```
 
-```
 func popover<Content>(
     isPresented: Binding<Void?>,
     content: @escaping () -> Content
@@ -354,13 +347,9 @@ class SheetModel: Identifiable, ObservableObject {
 
 ^ here i've modeled a kind of "parent" feature that holds onto an optional "sheet" feature. the optionality of the sheet model is what determines whether or not we are currently navigated to the sheet feature.
 
-^ and in the sheet domain we hold a value that determines if a popover is shown. presumably that value is used to drive the initial state of the popover somehow.
+^ and in the sheet domain we hold a value that determines if a popover is shown.
 
-^ all of this code is of course very basic and not very real world oriented, but these are the basic shapes of problems you would encounter in the real world.
-
-^ now, you may be wondering: "what if i store my state in `@State` variables? or even `@StateObject`s instead of `@ObservedObject`s?" Well, sadly in such cases the options for deep linking are quite limited. The whole point of those property wrappers is to have the source of truth lie locally in the views that holds that value, and hence doesn't exactly mix with the idea of some more root state. that's just a trade off you must make when using those tools.
-
-<!-- todo: clean up above paragraph -->
+^ All of this code is of course very basic and not very real world oriented, but these are the basic shapes of problems you would encounter in the real world.
 
 ---
 
@@ -432,7 +421,6 @@ struct SheetView: View {
 [.code-highlight: all]
 [.code-highlight: 2]
 [.code-highlight: 5,6,7]
-[.code-highlight: 2]
 ```
 struct PopoverView: View {
   @State var count: Int
@@ -446,57 +434,10 @@ struct PopoverView: View {
 }
 ```
 
-^ and here's a peek at what the popover view looks like
+^ and the leaf node of the application we have the popover view.
 
-^ i want it to have some basic functionality, so it manages a little piece of internal state, and exposes some buttons for mutating that state.
+^ It holds onto a bit of local, internal state which is seeded from the parent view, and it will expose buttons for mutating that state in some way, such as incrementing and decrementing.
 
-<!-- todo: potentially cut this digression -->
-
-^ now this little bit of code may cause a little tingle in the back of some of y'alls brains. i am specifically leaving this `@State` as uninitialized and allowing its initial state to be determined by the outside.
-
-^ you may have heard somewhere that this is a bad idea. I will say that it has its subtle edge cases, but there really is no perfect way for interacting with `@State`, and the same with `@StateObject`, due to its very nature.
-
-^ the subtlety here is that the lifetime of `@State` is tied to the lifetime of the view, and so it is _really_ only created a single time. after that first creation, even if the parent view tried recreating `PopoverView` with a completely new value, that value would just be discarded and this internal state would stay the same.
-
-^ so, that is tricky, but that's also just the cost of doing business with an object whose whole purpose is to be tied to the lifetime of a view.
-
----
-
-# Step 2
-### Define the view
-
-[.code-highlight: all]
-[.code-highlight: 2]
-[.code-highlight: 3]
-[.code-highlight: 10]
-```
-struct PopoverView: View {
-  @State var count = 0
-  let initialValue: Int
-  var body: some View {
-    HStack {
-      Button("-") { self.count -= 1 }
-      Text("\(self.count)")
-      Button("+") { self.count += 1 }
-    }
-    .onAppear { self.count = self.initialValue }
-  }
-}
-```
-
-^ some people suggest to "workaround" this strangeness in the following way
-
-^ you force `@State` to have a default value, and just hope there's even a sensible default to use, and then you provide a `let` property for the initial value. that's the value you can initialize the view with from the outside.
-
-^ _then_ you set up an `onAppear` to copy that initial value over to the state value.
-
-^ to me that just seems very strange and i don't think it's actually accomplished anything. you still have the behavior that this view can only _really_ be created with an initial value a single time. later recreations of the view with new values will still have no influence on the state held inside because `onAppear` won't be invoked again.
-
-^ and from the outside this code looks exactly the same as the previous code i had. both can be initialized simply with a single integer. there is no indiciation that something tricky is happening under the hood.
-
-^ so to me I rather use the previous code since there are fewer moving parts and since it has the exact same behavior as this. i say that if you need a view to hold onto `@State` or `@StateObject` and it needs to be initialized with some seed data from the outside, just pass it through directly, but know the caveats forwards and backwards. But, that is just my opinion, not a universal fact.
-
-<!-- todo: talk about how there are more workarounds for this but they are weird and one-directional -->
 
 ---
 
@@ -516,13 +457,11 @@ ContentView(
 )
 ```
 
-^ phew ok, that was a big step 2. let's get back on track.
+^ That was a big step 2, but there's just one final step to deep link into a very particular state of the application, and it's the thing we basically get for free by properly modeling navigation as state:
 
-^ the final step to deep link into a very particular state of the application, and the thing we basically get for free by properly modeling navigation as state:
+^ We can just construct a piece of state that represents where we want to navigate and it hand it off to SwiftUI to let it do its thing.
 
-^ we can just construct a piece of state that represents where we want to navigate
-
-^ thanks to the fact that the sheet and popover and driven off of this state it all just magically works. swiftui detects that the `sheetModel` is non-nil and so slides up a sheet, and then it detects that the value is non-`nil` and then shows a sheet.
+^ Thanks to the fact that the sheet and popover and driven off of this state it all just magically works. swiftui detects that the `sheetModel` is non-nil and so slides up a sheet, and then it detects that the value is non-`nil` and then shows a sheet.
 
 ---
 
@@ -544,8 +483,6 @@ ContentView(
 ^ and so we have now seen that sheets, full screen covers and popovers all have very similar APIs.
 
 ^ they all require you to hand it a binding of some optional data so that the navigation can be driven off of state
-
-^ technically they also have a variation that takes a binding of a boolean, but as we saw a moment ago that is really just a special case of the optinal binding style.
 
 ---
 
@@ -597,7 +534,7 @@ NavigationLink(
 [.code-highlight: all]
 [.code-highlight: 6]
 [.code-highlight: 2]
-[.code-highlight: 1,4]
+[.code-highlight: 1,3,4]
 ```
 NavigationLink(item: self.$model.editUser) {
   self.model.editUser = user
@@ -639,9 +576,9 @@ NavigationLink(
 
 ^ Well, unfortunately, those APIs are just a pipe dream and not reality at all. instead we have these 3 APIs, and in my opinion is one of the reasons why navigation links seemed so difficult to use since SwiftUI's inception.
 
-^ i think evidence of this is that, in my experience, people don't seem to have the same problems with sheets/covers/popovers the way they do with navigation links. People understand those other APIs pretty intuitively it seems.
+^ i think evidence of this is that, in my experience, people don't seem to have many problems understanding how to properly wield the sheets/covers/popover APIs. They understand them pretty intuitively. But the navigation APIs have always seemed a bit more mystifying for some reason.
 
-^ but alas, these are the APIs we had for a long time, though they are now deprecated. either way, let's take a quick look at them one-by-one.
+^ But alas, these are the APIs we had for a long time, though they are now deprecated. either way, let's take a quick look at them one-by-one.
 
 ---
 
@@ -662,7 +599,7 @@ NavigationLink(
 
 ^ this kind of link can be really handy in a pinch because it's so simple to use, but it also means you have no way whatsoever to programmatically deep link into the destination screen. Truly the only way to invoke the drill down is for the user to literally tap on the link. So, if you ever need to navigate to the destination via a deep link URL or a push notification or some other mechanism, this type of link is not for you.
 
-^ That's just the trade off for using this kind of navigation.
+^ And that's just the trade off for using this kind of navigation.
 
 ---
 
@@ -680,7 +617,7 @@ NavigationLink(
 
 ^ this is a state driven API, and the idea of it is that the link will listen for when the boolean becomes `true`, and when it detects that it will perform the drill down animation to the destination view.
 
-^ so that allows us to drive navigation off of boolean state. and in fact, we can even implement that optional item variation i showed just a moment ago in terms of this boolean one, so all is not lost. it just takes some work to do, and so most people are not going to know they need to do that.
+^ so that allows us to drive navigation off of boolean state. and in fact, we can even implement that optional-driven navigation link I theorized a moment ago in terms of this boolean binding one, so all is not lost. it just takes some work to do, and so most people are not going to know they need to do that.
 
 ---
 
@@ -803,7 +740,7 @@ func popover<Content>(
 
 ^ in all 4, the very act of invoking the API inextricably couples the source view that wants to perform the navigation to the destination you are navigating to.
 
-^ This means if you have a feature that can navigate to a settings screen, your feature must be able to build the settings feature in order to use these APIs.
+^ This means if you have a feature that can navigate to, say, a settings screen, your feature that wants to do the navigating must build the settings feature in order to get access to those symbols and actually make use of these APIs.
 
 ---
 
@@ -813,7 +750,7 @@ func popover<Content>(
 
 ^ Each box represents a feature, and each curve between boxes represents that you can navigate from one feature to another.
 
-^ If a feature's directly depends on the code of the features it can navigate to, it means we must build all destination features before we can build the parent feature.
+^ If a feature depends on the code of the features it can navigate to, it means we must build all destination features before we can build the parent feature. And not just the destinatinos, but also the destinations of the destinations, and on and on.
 
 ^ This means that leaf nodes will build super quickly because they basically have no dependencies, but as you work your work up the tree things will get slower and slower to compile.
 
@@ -821,7 +758,7 @@ func popover<Content>(
 
 ![200%](assets/coupling-2.png)
 
-^ For example, suppose in user list feature you can navigate either to a particular use or the settings screen. And then in each of those screens you can navigate to a few places.
+^ For example, suppose in user list feature you can navigate either to a particular user or the settings screen. And then in each of those screens you can navigate to a few places.
 
 ^ In order to implement new functionality or fix bugs in the `UsersList` feature, we must build all of the other features down below. And the functionality we are trying to implement or the bug we are trying to fix may not have anything to do with any of those features.
 
@@ -829,7 +766,7 @@ func popover<Content>(
 
 ^ For example, the `Settings` screen could start to depend on a heavy weight 3rd party library, like firebase, in order to sync settings to an external server.
 
-^ Or the `UserEdit` feature could pick up a dependency on an analytics SDK because that team wants to start instrumenting certain user behavior.
+^ Or the `UserEdit` feature could pick up a dependency on an analytics SDK because that team wants to start instrumenting certain user behavior. Those decisions seemingly only affect the team working on that specific feature, but secretly affects anyone working on a feature higher up the tree too.
 
 ^ now you may have never actually even experienced the problem i'm trying to explain here. it tends to affect large teams where it becomes difficult if not impossible to make sure that features don't bloat and take a long time to compile.
 
@@ -845,7 +782,7 @@ func popover<Content>(
 
 ![150%](assets/coupling-4.png)
 
-^ This would allow us to implement new functionality and fix bugs in each of these child features without building anything unnecessary things.
+^ This would allow us to implement new functionality and fix bugs in each of these child features without building anything unnecessary.
 
 ^ Now, this all sounds great in theory and in this fancy diagram, but I do want to point out the flip side of this.
 
@@ -865,7 +802,7 @@ func popover<Content>(
 
 ^ iOS 16 introduced a brand new API for drill-down navigations that can help decouple navigation destinations. It's called navigation stack, and Apple is so happy with this API that they deprecated all of the navigation link APIs we discussed a moment ago.
 
-^ It's worth mentioning that even with navigation stacks the coupling problem we discussed a moment ago is still possible with all other forms of navigation. For example, suppose the settings feature from a moment ago was not a drill down from the users list feature, but instead poppped up in a sheet. Then you have no choice but to use the `.sheet` view modifier to do that, and once you have done that you have coupled the users list feature to the settings feature.
+^ It's worth mentioning that even with navigation stacks the coupling problem we discussed all the other forms of navigation. For example, suppose the settings feature from a moment ago was not a drill down from the users list feature, but instead poppped up in a sheet. Then you have no choice but to use the `.sheet` view modifier to do that, and once you have done that you have coupled the users list feature to the settings feature.
 
 ^ So, it's still on you if you want to decouple your features for all of the other kinds of navigation we have discussed in this talk. But at least for drill-down animations, Apple has provided a tool
 
@@ -877,7 +814,7 @@ func popover<Content>(
 
 ^ In order to accomplish this decoupling the API for navigation had to be spread across 3 APIs: two are views and one is a view modifier.
 
-^  And it makes sense that it would need to be spread across a few APIs. If it was all in one single API like it is with the now deprecated `NavigationLink` initializers, then how could things be decoupled?
+^  And it makes sense that it would need to be spread across a few APIs. If it was all in one single API then how could we decouple? The very act of constructing the thing requires access to the source and the destination.
 
 ---
 
@@ -898,27 +835,34 @@ NavigationLink(value: user.id) {
 
 ^ In order to decouple the source and destination of a drill-down navigation, we need the ability to specify a piece of data that _describes_ the navigation without specifying the actual destination view of the navigation.
 
-^ This is done with a new initializer on `NavigationLink` that takes a piece of data that can be any hashable value, as well as the label for the link button.
+^ This is done with a new initializer on `NavigationLink` that takes a piece of data that can be any hashable value, as well as the label for the visual display on the link.
 
-^ There's a few other variations of this initializer too for different ways to specify the label.
+^ So, with this initializer we do not mention at all the view we want to navigate to. We only describe a piece of data that represents where we want to go to, and it will need to be interpreted later.
 
-^ So, with this initializer we do not describe at all the view we want to navigate to. We only describe a piece of data that represents where we want to go to.
+^ When you tap the link, the data is sent through every view layer all the way up to the root, and that data can be intercepted at any point to actually interpret the data and then decide which destination we should navigate to. This data flows to _all_ views above the link, even to siblings of parent views.
 
-^ When you tap the link, the data is sent through every view layer all the way up to the root, and that data can be intercepted at any point to actually interpret the data and then decide which destination we should navigate to. This data flows even to siblings of parent views, and most likely the feature is powered by `PreferenceKey`s if you are familiar with that.
-
-^ This is one part to the key for decoupling the source of navigation from the destination: the separation of data from interpretation of that data. We can see plain as day here that the view holding this navigation link to edit a user does not need to compile the "edit user" feature. There is no mention of any of its symbols.
+^ This is one part to the key for decoupling the source of navigation from the destination: the separation of data from interpretation of that data. We can see plain as day here that the view holding this navigation link to edit a user does not need to compile the "edit user" feature. There is no mention of any of its symbols, therefore we don't need to compile it.
 
 ---
 
 ## Decoupling navigation: Interpretation
 
+[.code-highlight: 1-4]
+[.code-highlight: 2]
+[.code-highlight: 3]
+[.code-highlight: 6-8]
 ```
+func navigationDestination<Data: Hashable>(
+  for: Data.Type, 
+  destination: (Data) -> Destination
+) -> some View
+
 .navigationDestination(for: User.ID.self) { userID in 
   EditUserView(id: userID)
 }
 ```
 
-^ Then, somewhere up the view heirarchy we can intercept the data that is sent from a navigation link and interpret it. This can happen in pretty much _any_ parent view.
+^ Then, somewhere up the view heirarchy we can intercept the data that is sent from a navigation link and interpret it using this view modifier. This can happen in pretty much _any_ parent view.
 
 ^ We first specify the _type_ of data we want to intercept, because technically we are allowed to make each navigation link in our application send up a different kind of data.
 
@@ -931,6 +875,12 @@ NavigationLink(value: user.id) {
 ![200%](assets/coupling-3.png)
 
 ^ So, we can now see that this new form of navigation does accomplish this type of dependency tree. All of the destination features, B through G, can be built in full isolation without building any of the other features.
+
+^ Each of B-G just needs to be able to construct a navigation link with a piece of data that describes where they want to go, but this can be something super lightweight, like the id of a model, such as a user or a photo or whatever.
+
+^ The types used for that data can be pulled out into its own module that builds super quickly since it's probably just a few tiny structs or enums. And feature B-G can depend on that module because it's so tiny.
+
+^ And the only feature that needs to actually build feature B-G is whoever uses the `.navigationDestination` modifier to 
 
 ---
 
@@ -958,9 +908,7 @@ NavigationLink("Edit user", value: user.id)
 
 ^ This is where the new `NavigationStack` comes into play.
 
-^ It supplants `NavigationView` as the entry point into drill down navigation on iOS, and `NavigationView` is now "soft" deprecated. Soft deprecated means that it is actually deprecated. If you look in the docs it will have the big yellow warning about that.
-
-^ But if you look at the actual interface file of the SwiftUI framework you will see that the deprecated version of `NavigationView` is set to 100,000, which means it doesn't cause a warning message in Xcode today. Presumably someday in the future they will bring that 100,000 down, like maybe for iOS 17, 18 or 19.
+^ It supplants `NavigationView` as the entry point into drill down navigation on iOS, and `NavigationView` is now "soft" deprecated. Soft deprecated means that it is actually deprecated. If you look in the docs it will have the big yellow warning about that. But warnings are not produced in Xcode yet, so you are not told to convert everything immediately. That will come later on.
 
 ---
 
@@ -1213,8 +1161,8 @@ var decodedPath = NavigationPath(
 
 ---
 
-# github.com/pointfreeco/
-# swift-url-routing
+## github.com/pointfreeco/
+## swift-url-routing
 
 ^ There are lots of libraries out there whose entire purpose is to interpret a nebulous URL request so that you can pick it apart, match on it, and then do something when it matches.
 
@@ -1421,6 +1369,7 @@ todo: talk more about how state-driven navigation makes it possible to test navi
  -->
 
 
+<!-- todo: mention that the idea of state existing/not existing also works for navigation stack -->
 
 
 
@@ -1430,3 +1379,73 @@ todo: talk more about how state-driven navigation makes it possible to test navi
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+---
+
+---
+---
+---
+---
+---
+
+<!-- 
+
+
+^ now this little bit of code may cause a little tingle in the back of some of y'alls brains. i am specifically leaving this `@State` as uninitialized and allowing its initial state to be determined by the outside.
+
+^ you may have heard somewhere that this is a bad idea. I will say that it has its subtle edge cases, but there really is no perfect way for interacting with `@State`, and the same with `@StateObject`, due to its very nature.
+
+^ the subtlety here is that the lifetime of `@State` is tied to the lifetime of the view, and so it is _really_ only created a single time. after that first creation, even if the parent view tried recreating `PopoverView` with a completely new value, that value would just be discarded and this internal state would stay the same.
+
+^ so, that is tricky, but that's also just the cost of doing business with an object whose whole purpose is to be tied to the lifetime of a view.
+
+---
+
+# Step 2
+### Define the view
+
+[.code-highlight: all]
+[.code-highlight: 2]
+[.code-highlight: 3]
+[.code-highlight: 10]
+```
+struct PopoverView: View {
+  @State var count = 0
+  let initialValue: Int
+  var body: some View {
+    HStack {
+      Button("-") { self.count -= 1 }
+      Text("\(self.count)")
+      Button("+") { self.count += 1 }
+    }
+    .onAppear { self.count = self.initialValue }
+  }
+}
+```
+
+^ some people suggest to "workaround" this strangeness in the following way
+
+^ you force `@State` to have a default value, and just hope there's even a sensible default to use, and then you provide a `let` property for the initial value. that's the value you can initialize the view with from the outside.
+
+^ _then_ you set up an `onAppear` to copy that initial value over to the state value.
+
+^ to me that just seems very strange and i don't think it's actually accomplished anything. you still have the behavior that this view can only _really_ be created with an initial value a single time. later recreations of the view with new values will still have no influence on the state held inside because `onAppear` won't be invoked again.
+
+^ and from the outside this code looks exactly the same as the previous code i had. both can be initialized simply with a single integer. there is no indiciation that something tricky is happening under the hood.
+
+^ so to me I rather use the previous code since there are fewer moving parts and since it has the exact same behavior as this. i say that if you need a view to hold onto `@State` or `@StateObject` and it needs to be initialized with some seed data from the outside, just pass it through directly, but know the caveats forwards and backwards. But, that is just my opinion, not a universal fact.
+
+
+ -->
