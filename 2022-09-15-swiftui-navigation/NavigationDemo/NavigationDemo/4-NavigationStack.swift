@@ -33,7 +33,6 @@ enum NavigationStackDemo {
             Text("Screen C")
           }
         }
-        .navigationDestination(for: <#T##Hashable.Protocol#>, destination: <#T##(Hashable) -> View#>)
         .navigationDestination(for: Destination.self) { destination in
           switch destination {
           case .screenA:

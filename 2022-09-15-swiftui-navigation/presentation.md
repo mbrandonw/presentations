@@ -933,7 +933,9 @@ NavigationStack(
 
 ^ And these are the two main ways you can create a state-driven navigation stack.
 
-^ First there's the seemingly complex one that takes a binding of some data, where that data has a bunch of constraints. At the end of the day, the `Data` generic is almost certainly going to be just an array of some hashable values.
+^ First there's the seemingly complex one that takes a binding of a collection of hashable data, and there's all types of constraints that make it look scary.
+
+^ But really at the end of the day, I think almost everyone is just going to use arrays. Maybe there's a use case for some more exotic collection types, but for now let's just simplify things.
 
 ---
 
@@ -951,18 +953,17 @@ NavigationStack(
 )
 ```
 
-^ So let's just make our lives easier and put that explicitly. Know that technically you can use fancier, more exotic collection types than just plain arrays, but that is kind of clouding what is really going on here.
+^ If we wipe away all of that noise we get something much nicer. The initializer takes a binding to an array of hashable elements.
 
 ^ So, the idea behind this binding is now when a user taps a navigation link, the data associated to that link will be appended to this array. And further, when the user taps a back button or does a swipe gesture, the value will be popped off the array.
 
 ^ In parallel with that, SwiftUI will also listen for changes to this array of elements, and when it detects something changed it will update the UI accordingly. It automatically figures out if values were added or removed and performs the appropriate pushing and popping animations.
 
-^ This allows us to programmatically drive navigation. If a push notification comes in, or we detect a deep link URL was opened, we just have to interpret that incoming data and add elements to this array, and SwiftUI will take care of the rest.
+^ And while all of that is happening, `.navigationDestintion` is doing its normal job of looking for data of a particular type to intercept and interpret.
+
+^ This binding allows us to programmatically drive navigation. If a push notification comes in, or we detect a deep link URL was opened, we just have to interpret that incoming data and add elements to this array, and SwiftUI will take care of the rest.
 
 ^ It is worth noting that when using this form of binding, then the data associated with navigation links must all be of the same. It all needs to be homogenous.
-
-
-<!-- todo: this is the first time we see coupling of features. the feature that contains the NavigationStack is the first time that we need to build multiple child features before we can run this feature.  -->
 
 ---
 
@@ -986,12 +987,17 @@ NavigationStack(
 
 ^ You can't iterate over the elements, you can't access a particular element. The internals of the quote-unquote "collection" are completely opaque to us. The elements are even type erased under the hood because you are allowed to append _any_ hashable data to this thing.
 
-^ Other than it's weird type erasedness, it mostly works as the other initializer. If a navigation link is tapped, that data is appended to the collection. The `.navigationDestination` still listens for data flowing up the view heirarchy in order to intercept certain pieces of data and interpret it. And finally, if the `NavigationStack` observes a change in the path it will do pushes and pops accordingly.
+^ Other than it's weird type erasedness, it mostly works as the other initializer. If a navigation link is tapped, that data is appended to the collection. The `.navigationDestination` still listens for data flowing up the view heirarchy in order to intercept certain pieces of data and interpret it. And finally, if the `NavigationStack` observes a change in the path it will do pushes and pops accordingly. 
+
+^ But the key difference is that any kind of data can be attached to a navigation link since navigation path is type erased. You aren't constrained to use the same static type for all links.
+
+^ And it's worth noting that in my opinion this type of binding still falls under the purview of that concept I discussed earlier about state coming into existence and then going out of existence. In this case, a piece of state goes from not existing to existing the moment it is added to the array, and then it ceases to exist once it is popped from the array.
 
 ---
 
 [.code-highlight: 1-4]
-[.code-highlight: 5-99]
+[.code-highlight: 6]
+[.code-highlight: 8-99]
 ```
 var path = NavigationPath()
 path.append(42)
@@ -1012,9 +1018,13 @@ var decodedPath = NavigationPath(
 
 ^ So you can append an integer, then a string, and then a boolean, and it will happily take it all. This is perhaps one of the reasons that you cannot iterate over this "collection", but honestly I think it'd still be useful, even if the element it exposed was just an `any Hashable` that we could cast ourselves.
 
-^ Even more wild though, you can encode this collection of nebulous, type erased elements into some data that can be saved to disk or sent over the network, and then somehow magically it can turn it back into a navigation path, which can then be plugged into a SwiftUI view causing the navigation stack to be restored.
+^ Also wild, you can encode this collection of nebulous, type erased elements into some data that can be saved to disk or sent over the network. That seems wild to me because all the elements are type erased, so what could possibly be serialized to data?
 
-^ That is really bizarre to think about because in order for that restoration process to happen the `.navigationDestination` view modifiers must be invoked, which means somehow real, strongly typed data is produced from this nebulous, type erased data that was just resurrected from raw bytes. 
+^ But even more wild, you can somehow decode that data back into a `NavigationPath`. How could it possibly produce a Swift value from raw bytes that were encoded from type erased data?
+
+^ And then you can somehow take that newly formed navigation path and plug it into the navigation stack view's binding causing the UI to be updated to represent the data you hand it. that means it will do any pushing and popping necessary.
+
+^ And that is really bizarre to think about because in order for that restoration process to happen the `.navigationDestination` view modifiers must be invoked in order to get a destination, which means somehow real, strongly typed data is produced from this nebulous, type erased data that was just resurrected from raw bytes. 
 
 ^ It's honestly pretty cool, and seems to solve state restoration in a simple 1-2-3 step proces, but sadly in its current for is not actually usable in production. If you restore a navigation stack with decoded navigation path data, you will eventually get a crash deep in the SwiftUI framework, and sadly that was not fixed before the final iOS 16 release.
 
@@ -1146,7 +1156,7 @@ var decodedPath = NavigationPath(
 /screenC/sheet    -> ScreenC w/ sheet open
 /screenC/sheet/42 -> ScreenC w/ sheet and popover open
 
-/screenA/screenB/screenC/sheet/42 -> stack of screen
+/screenA/screenB/screenC/sheet/42 -> stack of screens
 ```
 
 ^ For example, here are some URLs we might want to recognize for our application.
@@ -1200,6 +1210,10 @@ enum ScreenCDestination: Hashable {
 
 [.code-highlight: all]
 [.code-highlight: 3, 6-11]
+[.code-highlight: 6,11]
+[.code-highlight: 7,10]
+[.code-highlight: 8]
+[.code-highlight: 9]
 ```
 import URLRouting
 
@@ -1220,9 +1234,11 @@ struct ScreenCRouter: Parser {
 
 ^ Now it's a lot, but I want you to focus only on these few lines here. This is the actual description of how our parser will process an incoming URL request
 
-^ It wants to parse a `ScreenCDestination`, which is a case of an enum, so it says that upfront
+^ It wants to parse into a particular case of the `ScreenCDestination`, and so it specifies that directly. In order t construct that case we need to produce a `popoverValue` which is an optional integer.
 
-^ The first thing we want to parse is "sheet" from the first path component. If that fails, then whole parser fails.
+^ Then inside there we start describing all the various parts of the URL we want to parse and recognize. In this case we only want to parse path components, but if we needed to handle query fields there would be more to do here.
+
+^ The first path component we want to parse is "sheet". If that fails, then whole parser fails and we short circuit the rest of the work.
 
 ^ Next, we want to try to parse an integer from the path component, but it isn't required. It's totally fine to recognize the URL of just "/sheet" with no further integer, so we express this by saying that the integer is optional
 
@@ -1230,6 +1246,7 @@ struct ScreenCRouter: Parser {
 
 [.code-highlight: all]
 [.code-highlight: 5-20]
+[.code-highlight: 5,20]
 [.code-highlight: 6-9]
 [.code-highlight: 10-13]
 [.code-highlight: 14-18]
@@ -1307,7 +1324,9 @@ try router.match(path: "/screenC/sheet")
   ➡️ [.screenC(destination: .sheet(popoverValue: 42))]
 ```
 
-^ With that router defined we can use it to match URLs to values in the `Destination` enum. Here are some example usages.
+^ With that router defined we can take it for a spin.
+
+^ You construct a router, and then you use the `.match` method on a little URL fragment in order to transform it into our `Destination` enum type. Here are some example usages.
 
 
 ---
@@ -1323,7 +1342,7 @@ try router.match(path: "/screenC/sheet")
 }
 ```
 
-^ But the really amazing thing is that with that router defined, URL routing in your application can be done in just these few lines.
+^ But the really amazing thing is that with that router defined, URL routing in your application can be done in just these few lines. This is truly all it takes.
 
 ^ We use the `onOpenURL` view modifier to be notified when someone opens the app via a URL. This can be done via a custom URL scheme or setting up an app-site association file on your web server.
 
@@ -1358,19 +1377,10 @@ try router.match(path: "/screenC/sheet")
 ^ And the finally we should how URL routing can be broken down as the process of turning a nebulous URL into well-structured data, and then handing that data over to SwiftUI for it to do its thing.
 
 <!-- 
-todo: talk more about how state-driven navigation makes it possible to test navigation without resorting to UI tests.
- -->
-
-<!-- 
   todo: talk about navigationDestination(isPresented: Binding<Bool>)? 
     - another odd duck
 
-  todo: tighten up dependencies
  -->
-
-
-<!-- todo: mention that the idea of state existing/not existing also works for navigation stack -->
-
 
 
 
