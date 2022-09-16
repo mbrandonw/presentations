@@ -419,7 +419,7 @@ struct PopoverView: View {
 ---
 
 # Step 3
-### Construct state to deep link
+### Construct state
 
 [.code-highlight: all]
 [.code-highlight: 3]
