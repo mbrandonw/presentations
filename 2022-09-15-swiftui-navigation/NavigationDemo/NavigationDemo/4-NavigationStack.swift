@@ -176,15 +176,15 @@ extension NavigationStackDemo {
   struct ScreenRouter: ParserPrinter {
     var body: some ParserPrinter<URLRequestData, Destination> {
       OneOf {
-        // screenA
+        // /screenA
         Parse(.case(Destination.screenA)) {
           Path { "screenA" }
         }
-        // screenB
+        // /screenB
         Parse(.case(Destination.screenB)) {
           Path { "screenB" }
         }
-        // screenC/sheet-42
+        // /screenC/:sheet
         Parse(.case(Destination.screenC(destination:))) {
           Path { "screenC" }
           Optionally { ScreenCRouter() }
@@ -195,6 +195,7 @@ extension NavigationStackDemo {
 
   struct ScreenCRouter: ParserPrinter {
     var body: some ParserPrinter<URLRequestData, ScreenCDestination> {
+      // /sheet/:int?
       Parse(.case(ScreenCDestination.sheet(popoverValue:))) {
         Path {
           "sheet"
