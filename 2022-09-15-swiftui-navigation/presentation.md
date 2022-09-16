@@ -438,7 +438,7 @@ ContentView(
 
 ^ We can just construct a piece of state that represents where we want to navigate and it hand it off to SwiftUI to let it do its thing.
 
-^ Thanks to the fact that the sheet and popover and driven off of this state it all just magically works. swiftui detects that the `sheetModel` is non-nil and so slides up a sheet, and then it detects that the value is non-`nil` and then shows a sheet.
+^ Thanks to the fact that the sheet and popover and driven off of this state it all just magically works. swiftui detects that the `sheetModel` is non-nil and so slides up a sheet, and then it detects that the popover value is non-`nil` and then shows a popover.
 
 ---
 
@@ -1004,7 +1004,7 @@ var decodedPath = NavigationPath(
 
 ^ I'm not going to go super in depth into `NavigationPath`, but I do want to give you a preview of just how wild this type is.
 
-^ So you can append an integer, then a string, and then a boolean, and it will happily take it all. This is perhaps one of the reasons that you cannot iterate over this "collection", but honestly I think it'd still be useful, even if the element it exposed was just an `any Hashable` that we could cast ourselves.
+^ So you can append an integer, then a string, and then a boolean, and it will happily take it all. 
 
 ^ Also wild, you can encode this collection of nebulous, type erased elements into some data that can be saved to disk or sent over the network. That seems wild to me because all the elements are type erased, so what could that those raw serialized bytes even look like?
 
@@ -1172,8 +1172,10 @@ var decodedPath = NavigationPath(
 
 ---
 
+[.code-highlight: all]
+[.code-highlight: 10-15]
 ```
-enum Destination: Hashable {
+enum Destination {
   // /screenA
   case screenA
   // /screenB
@@ -1183,7 +1185,7 @@ enum Destination: Hashable {
 }
 
 // /sheet/:int?
-enum ScreenCDestination: Hashable {
+enum ScreenCDestination {
   case sheet(popoverValue: Int? = nil)
 }
 ```
@@ -1252,7 +1254,7 @@ struct DestinationRouter: Parser {
       Parse(Destination.screenB) {
         Path { "screenB" }
       }
-      // screenC/sheet/42
+      // screenC/:sheet
       Parse(Destination.screenC(destination:)) {
         Path { "screenC" }
         Optionally { ScreenCRouter() }
