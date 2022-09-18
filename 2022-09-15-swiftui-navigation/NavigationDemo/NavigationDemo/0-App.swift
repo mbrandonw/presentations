@@ -5,15 +5,15 @@ struct NavigationDemoApp: App {
   var body: some Scene {
     WindowGroup {
       // 1️⃣
-      SheetThenPopoverViewDemo.ContentView(
-        model: .init()
-      )
+//      SheetThenPopoverViewDemo.ContentView(
+//        model: .init(sheet: .init(popoverValue: 42))
+//      )
 
       // 2️⃣
 //      NavigationView {
 //        EmptyView()
 //        DrillDownThenSheetThenPopoverDemo.ContentView(
-//          model: .init()
+//          model: .init(child: .init(sheet: .init(popoverValue: 42)))
 //        )
 //      }
 //      .navigationViewStyle(.stack)
@@ -22,15 +22,15 @@ struct NavigationDemoApp: App {
 //      NavigationView {
 //        EmptyView()
 //        NestedDrillDownDemo.ContentView(
-//          model: .init()
+//          model: .init(child: .init(child: .init(child: .init(child: .init()))))
 //        )
 //      }
 //      .navigationViewStyle(.stack)
 
       // 4️⃣
-//      NavigationStackDemo.ContentView(
-//        model: .init()
-//      )
+      NavigationStackDemo.ContentView(
+        model: .init()
+      )
     }
   }
 }
