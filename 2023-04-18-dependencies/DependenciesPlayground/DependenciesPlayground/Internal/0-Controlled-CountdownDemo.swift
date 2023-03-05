@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CountdownView: View {
+struct ControlledCountdownDemo: View {
   @State var countdown = 10
   @State var isConfettiVisible = false
 
@@ -28,8 +28,8 @@ struct CountdownView: View {
   }
 }
 
-struct ContentView_Previews: PreviewProvider {
+struct ControlledContentDemo_Previews: PreviewProvider {
   static var previews: some View {
-    CountdownView()
+    ControlledCountdownDemo()
   }
 }

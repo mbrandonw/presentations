@@ -8,15 +8,21 @@
 
 /* Begin PBXBuildFile section */
 		CA0DC26329B13CC400788AAF /* ConfettiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA0DC26229B13CC400788AAF /* ConfettiView.swift */; };
-		CA0DC26629B1430B00788AAF /* LocationDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA0DC26529B1430B00788AAF /* LocationDemo.swift */; };
+		CA0DC26629B1430B00788AAF /* 1-LocationDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA0DC26529B1430B00788AAF /* 1-LocationDemo.swift */; };
 		CA0DC26B29B14F8400788AAF /* PlaygroundPackage in Frameworks */ = {isa = PBXBuildFile; productRef = CA0DC26A29B14F8400788AAF /* PlaygroundPackage */; };
-		CA0DC26D29B150ED00788AAF /* ContactsDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA0DC26C29B150ED00788AAF /* ContactsDemo.swift */; };
+		CA0DC26D29B150ED00788AAF /* 2-ContactsDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA0DC26C29B150ED00788AAF /* 2-ContactsDemo.swift */; };
+		CA0DC27E29B2785700788AAF /* 3-AnalyticsDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA0DC27D29B2785700788AAF /* 3-AnalyticsDemo.swift */; };
+		CA2DB85929B43A7A0003B914 /* 0-Controlled-CountdownDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2DB85829B43A7A0003B914 /* 0-Controlled-CountdownDemo.swift */; };
+		CA2DB85B29B43A930003B914 /* 3-Controlled-AnalyticsDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2DB85A29B43A930003B914 /* 3-Controlled-AnalyticsDemo.swift */; };
+		CA2DB85D29B446F10003B914 /* 1-Controlled-LocationDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2DB85C29B446F00003B914 /* 1-Controlled-LocationDemo.swift */; };
 		CA4E1BC729B013020006970D /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4E1BC629B013020006970D /* App.swift */; };
-		CA4E1BC929B013020006970D /* CountdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4E1BC829B013020006970D /* CountdownView.swift */; };
+		CA4E1BC929B013020006970D /* 0-CountdownDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4E1BC829B013020006970D /* 0-CountdownDemo.swift */; };
 		CA4E1BCB29B013030006970D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA4E1BCA29B013030006970D /* Assets.xcassets */; };
 		CA4E1BD829B013030006970D /* DependenciesPlaygroundTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4E1BD729B013030006970D /* DependenciesPlaygroundTests.swift */; };
 		CA4E1BE229B013030006970D /* DependenciesPlaygroundUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4E1BE129B013030006970D /* DependenciesPlaygroundUITests.swift */; };
 		CA4E1BE429B013030006970D /* DependenciesPlaygroundUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4E1BE329B013030006970D /* DependenciesPlaygroundUITestsLaunchTests.swift */; };
+		CAE856D829B2A40E0035524F /* Clocks in Frameworks */ = {isa = PBXBuildFile; productRef = CAE856D729B2A40E0035524F /* Clocks */; };
+		CAF4883A29B4FF5100D38DCC /* 2-Controlled-ContactsDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF4883929B4FF5100D38DCC /* 2-Controlled-ContactsDemo.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,19 +44,24 @@
 
 /* Begin PBXFileReference section */
 		CA0DC26229B13CC400788AAF /* ConfettiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiView.swift; sourceTree = "<group>"; };
-		CA0DC26529B1430B00788AAF /* LocationDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDemo.swift; sourceTree = "<group>"; };
+		CA0DC26529B1430B00788AAF /* 1-LocationDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "1-LocationDemo.swift"; sourceTree = "<group>"; };
 		CA0DC26729B145D000788AAF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		CA0DC26829B14F4300788AAF /* PlaygroundPackage */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = PlaygroundPackage; sourceTree = "<group>"; };
-		CA0DC26C29B150ED00788AAF /* ContactsDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsDemo.swift; sourceTree = "<group>"; };
+		CA0DC26C29B150ED00788AAF /* 2-ContactsDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "2-ContactsDemo.swift"; sourceTree = "<group>"; };
+		CA0DC27D29B2785700788AAF /* 3-AnalyticsDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "3-AnalyticsDemo.swift"; sourceTree = "<group>"; };
+		CA2DB85829B43A7A0003B914 /* 0-Controlled-CountdownDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "0-Controlled-CountdownDemo.swift"; sourceTree = "<group>"; };
+		CA2DB85A29B43A930003B914 /* 3-Controlled-AnalyticsDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "3-Controlled-AnalyticsDemo.swift"; sourceTree = "<group>"; };
+		CA2DB85C29B446F00003B914 /* 1-Controlled-LocationDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "1-Controlled-LocationDemo.swift"; sourceTree = "<group>"; };
 		CA4E1BC329B013020006970D /* DependenciesPlayground.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DependenciesPlayground.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA4E1BC629B013020006970D /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
-		CA4E1BC829B013020006970D /* CountdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownView.swift; sourceTree = "<group>"; };
+		CA4E1BC829B013020006970D /* 0-CountdownDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "0-CountdownDemo.swift"; sourceTree = "<group>"; };
 		CA4E1BCA29B013030006970D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CA4E1BD329B013030006970D /* DependenciesPlaygroundTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DependenciesPlaygroundTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA4E1BD729B013030006970D /* DependenciesPlaygroundTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependenciesPlaygroundTests.swift; sourceTree = "<group>"; };
 		CA4E1BDD29B013030006970D /* DependenciesPlaygroundUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DependenciesPlaygroundUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA4E1BE129B013030006970D /* DependenciesPlaygroundUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependenciesPlaygroundUITests.swift; sourceTree = "<group>"; };
 		CA4E1BE329B013030006970D /* DependenciesPlaygroundUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependenciesPlaygroundUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		CAF4883929B4FF5100D38DCC /* 2-Controlled-ContactsDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "2-Controlled-ContactsDemo.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +70,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CA0DC26B29B14F8400788AAF /* PlaygroundPackage in Frameworks */,
+				CAE856D829B2A40E0035524F /* Clocks in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -82,6 +94,10 @@
 		CA0DC26429B13CDA00788AAF /* Internal */ = {
 			isa = PBXGroup;
 			children = (
+				CA2DB85829B43A7A0003B914 /* 0-Controlled-CountdownDemo.swift */,
+				CA2DB85C29B446F00003B914 /* 1-Controlled-LocationDemo.swift */,
+				CAF4883929B4FF5100D38DCC /* 2-Controlled-ContactsDemo.swift */,
+				CA2DB85A29B43A930003B914 /* 3-Controlled-AnalyticsDemo.swift */,
 				CA0DC26229B13CC400788AAF /* ConfettiView.swift */,
 			);
 			path = Internal;
@@ -120,10 +136,11 @@
 			isa = PBXGroup;
 			children = (
 				CA0DC26729B145D000788AAF /* Info.plist */,
+				CA4E1BC829B013020006970D /* 0-CountdownDemo.swift */,
+				CA0DC26529B1430B00788AAF /* 1-LocationDemo.swift */,
+				CA0DC26C29B150ED00788AAF /* 2-ContactsDemo.swift */,
+				CA0DC27D29B2785700788AAF /* 3-AnalyticsDemo.swift */,
 				CA4E1BC629B013020006970D /* App.swift */,
-				CA0DC26C29B150ED00788AAF /* ContactsDemo.swift */,
-				CA4E1BC829B013020006970D /* CountdownView.swift */,
-				CA0DC26529B1430B00788AAF /* LocationDemo.swift */,
 				CA4E1BCA29B013030006970D /* Assets.xcassets */,
 				CA0DC26429B13CDA00788AAF /* Internal */,
 			);
@@ -165,6 +182,7 @@
 			name = DependenciesPlayground;
 			packageProductDependencies = (
 				CA0DC26A29B14F8400788AAF /* PlaygroundPackage */,
+				CAE856D729B2A40E0035524F /* Clocks */,
 			);
 			productName = DependenciesPlayground;
 			productReference = CA4E1BC329B013020006970D /* DependenciesPlayground.app */;
@@ -238,6 +256,9 @@
 				Base,
 			);
 			mainGroup = CA4E1BBA29B013020006970D;
+			packageReferences = (
+				CAE856D629B2A40E0035524F /* XCRemoteSwiftPackageReference "swift-clocks" */,
+			);
 			productRefGroup = CA4E1BC429B013020006970D /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -280,10 +301,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				CA0DC26329B13CC400788AAF /* ConfettiView.swift in Sources */,
-				CA4E1BC929B013020006970D /* CountdownView.swift in Sources */,
+				CA4E1BC929B013020006970D /* 0-CountdownDemo.swift in Sources */,
+				CAF4883A29B4FF5100D38DCC /* 2-Controlled-ContactsDemo.swift in Sources */,
 				CA4E1BC729B013020006970D /* App.swift in Sources */,
-				CA0DC26D29B150ED00788AAF /* ContactsDemo.swift in Sources */,
-				CA0DC26629B1430B00788AAF /* LocationDemo.swift in Sources */,
+				CA2DB85D29B446F10003B914 /* 1-Controlled-LocationDemo.swift in Sources */,
+				CA0DC27E29B2785700788AAF /* 3-AnalyticsDemo.swift in Sources */,
+				CA0DC26D29B150ED00788AAF /* 2-ContactsDemo.swift in Sources */,
+				CA0DC26629B1430B00788AAF /* 1-LocationDemo.swift in Sources */,
+				CA2DB85B29B43A930003B914 /* 3-Controlled-AnalyticsDemo.swift in Sources */,
+				CA2DB85929B43A7A0003B914 /* 0-Controlled-CountdownDemo.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -607,10 +633,26 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		CAE856D629B2A40E0035524F /* XCRemoteSwiftPackageReference "swift-clocks" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-clocks.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.2.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		CA0DC26A29B14F8400788AAF /* PlaygroundPackage */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PlaygroundPackage;
+		};
+		CAE856D729B2A40E0035524F /* Clocks */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CAE856D629B2A40E0035524F /* XCRemoteSwiftPackageReference "swift-clocks" */;
+			productName = Clocks;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

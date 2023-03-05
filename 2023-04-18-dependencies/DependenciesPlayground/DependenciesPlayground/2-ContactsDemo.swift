@@ -14,9 +14,7 @@ struct ContactsDemo: View {
     .onAppear {
       let store = CNContactStore()
       store.requestAccess(for: .contacts) { success, error in
-        guard success
-        else { return }
-
+        guard success else { return }
         do {
           let contacts = try store.unifiedContacts(
             matching: NSPredicate(block: { _, _ in true }),

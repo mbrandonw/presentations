@@ -3,8 +3,9 @@ import SwiftUI
 
 import PlaygroundPackage
 
-class LocationDemoModel: NSObject, ObservableObject, CLLocationManagerDelegate {
+class ControlledAnalyticsDemoModel: NSObject, ObservableObject, CLLocationManagerDelegate {
   let manager = CLLocationManager()
+  let analytics: any Analytics
   @Published var coordinateRegion = MKCoordinateRegion(
     center: CLLocationCoordinate2D(
       latitude: 40.7545006,
@@ -16,14 +17,14 @@ class LocationDemoModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     )
   )
 
-  override init() {
-    super.init()
-    self.manager.delegate = self
+  init(analytics: any Analytics = LiveAnalytics()) {
+    self.analytics = analytics
   }
 
   func locationButtonTapped() {
-    foo()
+    self.analytics.track("Location button tapped")
     if self.manager.authorizationStatus == .notDetermined {
+      self.analytics.track("Request authorization")
       self.manager.requestWhenInUseAuthorization()
     } else {
       self.manager.requestLocation()
@@ -32,7 +33,10 @@ class LocationDemoModel: NSObject, ObservableObject, CLLocationManagerDelegate {
 
   func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
     if self.manager.authorizationStatus == .authorizedWhenInUse {
+      self.analytics.track("Authorization granted")
       self.manager.requestLocation()
+    } else if self.manager.authorizationStatus != .notDetermined {
+      self.analytics.track("Authorization denied")
     }
   }
 
@@ -43,6 +47,8 @@ class LocationDemoModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     guard let location = locations.last
     else { return }
 
+    self.analytics.track("Location request succeeded")
+
     withAnimation {
       self.coordinateRegion.center = location.coordinate
       self.coordinateRegion.span.latitudeDelta = 0.01
@@ -51,11 +57,16 @@ class LocationDemoModel: NSObject, ObservableObject, CLLocationManagerDelegate {
   }
 
   func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+    self.analytics.track("Location request failed")
+  }
+
+  func onAppear() {
+    self.analytics.track("Location demo appeared")
   }
 }
 
-struct LocationDemo: View {
-  @ObservedObject var model: LocationDemoModel
+struct ControlledAnalyticsDemo: View {
+  @ObservedObject var model: ControlledAnalyticsDemoModel
 
   var body: some View {
     ZStack(alignment: .bottomTrailing) {
@@ -75,11 +86,34 @@ struct LocationDemo: View {
       .buttonStyle(.plain)
       .padding(.all)
     }
+    .onAppear {
+      self.model.onAppear()
+    }
   }
 }
 
-struct LocationDemo_Previews: PreviewProvider {
+struct ControlledAnalyticsDemo_Previews: PreviewProvider {
   static var previews: some View {
-    LocationDemo(model: LocationDemoModel())
+    ControlledAnalyticsDemo(
+      model: ControlledAnalyticsDemoModel(
+        analytics: NoopAnalytics()
+      )
+    )
+  }
+}
+
+protocol Analytics {
+  func track(_ event: String)
+}
+
+struct LiveAnalytics: Analytics {
+  func track(_ event: String) {
+    // TODO: URLSession.shared.dataTask(…)
+    print("Analytics tracked", event)
+  }
+}
+
+struct NoopAnalytics: Analytics {
+  func track(_ event: String) {
   }
 }

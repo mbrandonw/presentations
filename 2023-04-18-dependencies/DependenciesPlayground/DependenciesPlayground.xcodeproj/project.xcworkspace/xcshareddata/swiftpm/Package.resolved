@@ -1,0 +1,23 @@
+{
+  "pins" : [
+    {
+      "identity" : "swift-clocks",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-clocks.git",
+      "state" : {
+        "revision" : "20b25ca0dd88ebfb9111ec937814ddc5a8880172",
+        "version" : "0.2.0"
+      }
+    },
+    {
+      "identity" : "xctest-dynamic-overlay",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
+      "state" : {
+        "revision" : "62041e6016a30f56952f5d7d3f12a3fd7029e1cd",
+        "version" : "0.8.3"
+      }
+    }
+  ],
+  "version" : 2
+}
