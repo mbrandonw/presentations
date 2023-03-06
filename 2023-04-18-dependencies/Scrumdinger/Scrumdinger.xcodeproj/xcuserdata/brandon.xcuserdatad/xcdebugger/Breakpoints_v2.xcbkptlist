@@ -3,4 +3,54 @@
    uuid = "E2D01D54-A88B-4D8C-98D7-E52373DC33BB"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0635AB15-BD5C-4816-8C42-AA09948E7976"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Scrumdinger/ScrumdingerApp.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "13"
+            endingLineNumber = "13"
+            landmarkName = "body"
+            landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "0635AB15-BD5C-4816-8C42-AA09948E7976 - d4117bc362de285f"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Scrumdinger.ScrumdingerApp.body.getter : some"
+                  moduleName = "Scrumdinger"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brandon/projects/presentations/2023-04-18-dependencies/Scrumdinger/Scrumdinger/ScrumdingerApp.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "13"
+                  endingLineNumber = "13"
+                  offsetFromSymbolStart = "184">
+               </Location>
+               <Location
+                  uuid = "0635AB15-BD5C-4816-8C42-AA09948E7976 - 4de26a99cd71a201"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; &lt;&lt;opaque return type of SwiftUI.View.sheet&lt;&#x3c4;_0_0, &#x3c4;_0_1 where &#x3c4;_1_0: Swift.Identifiable, &#x3c4;_1_1: SwiftUI.View&gt;(item: SwiftUI.Binding&lt;Swift.Optional&lt;&#x3c4;_1_0&gt;&gt;, onDismiss: Swift.Optional&lt;() -&gt; ()&gt;, content: (&#x3c4;_1_0) -&gt; &#x3c4;_1_1) -&gt; some&gt;&gt;.0 in Scrumdinger.ScrumdingerApp.body.getter : some"
+                  moduleName = "Scrumdinger"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brandon/projects/presentations/2023-04-18-dependencies/Scrumdinger/Scrumdinger/ScrumdingerApp.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "14"
+                  endingLineNumber = "14"
+                  offsetFromSymbolStart = "600">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

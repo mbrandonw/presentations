@@ -53,7 +53,7 @@ struct LiveContactsClient: ContactsClient {
 
   func unifiedContacts() async throws -> [Contact] {
     try self.store.unifiedContacts(
-      matching: NSPredicate(block: { _, _ in true }),
+      matching: NSPredicate(value: true),
       keysToFetch: [CNContactGivenNameKey as CNKeyDescriptor]
     )
     .map(Contact.init(contact:))

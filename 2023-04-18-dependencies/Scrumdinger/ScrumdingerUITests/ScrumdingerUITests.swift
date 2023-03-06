@@ -7,7 +7,7 @@ final class ScrumdingerUITests: XCTestCase {
   override func setUpWithError() throws {
     self.continueAfterFailure = false
   }
-
+ 
   func testBasics() async throws {
     self.app.launch()
 

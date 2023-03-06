@@ -97,7 +97,7 @@ struct ControlledLocationDemo_Previews: PreviewProvider {
     ControlledLocationDemo(
       model: ControlledLocationDemoModel(
         analytics: NoopAnalytics(),
-        location: MockLocationClient(
+        locationClient: MockLocationClient(
           location: CLLocationCoordinate2D(
             latitude: 34.052235,
             longitude: -118.243683

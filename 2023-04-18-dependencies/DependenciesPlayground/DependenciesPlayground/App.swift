@@ -43,13 +43,36 @@ struct AppView: View {
             ControlledLocationDemo(model: ControlledLocationDemoModel())
           }
           NavigationLink("Contacts demo") {
-            //ContactsDemo()
+            ControlledContactsDemo()
           }
           NavigationLink("Analytics demo") {
-            //AnalyticsDemo(model: AnalyticsDemoModel())
+            ControlledAnalyticsDemo(model: ControlledAnalyticsDemoModel())
           }
         } header: {
           Text("Controlled dependencies")
+        }
+
+        // Spacer
+        ForEach(0...10, id: \.self) { _ in
+          Section { } header: { Text("") }
+        }
+
+        Section {
+          NavigationLink("Countdown demo") {
+          }
+          NavigationLink("Location demo") {
+          }
+          NavigationLink("Contacts demo") {
+          }
+          NavigationLink("Analytics demo") {
+          }
+        } header: {
+          Text("@Dependency")
+        }
+
+        // Spacer
+        ForEach(0...3, id: \.self) { _ in
+          Section { } header: { Text("") }
         }
       }
       .navigationTitle("Demos")

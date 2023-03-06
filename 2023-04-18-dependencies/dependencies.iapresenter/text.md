@@ -524,7 +524,7 @@ For example, in the analytics demo it is completely fine for me to leave off the
 
 ---
 
-### Ergonomics
+#### Ergonomics
 	```swift
 	
 	init(
@@ -542,37 +542,73 @@ But that brings up all new problems of its own. If we drop the defaults and requ
 
 Suppose this little location demo was many layers deep in the application. Maybe you have to switch to a tab, drill down to a screen, open up a sheet, and then drill down again to finally get to this feature. Well, if we add a single dependency to the location feature we are going to have to also add that same dependency to every single feature that touches the location feature, as well as every feature that touches a feature that touches the location feature, and on and on. 
 
-
-
-
----
-
-### Defaults are ergonomic
-### Requirements are safe
+Adding a dependency has turned into a viral event in which you are not updating objects in your code pass to take a dependency just so that you can pass it down the line, and the object doesn't even have any need for that dependency.
 
 ---
 
+	> Defaults are **ergonomic**, but not **safe**.
+	> Requirements are **safe**, but not **ergonomic**.
 
-	### What can we do about it?
-	- [x] Control dependencies
-	- [ ] Make it ergonomic
+What we are seeing is the unfortunate dichotomy between safety and ergonomics. Often things that are safe are not ergonomic, and things that are ergonomic are not safe. You have to give up a little of one to get some of the other, and it's a real bummer!
 
+This is the exact reason why people turn to "dependency injection" frameworks. It's not because people don't know how to pass explicit dependencies to the objects that need them.
+
+It's because if you do that _literally_ you are going to make a mess of your code base, and it's going to be so painful to add new dependencies that you simply will not do it. This is one of the reasons that "dependency injection" gets a bad wrap.
+
+---
+
+# “Dependency injection” library
+
+This is what leads people to adopt what is known as a "dependency injection" library. The sole purpose of a dependency injection library is to make it possible to give our objects the dependencies it needs to do its job.
+
+But also, crucially, do it in a way that is in some sense safe _and_ ergonomic. That is any dependency injection library's 1st goal, above all else. Now, it's not really possible to offer full safety and full ergonomics at the same time, and so every library has to make tradeoffs.
+
+And then the stance the library takes on safety versus ergonomics will dictate what other kinds of features the library offer you for overriding and controlling dependencies in interesting ways.
+
+---
+
+	* Cleanse
+	* Factory
+	* Needle
+	* Swinject
+	* Weaver
+	* ...
+
+There are a decent number of dependency injection frameworks out there in the Swift community. Here are just a few, and each of these has their own trade offs based on what they choose to prioritize.
+
+If you decide to control your dependencies, and I hope I have somewhat convinced you that it is worthwhile doing, then you may want to research all the various options out there and see how they can help you solve the problems you are having with your dependencies.
 
 ---
 
 	## github.com/pointfreeco/
 	## swift-dependencies
 
+And it just so happens that Stephen and I main a dependency library. I am in no way suggesting you use our library. We have made certain trade offs and decisions that are a top priority for us but maybe don't make a lot of sense for you.
+
+In particular, we wanted to fully embrace structured programming and structured concurrency when overriding dependencies, and so we use Swift's new `@TaskLocal` machinery to power the dependencies under the hood. This brings a lot of power when used correctly, but also completely prevents certain features that other dependency libraries have.
 
 
 ---
 # Advanced topics
-	* Propagation
-	* Overriding
 	* Designing dependencies
+	* Propagating dependencies
+	* Overriding dependencies
 
 
 
+---
+
+## Thank you
+
+#### Brandon Williams
+#### brandon@pointfree.co 
+#### @mbrandonw
+#### www.pointfree.co
+
+
+/assets/pf-cover.png
+background: true
+filter: darken
 
 
 
