@@ -35,19 +35,3 @@ struct ContactsDemo_Previews: PreviewProvider {
   }
 }
 
-struct ContactsCore: View {
-  let users: [String]
-
-  let buttonTapped: () -> Void
-  let gesturePerformed: () -> Void
-  @Binding var text: String
-
-  var body: some View {
-    List {
-      ForEach(self.users, id: \.self) { user in
-        Text("\(user)")
-      }
-    }
-    .navigationTitle(Text("Contacts"))
-  }
-}

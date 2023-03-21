@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CA0577A729B698DD001709F3 /* 2-Dependency-ContactsDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA0577A629B698DD001709F3 /* 2-Dependency-ContactsDemo.swift */; };
 		CA0DC26329B13CC400788AAF /* ConfettiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA0DC26229B13CC400788AAF /* ConfettiView.swift */; };
 		CA0DC26629B1430B00788AAF /* 1-LocationDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA0DC26529B1430B00788AAF /* 1-LocationDemo.swift */; };
 		CA0DC26B29B14F8400788AAF /* PlaygroundPackage in Frameworks */ = {isa = PBXBuildFile; productRef = CA0DC26A29B14F8400788AAF /* PlaygroundPackage */; };
@@ -46,6 +47,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CA0577A629B698DD001709F3 /* 2-Dependency-ContactsDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "2-Dependency-ContactsDemo.swift"; sourceTree = "<group>"; };
 		CA0DC26229B13CC400788AAF /* ConfettiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiView.swift; sourceTree = "<group>"; };
 		CA0DC26529B1430B00788AAF /* 1-LocationDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "1-LocationDemo.swift"; sourceTree = "<group>"; };
 		CA0DC26729B145D000788AAF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -184,6 +186,7 @@
 			children = (
 				CAF4884029B5494900D38DCC /* 0-Dependency-CountdownDemo.swift */,
 				CAF4884229B5499F00D38DCC /* 1-Dependency-LocationDemo.swift */,
+				CA0577A629B698DD001709F3 /* 2-Dependency-ContactsDemo.swift */,
 			);
 			path = Dependencies;
 			sourceTree = "<group>";
@@ -334,6 +337,7 @@
 				CA2DB85D29B446F10003B914 /* 1-Controlled-LocationDemo.swift in Sources */,
 				CAF4884329B5499F00D38DCC /* 1-Dependency-LocationDemo.swift in Sources */,
 				CA0DC27E29B2785700788AAF /* 3-AnalyticsDemo.swift in Sources */,
+				CA0577A729B698DD001709F3 /* 2-Dependency-ContactsDemo.swift in Sources */,
 				CA0DC26D29B150ED00788AAF /* 2-ContactsDemo.swift in Sources */,
 				CA0DC26629B1430B00788AAF /* 1-LocationDemo.swift in Sources */,
 				CA2DB85B29B43A930003B914 /* 3-Controlled-AnalyticsDemo.swift in Sources */,

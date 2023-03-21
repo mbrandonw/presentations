@@ -37,5 +37,9 @@ struct DependencyContentDemo_Previews: PreviewProvider {
     } operation: {
       DependencyCountdownDemo()
     }
+    .previewDisplayName("Immediate clock")
+
+    DependencyCountdownDemo()
+      .previewDisplayName("Continuous clock")
   }
 }

@@ -101,10 +101,12 @@ private enum LocationClientKey: DependencyKey {
     )
   )
 }
+
 private enum AnalyticsKey: DependencyKey {
   static let liveValue: any Analytics = LiveAnalytics()
   static let previewValue: any Analytics = NoopAnalytics()
 }
+
 extension DependencyValues {
   var locationClient: any LocationClient {
     get { self[LocationClientKey.self] }

@@ -60,11 +60,9 @@ struct AppView: View {
         Section {
           NavigationLink("Countdown demo") {
           }
-          NavigationLink("Location demo") {
+          NavigationLink("Location & Analytics demo") {
           }
           NavigationLink("Contacts demo") {
-          }
-          NavigationLink("Analytics demo") {
           }
         } header: {
           Text("@Dependency")

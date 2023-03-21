@@ -6,14 +6,14 @@ struct CountdownDemo: View {
 
   var body: some View {
     ZStack {
+      Text("\(self.countdown)")
+        .font(.system(size: 200).bold())
       if self.isConfettiVisible {
         ForEach(1...100, id: \.self) { _ in
           ConfettiView()
             .offset(x: .random(in: -20...20), y: .random(in: -20...20))
         }
       }
-      Text("\(self.countdown)")
-        .font(.system(size: 200).bold())
     }
     .task {
       while true {

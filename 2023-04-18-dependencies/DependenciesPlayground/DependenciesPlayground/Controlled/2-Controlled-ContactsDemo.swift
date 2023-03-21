@@ -2,12 +2,11 @@ import Contacts
 import SwiftUI
 
 struct ControlledContactsDemo: View {
-  let contacts: any ContactsClient
-
+  let contactsClient: any ContactsClient
   @State var users: [Contact] = []
 
   init(contacts: any ContactsClient = LiveContactsClient()) {
-    self.contacts = contacts
+    self.contactsClient = contacts
   }
 
   var body: some View {
@@ -19,8 +18,8 @@ struct ControlledContactsDemo: View {
     .navigationTitle(Text("Contacts"))
     .task {
       do {
-        if await self.contacts.requestAccess() {
-          self.users = try await self.contacts.unifiedContacts()
+        if await self.contactsClient.requestAccess() {
+          self.users = try await self.contactsClient.unifiedContacts()
         }
       } catch {}
     }
