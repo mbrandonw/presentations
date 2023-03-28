@@ -1,7 +1,7 @@
 # Control your dependencies
 ### don't let them control you
 
-Hello, today we are going to talk about dependencies, as well as all the ways they can wreak havoc in your code, and then show how you can take back control over your dependencies and not let them control you.
+Hello, today we are going to talk about dependencies. This includes defining what dependencies are, showing why they can be problematic, and then describing how to take control of them rather than letting them control you.
 
 ---
 
@@ -67,9 +67,9 @@ Now that definition may seem a little nebulous, so let’s look at some very con
 	
 	```
 
-Network API clients are a “dependency” because they make network requests in order to load data from external servers. Often such servers are not things under your control, such as if you are hitting the Stripe API for payment processing, or Mastodon API to load new toots. 
+Network API clients are a “dependency” because they make network requests in order to load data from external servers. Often those servers are not things under your control, such as if you are hitting the Stripe API for payment processing, or Mastodon API to load new posts. 
 
-And sometimes the server _is_ under your control, such as if it’s your company’s backend to power your app. Even in those cases we will consider it a dependency because it is an outside system, that is, it exists outside the code base that powers your application.
+And sometimes the server _is_ under your control, such as if it’s your company’s backend that powers your app. But even in those cases we will consider it a dependency because it is an outside system, that is, it exists outside the code base that powers your application.
 
 ---
 	_Examples of dependencies_
@@ -87,6 +87,8 @@ And sometimes the server _is_ under your control, such as if it’s your company
 	
 	
 	```
+
+Location managers are another example of a dependency.
 
 If you have ever used Core Location in your application, then you were using a dependency. Not only do you interact with Apple’s frameworks for fetching location data, which you do not control, but those APIs interact with the GPS instruments in your device in order to triangulate coordinates. That is a major outside system interacting with satellites orbiting the earth.
 
@@ -135,7 +137,7 @@ Firebase is another massive dependency. It’s kind of a _mega_ dependency, beca
 	
 	```
 
-If you have ever used a Swift `Clock`, which was introduced in Swift 5.7, or a Combine `Scheduler`, then you were again using a dependency. Those objects speak with the outside world in order to execute work at a later time, and we have no ability to tell those processes to do things in a different manner.
+If you have ever used `Task.sleep`, or `clock.sleep`, which were introduced in Swift 5.7, or a Combine `Scheduler`, then you were again using a dependency. Those objects speak with the outside world in order to execute work at a later time, and we have no ability to tell those processes to do things in a different manner.
 
 ---
 	_Examples of dependencies_
@@ -631,21 +633,6 @@ Further, while we're here, let's also show that we can add a new dependency with
 
 ---
 
-# Extra code just for dependencies?
-
-
-
-
-// TODO: some might say that doing the extra work to control you dependencies is not right because you are writing extra code for testing. That is completely wrong. Controlling your dependencies allows you to code in the style that we all want to do naively. We all just want to call out to apple framework code immediately and get some data back so that we can be on our way and work on our actual feature for our users.
-// 
-// well, controlling your dependencies allows you to do exactly that. While we did have to put in a little bit of upfront work to put an interface in front of the dependency, after that you are free to use the dependency exactly as you would call out directly to Apple's frameworks. The same cannot be true of building inert, data-only views just so that previews can work again. That is you doing work that truly only serves the purpose of getting previews to be functional again. 
-
-
-
-
-
----
-
 # This is just the beginning
 
 So, I hope that this talk has helped you understand what dependencies, why they can be so pernicious in a code base, and what you can do to start controlling them.
@@ -689,7 +676,44 @@ But also I want to highly encourage you to check out the other dependency librar
 
 You may not want those limitations and/or powers, and so it will be good to see what the other dependency libraries have to offer.
 
+
 ---
+
+	## github.com/pointfreeco/
+	## swift-dependencies
+
+So, I personally think everything just shown is pretty cool. We are unlocking new powers from our Xcode previews, working around quirks in Apple's frameworks, such as certain APIs require the presence of an Info.plist which is not always possible, and as a nice side benefit all of this work also unlocks much simpler testing capabilities. We don't have time to dive into testing, but the mere fact that we can control dependencies for our previews means that we can also control dependencies for our tests.
+
+---
+
+# Is the extra code worth it?
+
+But, I want to end this talk by addressing some common concerns and criticisms to everything we have discussed previously. While I personally think there is a lot of power in controlling dependencies, not everyone agrees and so I think it's a good idea for us to seek out those dissenting opinions and try to understand the core of their argument. And in fact, I think there is a sliver of truth in their concerns, I just don't think they are universally true.
+
+One common criticism is that we are maintaining a whole bunch of extra code to exercise dependencies. We need to wrap our dependencies in a type we control and then inject it into the features that need that dependency.
+
+That is absolutely true, it is extra code, however it is code that you only write once, and once it is done it allows you to write code for all your features in the style that we all want to do naively. When we were all first learning coding, our first instinct would be to just call out to Apple's frameworks without a care in the world. We just wanted to call out to some Apple API, get some data back so that we can be on our way and work on the actual feature for our users.
+
+Well, controlling your dependencies allows you to do exactly that without injecting uncertainty into your code base. We are now free to use a clock, an analytics client and a location client anywhere in our application just as we would have back before we cared about dependencies. But, because we did a little bit of upfront work to control the dependencies, we can actually see our features in Xcode previews, we aren't accidentally interacting with live dependencies, and we have a fighting shot at writing tests.
+
+The same cannot be said of building inert, data-only views that avoid all of the dependencies. We demonstrated such views in the contacts demo where we had an outer, "shell" view that was responsible for interacting with the Contacts framework, and then we also maintained an additional inner "core" view that took just plain data and didn't touch any dependencies.
+
+That inner view is literally extra code that only serves the purpose of making previews functional again. It serves no other purpose. And it is a lot of code to maintain, there are a lot of ways to get it wrong, and it only allows you to preview a lifeless version of your feature. You don't get to tap on any buttons and interact with the behavior of the feature in any meaningful way. And this is code you have to write for _every_ view that uses dependencies, as opposed to just controlling the dependency a single time and being able to instantly use it in _all_ views.
+
+So, in my opinion, the little bit of extra code is absolutely worth it, and it only allows you to implement your features in a more natural way, rather than contorting yourself to maintain inert, data-only views.
+
+---
+
+# Aren't you just testing the mock and/or 3rd party code?
+
+Another common criticism is that by controlling dependencies you are only testing the mock or you are only testing the other people's code, such as Apple's frameworks.
+
+While it definitely is possible to 
+
+
+
+---
+
 
 ## Thank you
 

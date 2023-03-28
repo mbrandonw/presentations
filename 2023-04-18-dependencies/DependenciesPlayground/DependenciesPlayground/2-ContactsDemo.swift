@@ -32,5 +32,19 @@ struct ContactsDemo_Previews: PreviewProvider {
     NavigationStack {
       ContactsDemo()
     }
+    NavigationStack {
+      ContactsCore(users: ["Blob", "Blob Jr", "Blob Sr"])
+    }
+  }
+}
+
+struct ContactsCore: View {
+  let users: [String]
+  var body: some View {
+    List {
+      ForEach(self.users, id: \.self) { user in
+        Text("\(user)")
+      }
+    }
   }
 }

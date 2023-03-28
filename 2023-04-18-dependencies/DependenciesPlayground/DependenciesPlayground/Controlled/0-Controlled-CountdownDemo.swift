@@ -3,6 +3,11 @@ import SwiftUI
 struct ControlledCountdownDemo: View {
   @State var countdown = 10
   @State var isConfettiVisible = false
+  let clock: any Clock<Duration>
+
+  init(clock: any Clock<Duration> = ContinuousClock()) {
+    self.clock = clock
+  }
 
   var body: some View {
     ZStack {
@@ -21,13 +26,14 @@ struct ControlledCountdownDemo: View {
           self.isConfettiVisible = true
           break
         }
-        try? await Task.sleep(for: .seconds(1))
+        try? await self.clock.sleep(for: .seconds(1))
         self.countdown -= 1
       }
     }
   }
 }
 
+import Clocks
 struct ControlledContentDemo_Previews: PreviewProvider {
   static var previews: some View {
     ControlledCountdownDemo()

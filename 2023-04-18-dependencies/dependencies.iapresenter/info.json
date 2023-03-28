@@ -1,12 +1,12 @@
 {
-  "version" : 2,
-  "transient" : false,
   "creatorIdentifier" : "net.ia.presenter",
-  "type" : "net.daringfireball.markdown",
   "net.ia.presenter" : {
-    "template" : "tokyo",
+    "appearance" : "dark",
     "darkbackgroundcolor" : "Transparent",
     "preset" : "Default",
-    "appearance" : "dark"
-  }
+    "template" : "tokyo"
+  },
+  "transient" : false,
+  "type" : "net.daringfireball.markdown",
+  "version" : 2
 }
