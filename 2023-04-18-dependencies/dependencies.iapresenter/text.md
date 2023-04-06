@@ -8,19 +8,19 @@ Hello, today we are going to talk about dependencies. This includes defining wha
 #### Brandon Williams
 	
 	brandon@pointfree.co 
-	:@mbrandonw
+	:@mbrandonw (@hachyderm.io)
 	:&nbsp;
 	
 #### Stephen Celis
 	
 	stephen@pointfree.co
-	: @stephencelis
+	: @stephencelis (@hachyderm.io)
 
 /assets/pf-cover.png
 background: true
 filter: darken
 
-But first a little bit of information about myself. Here is my email and Twitter handle in case you want to get in touch or have questions.
+But first a little bit of information about myself. Here is my email, Twitter handle and Mastodon handle in case you want to get in touch or have questions.
 
 Also, this talk is joint work with my collaborator Stephen Celis, and so here is his information too. You can reach out to either one of us.
 
@@ -291,8 +291,6 @@ Supporting all of those features is going to bloat the “core” view, make it 
 So we are again maintaining a bunch of additional code just to work around the fact that we have an uncontrolled dependency in our codebase. 
 
 And the code needed to maintain all of these little inert views that only hold onto data vastly outweighs the amount of code needed to control your dependencies. There may be 20 views out there that need to use a dependency, and each one of them is going to need this extra "inner" view to make the preview usable. Whereas you only need to control a dependency a single time and _all_ views get to benefit.
-
-And right now we are seeing a situation where the dependency just completely crashes the preview, but the preview is still running. There are also some dependencies out there that will make it so that your previews just do not run at all. You will get cryptic errors when running the preview and it is very hard to diagnose. The more you control your dependencies, the less code you need to compile in your features, which means Xcode can do a much better job at showing you your previews.
 
 ---
 
