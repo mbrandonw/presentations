@@ -1,11 +1,10 @@
 import MapKit
 import SwiftUI
 
-import PlaygroundPackage
-
 class ControlledAnalyticsDemoModel: NSObject, ObservableObject, CLLocationManagerDelegate {
   let manager = CLLocationManager()
   let analytics: any Analytics
+
   @Published var coordinateRegion = MKCoordinateRegion(
     center: CLLocationCoordinate2D(
       latitude: 40.7545006,

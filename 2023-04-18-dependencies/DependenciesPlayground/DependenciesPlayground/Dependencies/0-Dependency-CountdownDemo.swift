@@ -32,14 +32,14 @@ struct DependencyCountdownDemo: View {
 
 struct DependencyContentDemo_Previews: PreviewProvider {
   static var previews: some View {
+    DependencyCountdownDemo()
+      .previewDisplayName("Continuous clock")
+
     withDependencies {
       $0.continuousClock = ImmediateClock()
     } operation: {
       DependencyCountdownDemo()
     }
     .previewDisplayName("Immediate clock")
-
-    DependencyCountdownDemo()
-      .previewDisplayName("Continuous clock")
   }
 }

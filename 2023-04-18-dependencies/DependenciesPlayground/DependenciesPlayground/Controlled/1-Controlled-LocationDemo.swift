@@ -1,8 +1,6 @@
 import MapKit
 import SwiftUI
 
-import PlaygroundPackage
-
 class ControlledLocationDemoModel: NSObject, ObservableObject, CLLocationManagerDelegate {
   let analytics: any Analytics
   let locationClient: any LocationClient
@@ -99,7 +97,7 @@ struct ControlledLocationDemo_Previews: PreviewProvider {
         analytics: NoopAnalytics(),
         locationClient: MockLocationClient(
           location: CLLocationCoordinate2D(
-            latitude: 34.052235,
+            latitude: 34.152235,
             longitude: -118.243683
           )
         )

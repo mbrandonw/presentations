@@ -1,7 +1,14 @@
 import MapKit
 import SwiftUI
 
-import PlaygroundPackage
+struct AnalyticsClient {
+  static let shared = AnalyticsClient()
+
+  func track(_ event: String) {
+    // TODO: URLSession to send data to server
+    print("Analytics tracked", event)
+  }
+}
 
 class AnalyticsDemoModel: NSObject, ObservableObject, CLLocationManagerDelegate {
   let manager = CLLocationManager()
@@ -95,13 +102,5 @@ struct AnalyticsDemo: View {
 struct AnalyticsDemo_Previews: PreviewProvider {
   static var previews: some View {
     AnalyticsDemo(model: AnalyticsDemoModel())
-  }
-}
-
-struct AnalyticsClient {
-  static let shared = AnalyticsClient()
-
-  func track(_ event: String) {
-    print("Analytics tracked", event)
   }
 }

@@ -34,8 +34,11 @@ struct ControlledCountdownDemo: View {
 }
 
 import Clocks
+
 struct ControlledContentDemo_Previews: PreviewProvider {
   static var previews: some View {
-    ControlledCountdownDemo()
+    ControlledCountdownDemo(
+      clock: ImmediateClock()
+    )
   }
 }

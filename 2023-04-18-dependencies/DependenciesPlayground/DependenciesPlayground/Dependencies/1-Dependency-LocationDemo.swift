@@ -1,6 +1,5 @@
 import Dependencies
 import MapKit
-import PlaygroundPackage
 import SwiftUI
 
 class DependencyLocationDemoModel: NSObject, ObservableObject, CLLocationManagerDelegate {

@@ -1,8 +1,6 @@
 import MapKit
 import SwiftUI
 
-import PlaygroundPackage
-
 class LocationDemoModel: NSObject, ObservableObject, CLLocationManagerDelegate {
   let manager = CLLocationManager()
   
@@ -70,7 +68,7 @@ struct LocationDemo: View {
           .padding(.all)
           .background(Color.white)
           .cornerRadius(1000)
-          .shadow(radius: 10)
+          .shadow(radius: 20)
       }
       .buttonStyle(.plain)
       .padding(.all)
