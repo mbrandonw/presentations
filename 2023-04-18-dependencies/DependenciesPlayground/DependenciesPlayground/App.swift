@@ -11,7 +11,7 @@ struct DependenciesPlaygroundApp: App {
 
 struct AppView: View {
   var body: some View {
-    NavigationStack {
+    NavigationView {
       List {
         Section {
           NavigationLink("Countdown demo") {
