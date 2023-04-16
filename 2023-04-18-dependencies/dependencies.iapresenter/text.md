@@ -1,3 +1,10 @@
+⚠️ Clear simulator settings
+⚠️ Hide macOS menu bar
+⚠️ Force quit all apps
+⚠️ Turn on presentation focus mode
+⚠️ Run Scrumdinger test 
+
+
 # Control your dependencies
 ### don't let them control you
 
@@ -28,6 +35,7 @@ Also, this talk is joint work with my collaborator Stephen Celis, and so here is
 
 # Point-Free
 	www.pointfree.co
+	@pointfreeco (@hachyderm.io)
 
 /assets/pf-cover.png
 background: true
@@ -64,9 +72,7 @@ Now that definition may seem a little nebulous, so let’s look at some very con
 	
 	```
 
-Network API clients are a “dependency” because they make network requests in order to load data from external servers. Often those servers are not things under your control, such as if you are hitting the Stripe API for payment processing, or Mastodon API to load new posts. 
-
-And sometimes the server _is_ under your control, such as if it’s your company’s backend that powers your app. But even in those cases we will consider it a dependency because it is an outside system, that is, it exists outside the code base that powers your application.
+Network API clients are a “dependency” because they make network requests in order to load data from external servers. Typically those servers are not things under your control, such as if you are hitting the Stripe API for payment processing, or Mastodon API to load new posts. 
 
 ---
 	_Examples of dependencies_
@@ -119,7 +125,7 @@ This also extends to user defaults too. Anytime you read or write to user defaul
 		.setValue(["username": username])
 	```
 
-Firebase is another massive dependency. It’s kind of a _mega_ dependency, because it acts as a database, acts as a network API client, handles analytics, crash reporting, logging, remote config, authentication, push notifications, storage, and more! All of the code that powers these features is written by Google and hosted on Google’s servers, and so is fully out of your control.
+Firebase is another **massive** dependency. It’s kind of a _mega_ dependency, because it acts as a database, acts as a network API client, handles analytics, crash reporting, logging, remote config, authentication, push notifications, storage, and more! All of the code that powers these features is written by Google and hosted on Google’s servers, and so is fully out of your control.
 
 ---
 	_Examples of dependencies_
@@ -212,9 +218,7 @@ That is a real pain.
 
 Also, SwiftUI previews are supposed to be the amazing tool that allows us to play with our feature in isolation without booting up the simulator and navigating all the way to the thing we want to actually test. However, even it is not super helpful here. When running the preview we _still_ have to wait 10 seconds to pass before we get to see our confetti burst, which means we have completely destroyed the quick iterative cycle that Xcode previews promises us. Any tweak we may want to make to this feature incurs the cost of 10 seconds, which is not great.
 
-Now some of y’all may already be thinking about some potential workarounds. For example, if we wanted to iterate on just the _design_ of the confetti then we could pull out the `ForEach` with the `ConfettiView`s into its own view so that it can be previewed in isolation. And sure that would work, but also we are creating this extra view only to workaround an issue with using `Task.sleep`. Our feature doesn’t need that extra view. It just wants to show some confetti. So we are being forced to maintain extra code just to make it easier to work with, and all code is a liability in that it gives you new ways to get something wrong.
-
-So, I wouldn’t want to maintain an extra view just for that. Further, even that extra view doesn’t help with the first problem we had which is how the confetti view _integrates_ with the rest of the feature. In particular, we wanted to make sure it appears _over_ the countdown. One thing we could work around the timing problem at the integration level is to hard code the `countdown` variable to start at something smaller, like say 1 or even 0.
+One thing we could work around problem is to hard code the `countdown` variable to start at something smaller, like say 1 or even 0.
 
 However, we are setting real production values with test values just so that we can reasonably preview this feature. What if we forget to change it back to 10? Then the feature is completely busted. In general it is not a good idea to hack in little changes just to get your preview running.
 
@@ -242,7 +246,7 @@ Pretty simple, and the code is quite simple too. We have an `ObservableObject` s
 
 But let’s try running it in the preview. Well, the map does show with NYC centered, but tapping on the location button does nothing. No authorization prompt comes up and the map does not re-focus anywhere.
 
-This is happening because location authorization simply does not work in previews. No alert can be shown, therefore we can’t grant location permissions, therefore we are never given an updated locations from Core Location, and therefore the map does not refocus.
+This is happening because location authorization simply does not work in previews. No alert can be shown, therefore we can’t grant location permissions, therefore we are never given an updated location from Core Location, and therefore the map does not refocus.
 
 This preview is basically inert. Now you may be thinking: “well, at least this screen shows and we can iterate on its design.” Well, yes that is true, we can certainly make tweaks here, such as the button size, and we do see it immediately update.
 
@@ -277,15 +281,21 @@ Now when I run the preview it just crashes. We don’t get to see the UI at all.
 
 However, previews inside an SPM package have no surrounding app target, hence have no concept of an info.plist, and hence it is simply not possible to add the entry to the plist. This means this preview is just completely busted for us. We are not able to work on the design of anything inside this feature due to the crash. Even things that have nothing to do with the list of contacts. It is just broken.
 
-Now some of you may know of a workaround for this. What if we just created a whole new view that holds only the data but does not interact with the Contacts framework at all, and then the main view can wrap that new pure data view?
+Now some of y'all may know of a workaround for this. What if we created a whole new view that holds only the data but does not interact with the Contacts framework at all, and then the main view can wrap that new pure data view?
 
-Well, it’s certainly possible, but I think it sounds better in theory than it works in practice. First, most views are not just simple, inert representations of data. Most views have behavior, such as buttons to tap, textfields to enter text into, gestures to perform, and more.
+Well, it’s certainly possible, but I think it sounds better in theory than it works in practice. I have a version of this down below out of site. There's a `ContactsCoreView` that holds onto a plain `let` of users and shows that data in a list, and then there's a `ContactsDemoAlternate` view that uses the core view and interacts with the Contacts framework.
 
-Supporting all of those features is going to bloat the “core” view, make it easier to get things wrong or hook things up incorrectly, and at the end of the day this “core” view is only a mere shadow of the feature. A mirage. We are cramming data into it to make something appear in the preview, but the code path that is actually responsible for getting the data is not being exercised at all in the preview, and therefore we have no choice but to still run the full application in the simulator if we _truly_ want to see how this screen behaves.
+In my opinion this is not an ideal pattern to follow for a few reasons. First of all, most views are not just simple, inert representations of data. Most views have behavior, such as buttons to tap, textfields to enter text into, gestures to perform, and more. 
 
-So we are again maintaining a bunch of additional code just to work around the fact that we have an uncontrolled dependency in our codebase. 
+In order to support that we are going to need to bloat this seemingly simple "core view" with all kinds of callback handlers and communication mechanisms so that it can communicate back and forth with the real view that can actually interact with the contacts framework. Doing so can be quite complicated to get right.
 
-And the code needed to maintain all of these little inert views that only hold onto data vastly outweighs the amount of code needed to control your dependencies. There may be 20 views out there that need to use a dependency, and each one of them is going to need this extra "inner" view to make the preview usable. Whereas you only need to control a dependency a single time and _all_ views get to benefit.
+Second, this view is only a mere shadow of the feature. A mirage. We are cramming data into it to make something appear in the preview, but the code path that is actually responsible for getting the data is not being exercised at all in the preview, and therefore we have no choice but to still run the full application in the simulator if we _truly_ want to see how this screen behaves when it interacts with the contacts dependency.
+
+And third, we are maintaining a bunch of additional code just to work around the fact that we have an uncontrolled dependency in our codebase. All code is a liability in that it gives you new ways to get something wrong.
+
+And finally, the code needed to maintain all of these little inert views that only hold onto data vastly outweighs the amount of code needed to control your dependencies. 
+
+If you have 20 views that all use a single dependency then you will need to maintain 20 core views just to avoid the dependency. Or you could control the dependency a single time and make use of it in as many views as you want. 
 
 ---
 
@@ -311,21 +321,13 @@ And if _all_ of that wasn’t bad enough, it gets worse.
 
 I saved this one for last because testing isn’t exactly a top priority in the iOS community. I think that is a little unfortunate, and I would highly encourage everyone to really understand what testing brings to a codebase and consider what it would take to make your code testable.
 
-Tests are a great barometer for the health of your code. If you are able to construct the various objects in your code base in a fully isolated environment, run their logic, and then assert on how they behave, then you can be confident that your features are decoupled from the outside world and that you have the ability to alter their execution environment so that you can test really subtle and nuanced user flows.
+Tests are a great barometer for the health of your code, but I'm not going to get deep into testing, that is a talk for another time.
 
-And in fact, all the problems we just saw with our previews are an omen that we are going to have problems with testing. Previews are kind of like tests in that they run your features in an altered, isolated execution environment that is quite a bit different from the simulator and device. 
+Instead I want to look at yet another demo to show off this problem, but this time we are going to look at a code sample from Apple.
 
-Playgrounds are another example of a minimized execution environment. 
+Apple has this great tutorial called “Scrumdinger” which builds a pretty complex application from scratch. It deals with multiple forms of navigation and complex side effects, such as persistence, timers and speech recognizers. It’s pretty cool.
 
-Unit tests take this idea to the extreme. Unit tests completely remove the concept of a simulator or device, and it’s just your code running in an expansive, empty vacuum.
-
-I have yet another demo to show off this problem, but this time we are going to look at a code sample from Apple.
-
-Apple has this great tutorial called “Scrumdinger” which builds a surprisingly complex application from scratch. I say “surprisingly” because often Apple’s code samples are there to highlight some very specific features of SwiftUI and other frameworks, but doesn’t exactly build a cohesive application that you can learn from as a whole. I think the Fruta and Food Truck demos are interesting for learning certain things, but they don’t deal with any of the real complexities one comes across in every day development.
-
-The Scrumdinger app, on the other hand, deals with multiple forms of navigation, persistence of data and complex side effects such as timers and speech recognizers. It’s pretty cool.
-
-But also it isn’t exactly built with testing in mind, and  it is very difficult to write tests for the app due to the use of uncontrolled dependencies. All the problems we discussed previously pertain to this application, such as previews not being all that useful because most of the dependencies don’t work in previews.
+But also it isn’t built with testing in mind. It's pretty much impossible to write tests for the app because the vast majority of logic is trapped in views, and the code that isn't reaches out to live, uncontrolled dependencies.
 
 But, one way to get _some_ test coverage on an application regardless of the manner in which it was built is UI tests. UI tests allow you to literally boot up your app in the simulator and emulate a script of user actions on the screen so that you can assert on what happens.
 
@@ -339,7 +341,7 @@ What’s going on?
 
 Well, one of the features of this application is that it persists data to disk so that next time you launch you have all of your meetings from last time. That’s a great feature to have, but it’s also making testing complicated because now when we run this test it is loading up data from _previous_ runs of the test. Our dependency on the global file system is bleeding over from test to test.
 
-So we have no choice but to actually _weaken_ what we are testing here. We can’t test that when we go through this user flow a single item was added to the list that matches “Engineering”, but rather we can only test that there is at _at least_ one item with “Engineering”. There may be more, and probably will be!
+So we have no choice but to actually _weaken_ what we are testing here. We can’t test that when we go through this user flow a single item was added to the list that matches “Engineering”, but rather we can only test that there is at _at least_ one item with “Engineering”.
 
 So, if we ever accidentally introduce a bug that causes more than one item to be added to the list our test will happily pass and we will be none the wiser unless we happen to actually load up the app and witness this behavior.
 
@@ -355,7 +357,7 @@ Or maybe you have a feature that uses a dependency that doesn’t work in the si
 
 Or maybe you have an application that takes a long time to build so you just make sure to never accidentally clean the project, or you keep multiple versions of your repo checked out so that you don’t have to switch branches.
 
-And maybe over time you’ve just grown to understand that these are the peculiarities of your application and learn to deal with it. You may have some tricks you employ to get around certain annoyances, and for the most part you are able to be productive throughout the day. 
+And over time you’ve just grown to understand that these are the peculiarities of your application and learn to deal with it. You may have some tricks you employ to get around certain annoyances, and for the most part you are able to be productive throughout the day. 
 
 And that may be OK for you, but this does not scale at all, especially when you are on a team with multiple people because _then_ you need to distribute your little bag of tricks that you employ daily so that everyone on the team can use them too and not be blocked by these quirks.
 
@@ -366,12 +368,8 @@ What I’m trying to say here is that uncontrolled dependencies can make it real
 
 So, that was just a lot of time spent on negativity. We saw problem after problem with various code snippets, so now we will devote time to some positivity. What can we do to fix the problem?
 
-// TODO: talk about the fix falling into two buckets:
-//   * First you take control of the dependency
-//   * Second you must make it ergonomic to access dependencies
-
 ---
-	_What can we do about it?	_
+
 # In short:
 ### Don't reach out to code you don't own and can't control
 
@@ -379,9 +377,7 @@ Well, in short: stop reaching out to code that you don't own and can't control f
 
 All of those things talk to external systems and so the moment you interact with one of those APIs directly in your feature code you are susceptible to the vagaries of the outside world.
 
-I'm going to further extend this advice to not just include reaching out to code you don't own, but also reaching out to code you can't _control_. In essence this means using singletons. In our analytics demo we saw a moment ago I was using an `AnalyticsClient` "shared" singleton in the `ObservableObject`.
-
-By using a singleton we have completely frozen that piece of functionality into the feature and it can never be changed. That feature, no matter how it is run, whether in a preview, simulator, device or test, will _always_ use the same instance of the analytics client, which means making a real network request to send real data to our analytics backend. We have absolutely no ability to swap out that client for something that _doesn't_ track analytics for certain situations.
+This advice further extends to singletons, as those are things that you cannot control. Their whole purpose is to be the one static value used throughout your application. They are frozen the moment the application launches and can never be changed. Features that use singletons will always use the same instance, regardless of how they are run, such as previews, simulators, device or tests.
 
 Let's see some concrete examples of this in the demo we have been using to see all the problems with dependencies.
 
@@ -404,7 +400,7 @@ Let's start with the "Countdown" demo. It's main problem is that we had to wait 
 
 What if instead we passed in an explicit clock so that we can control time. By default we will use a `ContinuousClock`, but in the preview we can provide an "immediate" clock that squashes all of time into a single instant. When you tell it to sleep it just ignores you and doesn't suspend at all.
 
-Let's go back to the simulator, and secretly at the bottom of the root view I have some more demos. These are replicas of all the demos we have already gone through, but now we will control their dependencies.
+📲 Let's go back to the simulator, and secretly at the bottom of the root view I have some more demos. These are replicas of all the demos we have already gone through, but now we will control their dependencies.
 
 Let's go to the controlled countdown demo's code, and add an explicit clock to the view. Now that the view holds onto a concrete clock we can use it in the feature code rather than reaching out to the global, uncontrolled `Task.sleep`.
 
