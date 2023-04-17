@@ -34,10 +34,10 @@ class ControlledLocationDemoModel: NSObject, ObservableObject, CLLocationManager
   }
 
   func locationButtonTapped() {
-    if self.locationClient.authorizationStatus == .notDetermined {
-      self.locationClient.requestWhenInUseAuthorization()
-    } else {
+    if self.locationClient.authorizationStatus == .authorizedWhenInUse {
       self.locationClient.requestLocation()
+    } else {
+      self.locationClient.requestWhenInUseAuthorization()
     }
   }
 
@@ -49,6 +49,7 @@ class ControlledLocationDemoModel: NSObject, ObservableObject, CLLocationManager
           self.locationClient.requestLocation()
         } else if status != .notDetermined {
         }
+
       case .didFail:
         break
 
@@ -95,12 +96,7 @@ struct ControlledLocationDemo_Previews: PreviewProvider {
   static var previews: some View {
     ControlledLocationDemo(
       model: ControlledLocationDemoModel(
-        locationClient: MockLocationClient(
-          location: CLLocationCoordinate2D(
-            latitude: 34.0522300,
-            longitude: -118.2436800
-          )
-        )
+        locationClient: MockLocationClient()
       )
     )
   }
@@ -152,13 +148,20 @@ class LiveLocationClient: NSObject, LocationClient, CLLocationManagerDelegate {
 }
 
 struct MockLocationClient: LocationClient {
+  let authorizationStatus: CLAuthorizationStatus
   let location: CLLocationCoordinate2D
 
-  let authorizationStatus = CLAuthorizationStatus.authorizedWhenInUse
   let delegateEvents: AsyncStream<DelegateEvent>
   let delegateContinuation: AsyncStream<DelegateEvent>.Continuation
 
-  init(location: CLLocationCoordinate2D) {
+  init(
+    authorizationStatus: CLAuthorizationStatus = .authorizedWhenInUse,
+    location: CLLocationCoordinate2D = CLLocationCoordinate2D(
+      latitude: 34.0522300,
+      longitude: -118.2436800
+    )
+  ) {
+    self.authorizationStatus = authorizationStatus
     self.location = location
     var continuation: AsyncStream<DelegateEvent>.Continuation!
     self.delegateEvents = AsyncStream {
@@ -167,7 +170,7 @@ struct MockLocationClient: LocationClient {
     self.delegateContinuation = continuation
   }
   func requestWhenInUseAuthorization() {
-    self.delegateContinuation.yield(.didChangeAuthorization(.authorizedWhenInUse))
+    self.delegateContinuation.yield(.didChangeAuthorization(self.authorizationStatus))
   }
   func requestLocation() {
     self.delegateContinuation.yield(

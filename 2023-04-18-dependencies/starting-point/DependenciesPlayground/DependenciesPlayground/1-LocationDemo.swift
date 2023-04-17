@@ -21,10 +21,10 @@ class LocationDemoModel: NSObject, ObservableObject, CLLocationManagerDelegate {
   }
 
   func locationButtonTapped() {
-    if self.manager.authorizationStatus == .notDetermined {
-      self.manager.requestWhenInUseAuthorization()
-    } else {
+    if self.manager.authorizationStatus == .authorizedWhenInUse {
       self.manager.requestLocation()
+    } else {
+      self.manager.requestWhenInUseAuthorization()
     }
   }
 

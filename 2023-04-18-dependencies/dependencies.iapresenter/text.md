@@ -1,8 +1,8 @@
 ⚠️ Clear simulator settings
 ⚠️ Hide macOS menu bar
-⚠️ Force quit all apps
+⚠️ Quit all apps
 ⚠️ Turn on presentation focus mode
-⚠️ Run Scrumdinger test 
+⚠️ Pre-warm Scrumdinger tests
 
 
 # Control your dependencies
@@ -46,7 +46,7 @@ And if you weren't already aware, Stephen and I run a site called Point-Free, wh
 ---
 # What is a dependency?
 
-Let’s start with a very simple question: What is a dependency?
+Let’s start with a seemingly simple question: What is a dependency?
 
 This is a surprisingly tricky question to answer, and I can’t claim to have the most universal definition, but for the purposes of this talk we will define dependency as the following…
 
@@ -93,7 +93,7 @@ Network API clients are a “dependency” because they make network requests in
 
 Location managers are another example of a dependency.
 
-If you have ever used Core Location in your application, then you were using a dependency. Not only do you interact with Apple’s frameworks for fetching location data, which you do not control, but those APIs interact with the GPS instruments in your device in order to triangulate coordinates. That is a major outside system interacting with satellites orbiting the earth.
+If you have ever used Core Location in your app, then you were using a dependency. Not only do you interact with Apple’s frameworks for fetching location data, which you do not control, but those APIs interact with the GPS instruments in your device in order to triangulate coordinates. That is a major outside system interacting with satellites orbiting the earth.
 
 ---
 	_Examples of dependencies_
@@ -140,7 +140,7 @@ Firebase is another **massive** dependency. It’s kind of a _mega_ dependency, 
 	
 	```
 
-If you have ever used `Task.sleep`, or `clock.sleep`, which were introduced in Swift 5.7, or a Combine `Scheduler`, then you were again using a dependency. Those objects speak with the outside world in order to execute work at a later time, and we have no ability to tell those processes to do things in a different manner.
+If you have ever used `Task.sleep`, or `clock.sleep`, or a Combine `Scheduler`, then you were again using a dependency. Those objects speak with the outside world in order to execute work at a later time, and we have no ability to tell those processes to do things in a different manner.
 
 ---
 	_Examples of dependencies_
@@ -157,7 +157,7 @@ If you have ever used `Task.sleep`, or `clock.sleep`, which were introduced in S
 
 And then seemingly innocuous things such as `Date` and `UUID` initializers can also be considered dependencies. After all, when you ask Foundation for the current date it reaches out into the real world to get that information. 
 
-The same is true for `UUID`s. Each time you construct one you get a completely random, cryptic sequence of hex digits, and the process that concocts that value is an external system that we do not control
+The same is true for `UUID`s. Each time you construct one you get a completely random sequences of hex digits, and the process that concocts that value is an external system that we do not control
 
 
 ---
@@ -220,9 +220,11 @@ Also, SwiftUI previews are supposed to be the amazing tool that allows us to pla
 
 One thing we could work around problem is to hard code the `countdown` variable to start at something smaller, like say 1 or even 0.
 
+^ 🤌
+
 However, we are setting real production values with test values just so that we can reasonably preview this feature. What if we forget to change it back to 10? Then the feature is completely busted. In general it is not a good idea to hack in little changes just to get your preview running.
 
-So, we are now seeing in very concrete terms that by not controlling this dependency, the `Task.sleep`, we are letting it control us. It is forcing us to contort ourselves in weird ways just so that we can make code that touches `Task.sleep` less annoying to use
+So, we are now seeing in very concrete terms that by not controlling this dependency, the `Task.sleep`, we are letting it control us. It is forcing us to either wait for real world time to pass to test this feature, or to sprinkle in hacks. Neither of which is good.
 
 ---
 	_The problem with dependencies_
@@ -349,7 +351,7 @@ So, if we ever accidentally introduce a bug that causes more than one item to be
 
 # Death by 1,000 paper cuts
 
-So we have seen over and over again that seemingly reasonable code can lead to some very unfortunately results. Everyone here probably has at least one version of these problems in your code base today. 
+So we have seen over and over again that seemingly reasonable code can lead to some very unfortunate results. Everyone here probably has at least one version of these problems in your code base today. 
 
 Maybe it’s a preview that doesn’t work very well due to complex behavior and so you just run it in the simulator. 
 
@@ -373,13 +375,11 @@ So, that was just a lot of time spent on negativity. We saw problem after proble
 # In short:
 ### Don't reach out to code you don't own and can't control
 
-Well, in short: stop reaching out to code that you don't own and can't control from the outside. This includes interacting directly with the 3rd party APIs, such as Core Location, URL Session, file systems, Firebase, clocks, schedulers, date and UUID initializers, and more.
+Well, in short: stop reaching out to code that you don't own and can't control from the outside. This includes interacting directly with the 3rd party APIs, such as Core Location, URL Session, file systems, clocks, schedulers, date and UUID initializers, and more.
 
 All of those things talk to external systems and so the moment you interact with one of those APIs directly in your feature code you are susceptible to the vagaries of the outside world.
 
-This advice further extends to singletons, as those are things that you cannot control. Their whole purpose is to be the one static value used throughout your application. They are frozen the moment the application launches and can never be changed. Features that use singletons will always use the same instance, regardless of how they are run, such as previews, simulators, device or tests.
-
-Let's see some concrete examples of this in the demo we have been using to see all the problems with dependencies.
+Let's see how controlling our dependencies can fix a lot of the problems we just saw in our demos.
 
 ---
 	_Controlling dependencies_
@@ -389,7 +389,6 @@ Let's see some concrete examples of this in the demo we have been using to see a
 	
 	
 	let clock: any Clock<Duration>
-	
 	try await clock.sleep(for: .seconds(1))
 	
 	
@@ -441,19 +440,19 @@ This turned out to be really simple in this case, but I don't want to lead you t
 
 Most of the time we have to put in a little bit of extra work to actually control our dependencies.
 
-Take for example the analytics demo we showed off before. It had the problem of using an uncontrolled dependency for tracking analytics events, and that mean that we tracked real events when running the app in the preview. This will flood our analytics backend with fake events that do not actually correspond to things our user is doing in the app.
+Take for example the analytics demo we showed off before. It had the problem of using an uncontrolled dependency for tracking analytics events, and that meant that we accidentally tracked real events when running the app in the preview. That was really bad
 
 The fix is to take back control over this dependency rather than letting it control us, but this time we have to do a bit more work.
 
-At the bottom of this file we have sketched out a protocol that acts as an abstraction layer over the analytics client. Now, if you have followed any of Stephen's and my work for any amount of time you will know that we do not reach for protocols for this level of abstraction. There are simpler tools that offer a lot of power, but that is a whole other topic that will just muddy what I want to get at here.
+At the top of this file we have sketched out a protocol that acts as an abstraction layer over the analytics client. Now, if you have followed any of Stephen's and my work for any amount of time you will know that we do not reach for protocols for this level of abstraction. There are simpler tools that offer a lot of power, but that is a whole other topic that will just muddy what I want to get at here.
 
-I think far more people are familiar with this style, so let's roll with it. In addition to the protocol definition I have two conformances. One is the "live" conformance, which would be the thing that actually makes a network request. Right now it just logs to the console because this is just a demo, but you can imagine right in here is a call out to `URLSession`.
+With the protocol defined the feature's observable object no longer accesses the singleton directly. Instead, an explicit analytics client is passed along when creating the object, the client is stored in the object, and the client is used whenever we want to track some analytics.
+
+By default the model will use what is known as a "live" analytics client, which we have down at the bottom of the file. This is the thing that will make an actual real life `URLSession` request.
 
 Right below the live implementation we have the "no-op" implementation. This is a conformance of the `Analytics` protocol that doesn't do any actual tracking. It won't ever make a network request, and we don't even print anything to the console. It just does absolutely nothing when you tell it to track an event.
 
-So, let's start using this controllable dependency. We can add a property to our `ObservableObject` so that an analytics client can be passed in from the _outside_, and then we can be strict with ourselves to only use it and never reach out to the global, uncontrollable dependency.
-
-If we do that then we can create the view for the preview in a very particular configuration. In particular, when creating the model we will pass along the `NoopAnalytics` client so that no matter what happens in the preview it will never track a real life analytics event. And we can see that plain as day by running the preview and seeing that there's nothing in the logs.
+That is the version of the dependency we want to use in the preview, and that's exactly what we do.
 
 So that's great!
 
@@ -465,13 +464,15 @@ But, even this dependency wasn't so hard to control. The analytics client has a 
 
 This is not always the case, and things get more complicated as the dependency gets more complicated.
 
-Take the location demo from earlier. Interacting with a `CLLocationManager` is a lot more complicated than that analytics client. It has multiple methods we need to call, and it has a delegate that feeds us a stream of events. It takes more work to control this dependency, but the benefit is that you can immediately use it in any feature without making many changes, and you can develop those features in basically the regular way. No need to create additional, inert, data-only views just so that you can see how things behave in a preview.
+Take the location demo from earlier. Interacting with a `CLLocationManager` is a lot more complicated than that analytics client. It has multiple methods we need to call, and it has a delegate that feeds us a stream of events. It takes more work to control this dependency, but you only have to do it once and then can immediately use it in as many views as you want.
 
-We aren't going to do this from scratch because we don't have enough time in a single talk, but I have the work already done. At the bottom of the file we have a `LocationClient` protocol that exposes most of the basic functionality. The most interesting part is that the delegate is exposed as an `AsyncStream` that we can subscribe to.
+So, let's go back to the demos and see what the location demo looks like with this controlled dependency.
 
-Below the interface I have a "live" implementation that does actually call out to a `CLLocationManager` under the hood, but then most interesting, I have a "mock" client just below that. It allows you to emulate a location client, but rather than calling out to a `CLLocationManager` it just returns data to you right away. So if you ask it to authorize it just immediately says "sure you're authorized". And when you ask it for a location it immediately says "sure here's a location." 
+There's a protocol sketched up at top that exposes most of the basic functionality. The most interesting part is that the delegate is exposed as an `AsyncStream` that we can subscribe to.
 
-Let's give that a spin. In the preview we can substitute a mock for the location client that emulates being in Los Angeles. So, when we start the preview it is first centered in NYC, but as soon as we tap the location button it re-centers around LA. So we are now getting to actually see the behavior of the feature in the preview, not just look at its inert, lifeless graphical representation. This means we do not have to run this in the simulator just to check out this behavior, and that will be a huge productivity boon.
+Then the feature's model uses that dependency rather than calling out to Core Location's actual APIs. By default the model will use the "live" version of the dependency, which is implemented at the bottom of the file.
+
+But, there is also a "mock" version of the dependency, and that is appropriate to use in previews so that we can precisely control the state of the dependency. It even allows us to determine if the location client is authorized or not, as well as where it's current location is.
 
 We have another example of this over in the contacts demo. Here we have put another interface in front of using the bare Contacts framework APIs, and we have a live implementation of the interface as well as a "mock" one that simply pretends everything is already authorized and immediately gives you back some contacts.
 
@@ -485,7 +486,7 @@ So, things are looking pretty great!
 
 We have defined what dependencies are, we have seen how they can cause all types of problems in real code, and we have seemingly fixed those problems.
 
-You just need to identify your dependencies, make them controllable by putting an interface in front of them so that you have the freedom to swap out live and mock implementations, and then provide different implementations depending on the situation. When running your app in the simulator or on device you will probably want to use the live implementation, and then in previews and tests you will probably want to use a mock implementation.
+You just need to identify your dependencies, make them controllable by putting an interface in front of them so that you have the freedom to swap out live and mock implementations. When running your app in the simulator or on device you will probably want to use the live implementation, and then in previews and tests you will probably want to use a mock implementation.
 
 ---
 
@@ -493,11 +494,11 @@ You just need to identify your dependencies, make them controllable by putting a
 
 Well, it all sounds great, but unfortunately things are more complicated than they seem at first.
 
-If what we have discussed so far is all I told you about dependencies and you went out and tried wrangling in the dependencies in your application, you would run into many ergonomics problems, and it would probably be such a pain that you just wouldn't even bother.
+If what we have discussed so far is all I told you about dependencies and you went out and tried wrangling in the dependencies in your application, you would run into many safety & ergonomics problems, and it would probably be such a pain that you would give up
 
 ---
 ### Safety
-	```
+	```txt
 	
 	
 	
@@ -531,7 +532,7 @@ For example, in the analytics demo it is completely fine for me to leave off the
 ---
 
 #### Ergonomics
-	```swift
+	```txt
 	
 	init(
 	  analytics: any Analytics,
@@ -589,7 +590,7 @@ And it just so happens that Stephen and I maintain a dependency library. I am in
 
 In particular, we wanted to fully embrace structured programming and structured concurrency when overriding dependencies, and so we use Swift's new `@TaskLocal` machinery to power the dependencies under the hood. This brings a lot of power when used correctly, but also completely prevents certain features that other dependency libraries have.
 
-So, let's quickly see how our dependencies library can help improve upon the safety and ergonomics of how we are currently handling dependencies in our demo application.
+So, let's quickly see how our dependencies library can help improve upon the safety and ergonomics of the demos we have been exploring.
 
 Let's start with the countdown demo. Rather than passing an explicit clock to the `CountdownView` we will declare our dependency on a clock using the `@Dependency` property wrapper. The library comes with a bunch of common dependencies ready to use in a controllable fashion, and clocks are one. We can pluck out a controllable clock out of thin air, and with that we no longer need an initializer for passing in an explicit clock. One will be provided to the view automatically.
 
@@ -623,7 +624,7 @@ Further, while we're here, let's also show that we can add a new dependency with
 
 # This is just the beginning
 
-So, I hope that this talk has helped you understand what dependencies, why they can be so pernicious in a code base, and what you can do to start controlling them.
+So, I hope that this talk has helped you understand what dependencies are, why they can be so pernicious in a code base, and what you can do to start controlling them.
 
 However, I must warn that although we have covered a lot in this talk, it's really only just the beginning. We've discussed enough for you to be dangerous, but there's is still so much to learn to truly master the topic.
 
@@ -636,9 +637,9 @@ However, I must warn that although we have covered a lot in this talk, it's real
 
 Here are just a few topics that are important to dive into to fully master dependencies.
 
-First there's "designing dependencies". By this I mean the techniques that guide one in creating the interfaces and wrapper types that you put in front of a dependency in order to make it controllable. We showed off a few examples of this, such as the `LocationClient` and `ContactsClient`, but we didn't actually build those types from scratch in this talk. 
+First there's "designing dependencies". By this I mean the techniques that guide one in creating the interfaces and wrapper types that you put in front of a dependency in order to make it controllable. We showed off a few examples of this, such as the `Analytics` `LocationClient`, but we didn't actually build those types from scratch in this talk. 
 
-There is a lot to about how those clients were designed, and how to make them maximally flexible for testing and previews. It is also important to know when it is appropriate to model something as a dependency and when it is not. Not _everything_ should be a dependency, and on the flip side, some things should be dependencies that don't at first seem like dependencies.
+There is a lot to know about how those clients were designed, and how to make them maximally flexible for testing and previews. It is also important to know when it is appropriate to model something as a dependency and when it is not. Not _everything_ should be a dependency, and on the flip side, some things should be dependencies that don't at first seem like dependencies.
 
 Next there is the idea of overriding dependencies. We have already seen a glimpse of this for previews where we used the `withDependencies` tool to override dependencies just for the preview. But there are so many more cool things we can do.
 
@@ -646,7 +647,9 @@ For example, suppose you have an onboarding experience that teaches a person how
 
 And finally there is testing. We didn't directly show how our dependencies library enables testing, but it isn't too different from what we did in previews. You use the `withDependencies` tool to set up your  dependencies, and then execute your test in that controlled environment.
 
-But the library goes a step beyond too. If you access a dependency in a testing context that you have _not_ explicitly overridden, then you get a testing failure letting you know it is not OK to use live dependencies in tests. This prevents you from accidentally tracking analytics, writing data to disk, or any number of things while testing. Using live dependencies can bleed into other tests causing mystifying failures, or can cause your tests to become slow and flakey. It also means that if you suddenly start to use a new dependency in a feature, then you will be notified when running your test suite that there is more to assert on. It's incredibly powerful.
+But the library goes a step beyond too. If you access a dependency in a testing context that you have _not_ explicitly overridden, then you get a testing failure letting you know it is not OK to use live dependencies in tests. This prevents you from accidentally tracking analytics, writing data to disk, or any number of things while testing. Using live dependencies can bleed into other tests causing mystifying failures, or can cause your tests to become slow and flakey. And so it's good for the library to prevent you from doing this.
+
+It also means that if you suddenly start to use a new dependency in a feature, then you will be notified when running your test suite that there is more to assert on. It's incredibly powerful.
 
 ---
 
@@ -663,34 +666,6 @@ You may not want those limitations and/or powers, and so it will be good to see 
 
 ---
 
-# Is the extra code worth it?
-
-But, I want to end this talk by addressing some common concerns and criticisms to everything we have discussed previously. While I personally think there is a lot of power in controlling dependencies, not everyone agrees and so I think it's a good idea for us to seek out those dissenting opinions and try to understand the core of their argument. And in fact, I think there is a sliver of truth in their concerns, I just don't think they are universally true.
-
-One common criticism is that we are maintaining a whole bunch of extra code to exercise dependencies. We need to wrap our dependencies in a type we control and then inject it into the features that need that dependency.
-
-That is absolutely true, it is extra code, however it is code that you only write once, and once it is done it allows you to write code for all your features in the style that we all want to do naively. When we were all first learning coding, our first instinct would be to just call out to Apple's frameworks without a care in the world. We just wanted to call out to some Apple API, get some data back so that we can be on our way and work on the actual feature for our users.
-
-Well, controlling your dependencies allows you to do exactly that without injecting uncertainty into your code base. We are now free to use a clock, an analytics client and a location client anywhere in our application just as we would have back before we cared about dependencies. But, because we did a little bit of upfront work to control the dependencies, we can actually see our features in Xcode previews, we aren't accidentally interacting with live dependencies, and we have a fighting shot at writing tests.
-
-The same cannot be said of building inert, data-only views that avoid all of the dependencies. We demonstrated such views in the contacts demo where we had an outer, "shell" view that was responsible for interacting with the Contacts framework, and then we also maintained an additional inner "core" view that took just plain data and didn't touch any dependencies.
-
-That inner view is literally extra code that only serves the purpose of making previews functional again. It serves no other purpose. And it is a lot of code to maintain, there are a lot of ways to get it wrong, and it only allows you to preview a lifeless version of your feature. You don't get to tap on any buttons and interact with the behavior of the feature in any meaningful way. And this is code you have to write for _every_ view that uses dependencies, as opposed to just controlling the dependency a single time and being able to instantly use it in _all_ views.
-
-So, in my opinion, the little bit of extra code is absolutely worth it, and it only allows you to implement your features in a more natural way, rather than contorting yourself to maintain inert, data-only views.
-
----
-
-# Aren't you just testing the mock and/or 3rd party code?
-
-Another common criticism is that by controlling dependencies you are only testing the mock or you are only testing the other people's code, such as Apple's frameworks.
-
-While it definitely is possible to 
-
-
-
----
-
 
 ## Thank you
 
@@ -703,7 +678,6 @@ While it definitely is possible to
 /assets/pf-cover.png
 background: true
 filter: darken
-
 
 
 

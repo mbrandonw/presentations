@@ -4,6 +4,7 @@ import SwiftUI
 
 class DependencyLocationDemoModel: NSObject, ObservableObject, CLLocationManagerDelegate {
   @Dependency(\.analytics) var analytics
+  @Dependency(\.date) var date
   @Dependency(\.locationClient) var locationClient
 
   @Published var coordinateRegion = MKCoordinateRegion(
@@ -19,11 +20,11 @@ class DependencyLocationDemoModel: NSObject, ObservableObject, CLLocationManager
 
   func locationButtonTapped() {
     self.analytics.track("Location button tapped")
-    if self.locationClient.authorizationStatus == .notDetermined {
+    if self.locationClient.authorizationStatus == .authorizedWhenInUse {
+      self.locationClient.requestLocation()
+    } else {
       self.analytics.track("Request authorization")
       self.locationClient.requestWhenInUseAuthorization()
-    } else {
-      self.locationClient.requestLocation()
     }
   }
 

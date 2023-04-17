@@ -19,11 +19,11 @@ class DependencyLocationDemoModel: NSObject, ObservableObject, CLLocationManager
 
   func locationButtonTapped() {
     self.analytics.track("Location button tapped")
-    if self.locationClient.authorizationStatus == .notDetermined {
+    if self.locationClient.authorizationStatus == .authorizedWhenInUse {
+      self.locationClient.requestLocation()
+    } else {
       self.analytics.track("Request authorization")
       self.locationClient.requestWhenInUseAuthorization()
-    } else {
-      self.locationClient.requestLocation()
     }
   }
 

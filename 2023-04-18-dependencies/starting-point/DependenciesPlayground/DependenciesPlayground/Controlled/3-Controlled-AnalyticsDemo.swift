@@ -7,8 +7,7 @@ protocol Analytics {
 
 class ControlledAnalyticsDemoModel: NSObject, ObservableObject, CLLocationManagerDelegate {
   let analytics: any Analytics
-  let locationClient: any LocationClient
-
+  let manager = CLLocationManager()
   @Published var coordinateRegion = MKCoordinateRegion(
     center: CLLocationCoordinate2D(
       latitude: 40.7545006,
@@ -20,58 +19,53 @@ class ControlledAnalyticsDemoModel: NSObject, ObservableObject, CLLocationManage
     )
   )
 
-  init(
-    analytics: any Analytics = LiveAnalytics(),
-    locationClient: any LocationClient = LiveLocationClient()
-  ) {
+  init(analytics: any Analytics = LiveAnalytics()) {
     self.analytics = analytics
-    self.locationClient = locationClient
+    super.init()
+    self.manager.delegate = self
   }
 
   func locationButtonTapped() {
     self.analytics.track("Location button tapped")
-    if self.locationClient.authorizationStatus == .notDetermined {
-      self.analytics.track("Request authorization")
-      self.locationClient.requestWhenInUseAuthorization()
+    if self.manager.authorizationStatus == .authorizedWhenInUse {
+      self.manager.requestLocation()
     } else {
-      self.locationClient.requestLocation()
+      self.analytics.track("Request authorization")
+      self.manager.requestWhenInUseAuthorization()
     }
   }
 
-  func task() async {
-    self.analytics.track("Location demo appeared")
+  func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+    if self.manager.authorizationStatus == .authorizedWhenInUse {
+      self.analytics.track("Authorization granted")
+      self.manager.requestLocation()
+    } else if self.manager.authorizationStatus != .notDetermined {
+      self.analytics.track("Authorization denied")
+    }
+  }
 
-    for await event in self.locationClient.delegateEvents {
-      switch event {
-      case let .didChangeAuthorization(status):
-        if status == .authorizedWhenInUse {
-          self.analytics.track("Authorization granted")
-          self.locationClient.requestLocation()
-        } else if status != .notDetermined {
-          self.analytics.track("Authorization denied")
-        }
+  func locationManager(
+    _ manager: CLLocationManager,
+    didUpdateLocations locations: [CLLocation]
+  ) {
+    guard let location = locations.last
+    else { return }
 
-      case .didFail:
-        self.analytics.track("Location request failed")
-        break
+    self.analytics.track("Location request succeeded")
 
-      case let .didUpdateLocations(locations):
-        guard let location = locations.last
-        else { return }
-
-        self.analytics.track("Location request succeeded")
-
-        withAnimation {
-          self.coordinateRegion.center = location.coordinate
-          self.coordinateRegion.span.latitudeDelta = 0.01
-          self.coordinateRegion.span.longitudeDelta = 0.01
-        }
-      }
+    withAnimation {
+      self.coordinateRegion.center = location.coordinate
+      self.coordinateRegion.span.latitudeDelta = 0.01
+      self.coordinateRegion.span.longitudeDelta = 0.01
     }
   }
 
   func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
     self.analytics.track("Location request failed")
+  }
+
+  func onAppear() {
+    self.analytics.track("Location demo appeared")
   }
 }
 
@@ -96,8 +90,8 @@ struct ControlledAnalyticsDemo: View {
       .buttonStyle(.plain)
       .padding(.all)
     }
-    .task {
-      await self.model.task()
+    .onAppear {
+      self.model.onAppear()
     }
   }
 }
@@ -106,13 +100,7 @@ struct ControlledAnalyticsDemo_Previews: PreviewProvider {
   static var previews: some View {
     ControlledAnalyticsDemo(
       model: ControlledAnalyticsDemoModel(
-        analytics: NoopAnalytics(),
-        locationClient: MockLocationClient(
-          location: CLLocationCoordinate2D(
-            latitude: 34.0522300,
-            longitude: -118.2436800
-          )
-        )
+        analytics: NoopAnalytics()
       )
     )
   }
