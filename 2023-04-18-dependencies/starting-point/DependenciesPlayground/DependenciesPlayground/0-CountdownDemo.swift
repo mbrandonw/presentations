@@ -9,10 +9,7 @@ struct CountdownDemo: View {
       if self.isConfettiVisible {
         ForEach(1...100, id: \.self) { _ in
           ConfettiView()
-            .offset(
-              x: .random(in: -20...20),
-              y: .random(in: -20...20)
-            )
+            .offset(x: .random(in: -20...20), y: .random(in: -20...20))
         }
       }
       Text("\(self.countdown)")

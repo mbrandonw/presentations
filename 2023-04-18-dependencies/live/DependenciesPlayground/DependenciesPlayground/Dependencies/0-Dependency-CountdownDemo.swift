@@ -6,8 +6,6 @@ struct DependencyCountdownDemo: View {
   @State var isConfettiVisible = false
   @Dependency(\.continuousClock) var clock
 
-  // init() { … }
-
   var body: some View {
     ZStack {
       if self.isConfettiVisible {

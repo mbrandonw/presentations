@@ -96,12 +96,7 @@ struct ControlledLocationDemo_Previews: PreviewProvider {
   static var previews: some View {
     ControlledLocationDemo(
       model: ControlledLocationDemoModel(
-        locationClient: MockLocationClient(
-          authorizationStatus: .denied,
-          location: CLLocationCoordinate2D(
-          latitude: 34.522300,
-          longitude: -118.436800
-        ))
+        locationClient: MockLocationClient()
       )
     )
   }

@@ -1,6 +1,6 @@
 ⚠️ Clear simulator settings
 ⚠️ Hide macOS menu bar
-⚠️ Quit all apps
+⚠️ Quit all macOS apps
 ⚠️ Turn on presentation focus mode
 ⚠️ Pre-warm Scrumdinger tests
 
@@ -27,7 +27,7 @@ Hello, today we are going to talk about dependencies. This includes defining wha
 background: true
 filter: darken
 
-But first a little bit of information about myself. Here is my email, Twitter handle and Mastodon handle in case you want to get in touch or have questions.
+But first a little bit of information about myself. Here is my email, Twitter and Mastodon handle in case you want to get in touch or have questions.
 
 Also, this talk is joint work with my collaborator Stephen Celis, and so here is his information too. You can reach out to either one of us.
 
@@ -200,29 +200,16 @@ Another problem with dependencies is that they can just make your code more anno
 
 I have a demo for this. I’m going to switch over to the simulator, where I have an app running that has lots of demos that we will be playing around with in this talk. The first demo is this “Countdown” feature.
 
-I can drill down to it, and we will see a counter starting at 10, going down to 0, and when it reaches 0 a little bit of confetti bursts out of the center.
-
-So that’s fun, but let’s take a quick look at the code for this feature. We will see it `ZStack`s a bunch of confetti views on top of the counter, and when the view appears the `.task` modifier is executed at the end, where we use structured concurrency to sleep in an infinite loop in order to execute our logic.
-
-The read flag to us is this line right here:
-
-try? await Task.sleep(for: .seconds(1))
-
-That is reaching out to a global, uncontrolled dependency that asks the system clock to sleep for 1 second. That means to run our feature in the simulator we have no choice but to literally wait many seconds to pass by.
-
-For example, I don’t know if anyone noticed, but when the confetti burst it was actually _behind_ the counter number. I would prefer it to be on top, and luckily that is a very easy fix by just swapping the order on the `ZStack`.
-
-However, in order to see that change I need to run the feature in the simulator, wait another 10 seconds, and then finally I get to see that indeed the confetti is on _top_ of the number. However, say I got distracted while it was counting down and I missed the burst? Well, I guess I would have no choice but to run the application in the simulator all over again and wait another 10 seconds.
-
-That is a real pain. 
-
-Also, SwiftUI previews are supposed to be the amazing tool that allows us to play with our feature in isolation without booting up the simulator and navigating all the way to the thing we want to actually test. However, even it is not super helpful here. When running the preview we _still_ have to wait 10 seconds to pass before we get to see our confetti burst, which means we have completely destroyed the quick iterative cycle that Xcode previews promises us. Any tweak we may want to make to this feature incurs the cost of 10 seconds, which is not great.
-
-One thing we could work around problem is to hard code the `countdown` variable to start at something smaller, like say 1 or even 0.
-
-^ 🤌
-
-However, we are setting real production values with test values just so that we can reasonably preview this feature. What if we forget to change it back to 10? Then the feature is completely busted. In general it is not a good idea to hack in little changes just to get your preview running.
+* Demo feature in simulator
+* Mention that confetti layering is not right
+* Show the code and fix it, show you have to wait 10 seconds again
+* Previews are supposed to help with things like this
+* Previews don't help
+* The red flag is `Task.sleep`
+* That's a global, uncontrolled dependency
+* We are forced to wait real time to pass
+* We can hardcode a smaller `countdown`
+* But that's also bad, test values in prod code
 
 So, we are now seeing in very concrete terms that by not controlling this dependency, the `Task.sleep`, we are letting it control us. It is forcing us to either wait for real world time to pass to test this feature, or to sprinkle in hacks. Neither of which is good.
 
@@ -242,19 +229,18 @@ If you indiscreetly sprinkle direct access to those frameworks in your code, you
 
 I have a demo to show exactly how this can happen. Let’s go back to the simulator, and this time let’s go into the “Location Demo”.
 
-What we will find is a very simple feature that shows a map that by default is zoomed in on the New York City area. There’s also a button in the bottom right that when tapped is going to ask for location permissions, and if you grant permission then we refocus the map on your current location.
+* Run location demo in simulator to show how it mostly works just fine
+* Walk through code to show it is reasonable
+* Show that feature does not work well in preview
+* Core Location just doesn't work in previews
+* Can't show authorization alert
+* So we are stuck previewing only very basic functionality in the view
+* Can't see how the feature reacts to the location manager
+* We are forced to run on simulator
+* But even that isn't ideal since once you grant permission you can't un-grant it to get the authorization alert again.
+* You have to delete / re-install app
 
-Pretty simple, and the code is quite simple too. We have an `ObservableObject` so that we can create a location manager and set up a delegate. When the location button is tapped we check the current authorization status, and if authorized we request location, and otherwise we request authorization. Further, when authorization is granted we then request the user’s location. And finally, when a location update is delivered to the delegate we mutate the current `coordinateRegion`. It’s pretty straightforward stuff.
-
-But let’s try running it in the preview. Well, the map does show with NYC centered, but tapping on the location button does nothing. No authorization prompt comes up and the map does not re-focus anywhere.
-
-This is happening because location authorization simply does not work in previews. No alert can be shown, therefore we can’t grant location permissions, therefore we are never given an updated location from Core Location, and therefore the map does not refocus.
-
-This preview is basically inert. Now you may be thinking: “well, at least this screen shows and we can iterate on its design.” Well, yes that is true, we can certainly make tweaks here, such as the button size, and we do see it immediately update.
-
-But there is a whole world of logic and behavior in this feature beyond just this static map. What if we had some interesting behavior we wanted to iterate on for when location permissions are granted or denied. We can not get access to any of that in the preview, and instead have to load up the full app in the simulator, navigate to the feature, and _then_ see how our feature behaves. Further, if you wanted to test the exact situation of _granting_ permission or _denying_ permission, then you would have to fully delete the application between each run. Once you have granted or denied location permission there is no way to get iOS to ask you again.
-
-There are even some dependencies that don’t even work in _simulators_. For example, Core Motion has some interesting APIs for reading accelerometer and gyroscope events from the device, but none of that works in the simulator. You have no choice but to actually run the app on your device if you want to play around with that behavior.
+There are even some dependencies that don’t work in _simulators_. For example, Core Motion has some interesting APIs for reading accelerometer and gyroscope events from the device, but none of that works in the simulator. You have no choice but to actually run the app on your device if you want to play around with that behavior.
 
 We are again seeing that by not controlling our dependencies we are allowing them to control us. We simply are not able to use Xcode previews if we use certain frameworks directly in our code.
 
@@ -267,27 +253,20 @@ So, it’s a pretty big bummer that previews become less helpful as you start to
 
 But things get much, _much_ worse. Some dependencies just completely break previews entirely. To demonstrate this lets head back over to the simulator and take a look at the “Contacts demo."
 
-This is a very simple demo showing how to interact with the Contacts framework by loading the names of all the contacts on the device. When we drill down to the demo we are instantly asked to grant permissions, and if we allow then we will see some contacts fill the screen.
+* Run demo in simulator to show how it works
+* Walk through the code to show it is reasonable
+* Show how previews are again mostly non-functional
+* Modularizing apps is increasingly popular in the iOS community
+* It's a great way to decouple and isolate features, and speed up compile times
+* But if we copy and paste contacts demo to an SPM module we will see preview crashes
+* This is because of missing info plist entry
 
-The code is extremely simple. There’s just some state to hold the names of users, which we show in a `List`, and in `onAppear` we interact with `CNContactStore` to request all of the contacts on the device.
+* Some may know of a workaround
+* We can create a new "core" view that holds only data and use it from the view that interacts with dependency
+* Show that and show the preview works
+* Sounds better in theory than works in practice, for a few reasons
 
-So, that’s great, but let’s see what happens I run this in the preview. It’s just a blank screen. No alert asking for permission, and no list of contacts. This is because the Contacts framework simply does not work in previews, just like Core Location. It does not support showing the permissions alert.
-
-So, the preview is inert just as we saw with our location demo, but it at least runs. If there were other things in this UI we could at least iterate on _their_ design and functionality in the preview.
-
-However, let’s now do a very simple thing. I want to move this feature to its own module. Modularizing code bases is becoming very popular in the community and it is one of the most impactful things you can do to decrease build times, decouple features, and run features in isolation without building the full application.
-
-So, I will literally copy-and-paste this code into a new file of the SPM package I have stubbed out.
-
-Now when I run the preview it just crashes. We don’t get to see the UI at all. This is happening because in order for us to be able to interact with the Contacts framework’s APIs we must have an entry added to the info.plist of the application. We did that in the main application.
-
-However, previews inside an SPM package have no surrounding app target, hence have no concept of an info.plist, and hence it is simply not possible to add the entry to the plist. This means this preview is just completely busted for us. We are not able to work on the design of anything inside this feature due to the crash. Even things that have nothing to do with the list of contacts. It is just broken.
-
-Now some of y'all may know of a workaround for this. What if we created a whole new view that holds only the data but does not interact with the Contacts framework at all, and then the main view can wrap that new pure data view?
-
-Well, it’s certainly possible, but I think it sounds better in theory than it works in practice. I have a version of this down below out of site. There's a `ContactsCoreView` that holds onto a plain `let` of users and shows that data in a list, and then there's a `ContactsDemoAlternate` view that uses the core view and interacts with the Contacts framework.
-
-In my opinion this is not an ideal pattern to follow for a few reasons. First of all, most views are not just simple, inert representations of data. Most views have behavior, such as buttons to tap, textfields to enter text into, gestures to perform, and more. 
+First of all, most views are not just simple, inert representations of data. Most views have behavior, such as buttons to tap, textfields to enter text into, gestures to perform, and more. 
 
 In order to support that we are going to need to bloat this seemingly simple "core view" with all kinds of callback handlers and communication mechanisms so that it can communicate back and forth with the real view that can actually interact with the contacts framework. Doing so can be quite complicated to get right.
 
@@ -308,11 +287,12 @@ We’ve so far covered a lot of very in-your-face and pernicious problems when u
 
 And that is accidentally using “live” dependencies when you don’t mean to. To explore this, lets head back to the simulator yet again to check out the “Analytics demo".
 
-This demo is identical to the location demo, but with one key difference: it has an analytics client for sending certain events to a backend service so that we can aggregate user behavior and make business decisions based off of that data. The feature has also been instrumented in various places that we are interested in, such as when buttons are tapped, when we get authorization from the user, and more.
+* Run analytics demo in simulator, open logs and filter to show tracking
+* Walkthrough code to show it is reasonable
+* Run in preview, click around
+* Open logs and show that we were secretly tracking live analytics data even though we are just testing the feature
 
-We can run the application in the simulator and see that logs are printed to the console showing that analytics are indeed being tracked how we expect.
-
-The problem is when we run this feature in the preview. Unbeknownst to me, while I am running this preview over and over and over, and tapping on buttons, I am secretly tracking analytics events and sending those to my backend server. Over the course of working on this feature for an afternoon I can _easily_ refresh this preview hundreds of times. Each preview refresh tracks a new analytic event, and that is going to muddy up our data. We can no longer confidently make business decisions based on this data because it now holds events that didn’t actually come from our end users and instead came from our developers building new features.
+Over the course of working on this feature for an afternoon I can _easily_ refresh this preview hundreds of times. Each preview refresh tracks a new analytic event, and that is going to muddy up our data. We can no longer confidently make business decisions based on this data because it now holds events that didn’t actually come from our end users and instead came from our developers building new features.
 
 ---
 
@@ -332,6 +312,8 @@ Apple has this great tutorial called “Scrumdinger” which builds a pretty com
 But also it isn’t built with testing in mind. It's pretty much impossible to write tests for the app because the vast majority of logic is trapped in views, and the code that isn't reaches out to live, uncontrolled dependencies.
 
 But, one way to get _some_ test coverage on an application regardless of the manner in which it was built is UI tests. UI tests allow you to literally boot up your app in the simulator and emulate a script of user actions on the screen so that you can assert on what happens.
+
+* Open scrum dinger Xcode and launch in simulator
 
 Well, I gave this a shot in Apple’s Scrumdinger app by writing a test to exercise the flow of the user tapping the “+” button, filling in some details, hitting “Add”, and then asserting that the root list has a single row with the details that were just entered into the form.
 
@@ -368,7 +350,7 @@ What I’m trying to say here is that uncontrolled dependencies can make it real
 ---
 # What can we do about it?
 
-So, that was just a lot of time spent on negativity. We saw problem after problem with various code snippets, so now we will devote time to some positivity. What can we do to fix the problem?
+So, that was just a lot of time spent on negativity. We saw problem after problem with seemingly reasonable code, so now we will devote time to some positivity. What can we do to fix the problem?
 
 ---
 
@@ -399,26 +381,24 @@ Let's start with the "Countdown" demo. It's main problem is that we had to wait 
 
 What if instead we passed in an explicit clock so that we can control time. By default we will use a `ContinuousClock`, but in the preview we can provide an "immediate" clock that squashes all of time into a single instant. When you tell it to sleep it just ignores you and doesn't suspend at all.
 
-📲 Let's go back to the simulator, and secretly at the bottom of the root view I have some more demos. These are replicas of all the demos we have already gone through, but now we will control their dependencies.
-
-Let's go to the controlled countdown demo's code, and add an explicit clock to the view. Now that the view holds onto a concrete clock we can use it in the feature code rather than reaching out to the global, uncontrolled `Task.sleep`.
-
-And then the most important part is that when we construct this view for the preview we now have the power to supply a clock that is not the `ContinuousClock`, which waits for actual, real world time to pass.
-
-But, unfortunately, Swift does not come with any `Clock` conformances that can help us out here. The only two conformances are the `ContinuousClock` and the `SuspendingClock`, but we want something like an "immediate" clock.
-
-Well, luckily Stephen and I maintain a library of helpful `Clock` conformances, and so we can import `Clocks` here and then construct an `ImmediateClock`.
-
-Now we see that the countdown zips down to 0 instantly and see the confetti. This has completely fixed the problem we were seeing before without changing how the app behaves in the simulator. The simulator will still use a live, continuous clock and will actually wait for a full 10 real seconds to pass.
-
-And we accomplished this by just adding 1 single line of code and changing 1 other line of code. If we had decided to maintain one of those "core", inert views that just holds data then we would have added _dozens_ of lines of code and could have easily gotten something wrong that breaks the app but looks fine in the simulator.
+* Open simulator to show that there are "controlled" versions of all the demos we just explored
+* Each demo works exactly the same as before, but the code has been slightly tweaked to control dependencies
+* Open code for countdown demo
+* Mention that code is identical to before except for 2 changes:
+	* a clock has been added as an instance variable
+	* and initializer has been provided so that any clock can be passed in
+* By default a live continuous clock is used
+* But in previews we can use something else, like an immediate clock
+* The standard library doesn't ship an immediate clock, but we do in our swift-clocks open source library.
+* Now the feature counts down immediately
+* No need to wait for real time to pass
+* And we didn't need to hack around and change production values with debug values
+* So we accomplished this by adding just a few lines of code, and we still get to use the `sleep` method exactly how we wanted to naively, it just now goes through a clock instead of `Task`
 
 Alright, so this is looking really promising. We've seen the very basics of controlling a dependency:
 
-* Supply the dependency explicitly to the type that wants to use it.
+* Add the dependency as an instance variable to the type that wants to use it
 * Then actually use that dependency instead of reaching to the global, uncontrollable dependency.
-
-So, rather than reaching out to `Task.sleep` directly, we instead add a clock to the view and use that.
 
 This turned out to be really simple in this case, but I don't want to lead you to believe it's always this easy. We are lucky here because we happen to want to control a dependency that is already abstracted with a protocol, `Clock`, which means it easy to add an `any Clock` to the view and then substitute any number of implementations at runtime.
 
@@ -444,15 +424,16 @@ Take for example the analytics demo we showed off before. It had the problem of 
 
 The fix is to take back control over this dependency rather than letting it control us, but this time we have to do a bit more work.
 
-At the top of this file we have sketched out a protocol that acts as an abstraction layer over the analytics client. Now, if you have followed any of Stephen's and my work for any amount of time you will know that we do not reach for protocols for this level of abstraction. There are simpler tools that offer a lot of power, but that is a whole other topic that will just muddy what I want to get at here.
-
-With the protocol defined the feature's observable object no longer accesses the singleton directly. Instead, an explicit analytics client is passed along when creating the object, the client is stored in the object, and the client is used whenever we want to track some analytics.
-
-By default the model will use what is known as a "live" analytics client, which we have down at the bottom of the file. This is the thing that will make an actual real life `URLSession` request.
-
-Right below the live implementation we have the "no-op" implementation. This is a conformance of the `Analytics` protocol that doesn't do any actual tracking. It won't ever make a network request, and we don't even print anything to the console. It just does absolutely nothing when you tell it to track an event.
-
-That is the version of the dependency we want to use in the preview, and that's exactly what we do.
+* Jump to the controlled analytics demo
+* Show that we have an Analytics protocol at the top
+	* Mention that this is not how Stephen and I usually do things, but we are keeping it simple for the talk
+* Observable object now takes an analytics client
+* Exposes initializer that defaults to a "live" version
+* And then we use the client instead of reaching out to the global, uncontrollable singleton
+* At the bottom of the file there are two conformances
+	* a live conformance that uses `URLSession`
+	* a loop conformance that does not
+* We can use the noop conformance in previews so that we can play around with the feature to our heart's content without worrying about accidentally tracking analytics
 
 So that's great!
 
@@ -468,15 +449,22 @@ Take the location demo from earlier. Interacting with a `CLLocationManager` is a
 
 So, let's go back to the demos and see what the location demo looks like with this controlled dependency.
 
-There's a protocol sketched up at top that exposes most of the basic functionality. The most interesting part is that the delegate is exposed as an `AsyncStream` that we can subscribe to.
+* Open controlled location demo
+* Show the protocol at the top and how it's a lot more complicate
+	* instead of a delegate that you can override we expose a stream of delegate actions you can subscribe to
+* Observable object holds onto a location client instead of reaching out to CLLocationManager directly
+* Initializer allows passing in a different location client at runtime
+* Then we use the location client in the model's code instead of using CLLocationManager
+* At the bottom we have two conformances:
+	* A live conformance that actually interacts with CLLocationManager
+	* A mock conformance that does not touch CLLocationManager and instead we can configure it's auth status and location
+* Then in previews we can use a mock location client to simulate the user's location being in LA
+* We can even change the auth status to denied to see what happens when the user has previously denied 
+	* Right now the feature doesn't do anything with that info, but if it did we would be able to see it
 
-Then the feature's model uses that dependency rather than calling out to Core Location's actual APIs. By default the model will use the "live" version of the dependency, which is implemented at the bottom of the file.
-
-But, there is also a "mock" version of the dependency, and that is appropriate to use in previews so that we can precisely control the state of the dependency. It even allows us to determine if the location client is authorized or not, as well as where it's current location is.
-
-We have another example of this over in the contacts demo. Here we have put another interface in front of using the bare Contacts framework APIs, and we have a live implementation of the interface as well as a "mock" one that simply pretends everything is already authorized and immediately gives you back some contacts.
-
-This now lets us run the preview and see some data actually populating the list, but even better, we can copy-and-paste all of this code over to the Swift package where, if you remember, previous the preview simply crashed due to incorrectly configured Info.plist. It wasn't actually possible to fix that plist problem in the package, and so we were out of luck. Now that we have a mock dependency we are not touching any Contacts framework code at all, and the preview works just fine.
+* Open the contacts demo to show it works the same
+* If we moved this code over to the SPM module like we did earlier it would no longer crash because in the preview we are no longer touching the contacts framework
+* We've completely removed it from the equation
 
 ---
 
@@ -526,8 +514,10 @@ First, in a more real world application, you will have many objects that need de
 
 So that's bad, but also since it is possible to create an object without supplying any dependencies, and more importantly, even possible to create an object while being completely _ignorant_ of the dependencies that _could_ be supplied, it is still easy for us to accidentally reach out to live dependencies when we don't mean to.
 
-For example, in the analytics demo it is completely fine for me to leave off the analytics argument, the preview works just fine, but now we are secretly tracking live analytics to our backend. This means we have to be intimately knowledgable about the internals of all views and objects in our application to know when we should override the analytics client for previews. But worse, if someone updates a view that previously did not have analytics and added analytics, then that preview would start tracking live event data and we would be none the wiser.
-
+* Go back to code of controlled analytics demo
+* Show that commenting out NoopAnalytics causes analytics to be tracked again
+* It's on us to pass all dependencies
+* If analytics is added at a later time we may have many previews that haven't been updated and will be tracking live analytics.
 
 ---
 
@@ -543,13 +533,13 @@ For example, in the analytics demo it is completely fine for me to leave off the
 	
 	```
 
-So, safety is a really big issue, and that may be reason enough for us to abandon the defaults entirely and just require all dependencies to be passed explicitly.
+So, safety is a really big issue with default arguments, so we may want to require all dependencies to be passed in explicitly.
 
-But that brings up all new problems of its own. If we drop the defaults and require all dependencies to be explicitly passed in, then the simple act of adding a dependency to a feature will reverberate throughout the entire application.
+But that brings up all new problems of its own. The simple act of adding a dependency to a feature will reverberate throughout the entire application.
 
 Suppose this little location demo was many layers deep in the application. Maybe you have to switch to a tab, drill down to a screen, open up a sheet, and then drill down again to finally get to this feature. Well, if we add a single dependency to the location feature we are going to have to also add that same dependency to every single feature that touches the location feature, as well as every feature that touches a feature that touches the location feature, and on and on. 
 
-Adding a dependency has turned into a viral event in which you are now updating objects in your code to take a dependency just so that you can pass it down the line, and the object doesn't even have any need for that dependency.
+Adding a dependency has turned into a viral event in which you are now updating lots of objects in your code to take a dependency just so that you can pass it down the line, and the object doesn't necessarily even have any need for that dependency.
 
 ---
 
@@ -562,11 +552,11 @@ What we are seeing is the unfortunate dichotomy between safety and ergonomics. O
 
 # “Dependency injection” library
 
-This is what leads people to adopt what is known as a "dependency injection" library. The sole purpose of a dependency injection library is to make it possible to give our objects the dependencies it needs to do its job.
+This is what leads people to adopt what is known as a "dependency injection" library. The sole purpose of a dependency injection library is to make it possible to give our objects the dependencies it needs to do its job, but in a manner that is safer than an initializer with default arguments and more ergonomic than an initializer with non-default arguments.
 
-But also, crucially, do it in a way that is in some sense safe _and_ ergonomic. That is any dependency injection library's 1st goal, above all else. Now, it's not really possible to offer full safety and full ergonomics at the same time, and so every library has to make tradeoffs.
+Now, it's not really possible to offer full safety and full ergonomics at the same time, and so every library has to make tradeoffs.
 
-And then the stance the library takes on safety versus ergonomics will dictate what other kinds of features the library offer you for overriding and controlling dependencies in interesting ways.
+And the stance the library takes on safety versus ergonomics will dictate what other kinds of features the library offer you for overriding and controlling dependencies in interesting ways.
 
 ---
 
@@ -592,33 +582,43 @@ In particular, we wanted to fully embrace structured programming and structured 
 
 So, let's quickly see how our dependencies library can help improve upon the safety and ergonomics of the demos we have been exploring.
 
-Let's start with the countdown demo. Rather than passing an explicit clock to the `CountdownView` we will declare our dependency on a clock using the `@Dependency` property wrapper. The library comes with a bunch of common dependencies ready to use in a controllable fashion, and clocks are one. We can pluck out a controllable clock out of thin air, and with that we no longer need an initializer for passing in an explicit clock. One will be provided to the view automatically.
+* Go back to simulator to show there are even more demos down below.
+* These demos work exactly as the previous versions we've seen, but now dependencies are controlled using our library
 
-Outside of the initializer everything works exactly as it did before. We can reference `clock` anywhere in the view and use it like normal. So already this version of this feature is slightly more ergonomic that the previous because we no longer even need to maintain an initializer just so that someone can pass it a non-continuous clock.
+* First is the countdown demo. This code is _identical_ to the original version, except with 1 new line added and 1 line changed
+* Now we mark our dependency with `@Dependency`
+* And that simple act makes an initializer not required
+* When you register a dependency with our library you get to specify the default value used, and in this cause it's a continuous clock.
+* That means the preview down below uses a live continuous clock and we have to wait for time to pass
+* But we can wrap the creation of the view in `withDependencies` to control its clock from the outside
+* We will override the clock to be an immediate clock
+* And now it works like before
+* So our dependencies library provides the tools that allow you to skip the explicit initializer but also still allow you to override dependencies. 
 
-But then you may ask: how can we use a non-continuous clock with this set up? Well, that's where the real magic comes happens. You can alter the execution context a view operates in by simply wrapping its creation in a `withDependencies` call. So, down in the preview, we will use this tool to override its dependencies and provide an `ImmediateClock`. That's all it takes.
+* So, that sounds great for ergonomics, but what about safety? 
+* Isn't this going to have problems where we accidentally use live dependencies in previews?
+* Well, the library has a tool for that too
 
-When the application runs in the simulator or device it will still use the real life `ContinuousClock`, but down in this preview we get to choose what kind of clock we want to use just for this one specific preview. We can even have two previews side-by-side each with different dependencies, which is great for being able to see how your features behavior with a bunch of different dependency combinations.
+* Let's hop over to the location demo
+* Here we are using `@Dependency` twice, once for the analytics client and once for the location client
+* Down in the preview we will see we are construct the observable object without overriding dependencies 
+* Yet when we run in the preview it is skipping the analytics event. And even the location features work
+* And if we run in the simulator it is definitely tracking live analytics
+* How does that work?
+* Well, when you register your dependencies with the library you get to specify the default, live version that is used when running in the simulator and on device
+* But you also get to specify the version of the dependency that is used in previews, and for that we have the analytics dependency use the loop version and the location client use the mock version.
+* That means we don't have to do anything special in our preview. 
+* And if you add analytics to an existing feature, then it will automatically get the loop version in previews, meaning you never have to worry again about accidentally tracking live analytics in previews.
 
-Let's look at the next demo. We've actually combined both the location and analytics demo into just one. We are now using the `@Dependency` wrapper twice, once for the analytics dependency and again for the location client dependency. And best of all we no longer need an initializer, and no longer need to decide between providing a default for dependencies are not.
+* So, this is showing how we try to balance safety versus ergonomics in our library
+* It is ergonomic because we don't have to implement explicit initializers in our types that require all dependencies to be provided
+* But it is also ergonomic because each dependency has the ability to specify a safe version of it to use in previews
+* There's even a way to carve out a dependency to use for tests, but we won't have time to explore that.
 
-This object can be created without explicitly passing in any dependencies, so it's very ergonomic to create this object, yet it's still possible to control the dependencies.
-
-We technically could do this using the `withDependencies` tool that we showed off in the countdown demo, but there is something even better we can do. If we scroll down to the preview we will see we are creating the model object without overriding dependencies at all. That seems really bad. Won't that mean that we are accidentally tracking live analytics events to our backend and that the preview will be mostly non-functional since since Core Location doesn't work well in previews?
-
-Well, we can run the preview to see that is not the case. The preview is completely functional and we can check the logs to see that nothing is being printed to the console which means analytics events are definitely not being sent to our backend.
-
-How can that possibly be? 
-
-Well, our dependencies library has the concept of "preview" dependencies. When you register a dependency with the library so that it can be used with the `@Dependency` property wrapper you get to specify 3 implementations: the one to be used when running the app in the simulator or on device, called the "live" implementation, one to be used when running in previews, and one to be used when running in tests.
-
-When registering the analytics and location client with the dependencies library we chose to provide implementations that do not reach out to the outside world. So we no longer have to ever worry about accidentally tracking real life analytics events when running in a preview. That possibility has been completely ruled out due to how the library is structured.
-
-And if you want to further tweak the dependencies for the feature you can always wrap everything in a `withDependencies` and override anything you want.
-
-So this is a _huge_ ergonomic improvement over the explicit dependency passing we explored earlier in the talk. We don't have to explicitly pass dependencies around and yet we can still be very safe. A feature is free to add analytics without worrying about accidentally tracking bad data in previews.
-
-Further, while we're here, let's also show that we can add a new dependency without any fuss. Let's say this feature started needing access to the current date. We can do that easily, and everything still compiles without having to make a single change. We could have dozens or hundreds of other features needing to construct this feature, and we wouldn't have to update a single one.
+* Finally, let's show what it takes to add a new dependency to a type
+* Our dependency library comes with many controllable dependencies out of the box
+* Let's add `@Dependency(\.date)` to the observable object.
+* That's all it takes. There is no other code to fix.
 
 ---
 

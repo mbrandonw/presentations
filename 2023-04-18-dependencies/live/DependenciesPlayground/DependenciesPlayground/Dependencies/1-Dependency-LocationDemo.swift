@@ -4,7 +4,6 @@ import SwiftUI
 
 class DependencyLocationDemoModel: NSObject, ObservableObject, CLLocationManagerDelegate {
   @Dependency(\.analytics) var analytics
-  @Dependency(\.date) var date
   @Dependency(\.locationClient) var locationClient
 
   @Published var coordinateRegion = MKCoordinateRegion(
