@@ -41,7 +41,7 @@ Also, this talk is joint work with my collaborator Stephen Celis, and so here is
 background: true
 filter: darken
 
-And if you weren't already aware, Stephen and I run a site called Point-Free, where we go deep into topics like the one I am about to discuss today, and a whole bunch more. I encourage you to check it out if anything in today's talk catches your eye.
+And if you weren't aware, Stephen and I run a site called Point-Free, where we go deep into topics like the one I am about to discuss today, and a whole bunch more. I encourage you to check it out if anything in today's talk catches your eye.
 
 ---
 # What is a dependency?
@@ -140,7 +140,7 @@ Firebase is another **massive** dependency. It’s kind of a _mega_ dependency, 
 	
 	```
 
-If you have ever used `Task.sleep`, or `clock.sleep`, or a Combine `Scheduler`, then you were again using a dependency. Those objects speak with the outside world in order to execute work at a later time, and we have no ability to tell those processes to do things in a different manner.
+If you have ever used `Task.sleep`, or `clock.sleep`, or a Combine `Scheduler`, or even just a dispatch queue in general, then you were again using a dependency. Those objects speak with the outside world in order to execute work at a later time, and we have no ability to tell those processes to do things in a different manner.
 
 ---
 	_Examples of dependencies_
@@ -270,9 +270,9 @@ First of all, most views are not just simple, inert representations of data. Mos
 
 In order to support that we are going to need to bloat this seemingly simple "core view" with all kinds of callback handlers and communication mechanisms so that it can communicate back and forth with the real view that can actually interact with the contacts framework. Doing so can be quite complicated to get right.
 
-Second, this view is only a mere shadow of the feature. A mirage. We are cramming data into it to make something appear in the preview, but the code path that is actually responsible for getting the data is not being exercised at all in the preview, and therefore we have no choice but to still run the full application in the simulator if we _truly_ want to see how this screen behaves when it interacts with the contacts dependency.
+And second, we are maintaining a bunch of additional code just to work around the fact that we have an uncontrolled dependency in our codebase. All code is a liability in that it gives you new ways to get something wrong.
 
-And third, we are maintaining a bunch of additional code just to work around the fact that we have an uncontrolled dependency in our codebase. All code is a liability in that it gives you new ways to get something wrong.
+Third, this view is only a mere shadow of the feature. A mirage. We are cramming data into it to make something appear in the preview, but the code path that is actually responsible for getting the data is not being exercised at all in the preview, and therefore we have no choice but to still run the full application in the simulator if we _truly_ want to see how this screen behaves when it interacts with the contacts dependency.
 
 And finally, the code needed to maintain all of these little inert views that only hold onto data vastly outweighs the amount of code needed to control your dependencies. 
 
@@ -331,7 +331,7 @@ So, if we ever accidentally introduce a bug that causes more than one item to be
 
 ---
 
-# Death by 1,000 paper cuts
+### Death by 1,000 paper cuts
 
 So we have seen over and over again that seemingly reasonable code can lead to some very unfortunate results. Everyone here probably has at least one version of these problems in your code base today. 
 
@@ -348,13 +348,13 @@ And that may be OK for you, but this does not scale at all, especially when you 
 What I’m trying to say here is that uncontrolled dependencies can make it really, _really_ annoying to work in a code base. Each of these in isolation is maybe not a huge deal, but it’s easy to have lots of uncontrolled dependencies that cause more and more problems, and the problems start compounding on each other.
 
 ---
-# What can we do about it?
+### What can we do about it?
 
 So, that was just a lot of time spent on negativity. We saw problem after problem with seemingly reasonable code, so now we will devote time to some positivity. What can we do to fix the problem?
 
 ---
 
-# In short:
+### In short:
 ### Don't reach out to code you don't own and can't control
 
 Well, in short: stop reaching out to code that you don't own and can't control from the outside. This includes interacting directly with the 3rd party APIs, such as Core Location, URL Session, file systems, clocks, schedulers, date and UUID initializers, and more.
@@ -385,8 +385,8 @@ What if instead we passed in an explicit clock so that we can control time. By d
 * Each demo works exactly the same as before, but the code has been slightly tweaked to control dependencies
 * Open code for countdown demo
 * Mention that code is identical to before except for 2 changes:
-	* a clock has been added as an instance variable
-	* and initializer has been provided so that any clock can be passed in
+* -> a clock has been added as an instance variable
+* -> and initializer has been provided so that any clock can be passed in
 * By default a live continuous clock is used
 * But in previews we can use something else, like an immediate clock
 * The standard library doesn't ship an immediate clock, but we do in our swift-clocks open source library.
