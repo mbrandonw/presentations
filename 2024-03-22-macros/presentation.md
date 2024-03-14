@@ -17,10 +17,10 @@ build-lists: true
 # 👋
 
 ## Brandon Williams
-### brandon@pointfree.co
+### [brandon@pointfree.co](#)
 
 ## Stephen Celis
-### stephen@pointfree.co
+### [stephen@pointfree.co](#)
 
 ^ But first, we are Brandon and Stephen, and here is some contact info for everyone.
 
@@ -456,72 +456,316 @@ class FeatureModel {
 }
 ```
 
-^ For example, the `@Observable` macro needs to be careful to only transform _stored_ properties of the class, and leave _computed_ properties alone.
+^ For example, the `@Observable` macro needs to be careful to only transform _stored_ properties of the class, and leave _computed_ properties alone. If it tries to expand additional code for the `isEven` property it will generate invalid Swift code.
 
 ---
 
-let vs var
+```swift
+@Observable
+class FeatureModel {
+  let id = UUID()
+  var count = 0
+}
+```
+
+^ Extra care also has to be taken with `let` versus `var` properties. If a property is bound with `let` then no observation instrumentation needs to take place, and in fact trying to add `get` and `set` accessors to such a property is invalid Swift code.
 
 ---
 
-access control
+```swift
+@Observable
+class FeatureModel {
+  public let id = UUID()
+  var count = 0
+  private var isLoading = false
+}
+```
 
-
+^ Access control can also be tricky. When expanding a stored property to a computed property plus a stored property, like the `@Observable` macro, you must make sure to bring along the access control applied. Otherwise you will have a computed property attempting to access a store property with an incompatible access control, causing compiler errors.
 
 ---
 
-overloaded enum case
+![fit](case-pathable-overloaded-enum.png)
+
+^ There are also situations in which a macro cannot possibly generate valid Swift code based on the code it is applied to.
+
+^ For example, it is technically possible to overload case names in Swift enums. However, overloaded case names aren't useful at all in Swift because due to a Swift compiler bug it is impossible to switch over such enums.
+
+^ Further, overloaded case names causes our `@CasePathable` macro to generate invalid Swift since it would need to generate two computed properties with the same name.
+
+^ So, we detect that situation early on and throw an error immediately. That way we don't generate invalid Swift code.
 
 ---
 
-????
+```swift
+@MemberwiseInitializer
+struct User {
+  let id: UUID
+  var name: String
+  #if DEBUG
+    var debugFlag = false
+  #endif
+}
+```
+
+^ Another thorny situation is when compiler directives are involved.
+
+^ A very popular case study for macros is a "memberwise initializer" macro, which generates a public initializer for each field of a struct.
+
+^ But if some of those fields are hidden behind a compiler directive, like `#if DEBUG`, then you have to take extra care with how the initializers are generated. It is very easy to get this wrong.
+
+---
+
+```swift
+#if canImport(AppKit)
+  import AppKit
+#else
+  import UIKit
+#endif
+
+@CasePathable
+enum Event {
+  #if canImport(AppKit)
+    case open(NSApplication)
+  #else
+    case open(UIApplication)
+  #endif
+  case close
+}
+```
+
+^ And this is something we came across in our case paths library.
+
+^ There were people using our library that needed enums which had different cases on different platforms. We needed to create computed properties for each of these cases while also repeating the compiler directives.
+
+---
+
+```swift
+#if canImport(AppKit)
+  import AppKit
+#else
+  import UIKit
+#endif
+
+@CasePathable
+enum Event {
+  #if canImport(AppKit) && DEBUG
+    case open(NSApplication)
+  #else
+    #if swift(>=5.9)
+     case open(UIApplication)
+    #endif
+  #endif
+  case close
+}
+```
+
+^ And of course things can get really complicated when you have multiple conditions in a directive or nested directives.
+
+---
+
+# How to test macros?
+
+^ This is only a small taste of all the complexities one has to think about when writing a macro.
+
+^ Swift syntax can be quirky, and that puts a lot of responsibility on our shoulders to make sure we deal with its quirkiness in the right way.
 
 --- 
 
 # Apple's method of testing macros
 
----
+^ First let's quickly show off the tool that Apple provides for testing macros. 
 
-# Snapshot testing macros
-
-
-
-
+^ Honestly we are all lucky that Apple even provided such a tool! Many times Apple's SDKs and libraries are not built with testing in mind, and that makes it very difficult to verify that something works the way you expect in an automated way.
 
 ---
 
+```swift
+func testMyMacro() {
+  assertMacroExpansion(
+    <#String#>, 
+    expandedSource: <#String#>, 
+    macros: <#[String : Macro]#>
+  )
+}
+```
 
+^ The tool Apple gave us is this free function called `assertMacroExpansion`.
 
+^ It takes 3 arguments. The first is a string that represents a bit of Swift code that uses macros in it.
+
+^ The second argument is a string that represents the Swift code after any macros have been expanded.
+
+^ And the third argument is a list of the macros that you are testing. 
+
+^ When the test is run, the `assertMacroExpansion` function will expand all the macros in the first string, and then compare that to the second string you provided. If it does not match the test will fail with a helpful error message.
+
+---
+
+# Live demo of `assertMacroExpansion`
+
+^ Let's check out how this works live in Xcode!
+
+^ **Note to interpreters:** This portion will be done while we live code on the screen. The below transcript is _roughly_ what we will discuss.
+
+^ We have our "Case Paths" library open right now, and we have a fresh test file prepared where we can write a new test.
+
+^ Let's write a simple test for the `@CasePathable` macro that is applied to an enum with one case.
+
+^ We get a test failure that shows exactly what went wrong. In fact, we can see the full expansion right in the failure message.
+
+^ The question is, how do we turn this into a passing test?
+
+^ Well, we can just copy the expected string straight from the failure message and paste it into the `expandedSource` argument. However, due to a bug in Xcode you can't always scroll down to the bottom of the failure message, and so sometimes that can be difficult to do.
+
+^ But even if you do the copy-and-paste, the test still fails. And that's because there are slight changes to the formatting. Looks like when pasting we lost some indentation.
+
+^ The easiest way to fix is to delete the `expandedSource` and try again. This time we will be un-indented all the way to the beginning of the line, and we will perform command+option+shift+V to paste in the code while preserving formatting.
+
+^ Now the test passes, but it's also weird that it's indented so far to the left. If we don't like that we will have to re-indent to the right.
+
+^ But, at least we have a passing test. Well, that is until we change the input source a bit. Let's add another case.
+
+^ Now we have another test failure, and we have to go through the laborious steps to fix it.
+
+^ Let's make another change to the input string to produce a diagnostic, such as the overloaded case name we demonstrated a moment ago.
+
+^ Now we again have a test failure, which we can fix by copying and pasting the string again. This shows that the macro doesn't expand anything when it finds a problem with the case names.
+
+^ But even that is not enough to get a passing test because we also have to assert on the diagnostics produced. To do that we need to provide an extra argument to `assertMacroExpansion` and describe all the details of the diagnostic, including the message, line and column it appeared. But even with that done, this diagnostic isn't super helpful. It tells us abstractly that the problem is on line 4 and column 8, but I would have to do a bunch of counting to actually see where the corresponds in the Swift code.
+
+^ We finally have a passing test, but it was a bit painful to maintain this expanded source. And if we make small changes to our macro then it will be easy to get another test failure here, and we will have to repreat all of these steps again to get the test passing.
+
+---
+
+# `assertMacroExpansion`
+
+^ So, that is how Apple's test helper works. Again, it is nice that Apple provided something, but the ergonomics are just not quite there. It can be difficult to manually maintain the `expandedSource` string in tests, and diagnostics are really hard to maintain.
+
+---
+
+# A better macro testing helper
+
+github.com/pointfreeco/swift-macro-testing
+
+^ And this is what motivated us to create our own macro testing library.
+
+^ It is called swift-macro-testing and surprisingly it is actually built on top of our popular snapshot testing library. If you didn't already know, we have a snapshot testing library that allows you to snapshot any kind of data type into any kind of format, not just snapshotting views into images.
+
+^ And it's even able to in-line snapshot data types into strings, and insert those strings directly into the test source file. We call this in-line snapshot testing.
+
+---
+
+# Live demo of `assertMacro`
+
+^ Let's demo how our macro testing helper can approve upon apples default, testing helper.
+
+^ **Note to interpreters:** This portion will be done while we live code on the screen. The below transcript is _roughly_ what we will discuss.
+
+^ I am going to create a new test method, and use our `assertMacro` helper. It can be used by providing just a single argument: a trailing closure of a string that represents the input Swift source code that you want to expand.
+
+^ And thanks to the `withMacroTesting` up at the top of the file, we have one single place where the macro is described rather than needing to add it to every invocation of the helper.
+
+^ If we run this test we will see that magically the expanded macro source was inserted right into our test file. We didn't need to copy-and-paste from a test failure message, and we didn't need to reformat the string. It all was done for us.
+
+^ We can verify this string to see that it is what we expect it to be, and if we re-run the test it passes.
+
+^ Further, if we tweak the input string a bit we get a test failure with a very helpful message of exactly what went wrong. However, we can re-record this expand macro source by simply turning on record mode.
+
+^ Now when we run the test the fresh macro expansion is written into the test file. And now we can turn off record mode.
+
+^ But things get even better. Let's test the diagnostics.
+
+^ Let's add back an overloaded case name, put the test in record mode again, and re-run the test. A new `diagnostics` closure was automatically inserted into the test. This shows exactly where the diagnostic was emitted, inline the line, column and even range.
+
+---
+
+# `assertMacro`
+
+^ That is the basics of how to test a macro using our `assertMacro` helper. It's pretty great, but also what we have shown here is only scratching the surface. There are a lot more things it can do. If you are writing macros we highly encourage you give it a spin to test your macros.
+
+---
+
+# Static macro tests
+
+^ todo: we can cut this if we need to save time
 
 ---
 
 # Lessons learned from writing _lots_ of macros
 
+^ And finally we want to end by sharing some lessons we've learned, often learned the _hard_ way, by having written many, many, many macros.
+
+---
+
+# Lessons learned from writing _lots_ of macros
+
+```swift
+@CasePathable
+@DependencyClient
+@DependencyEndpoint
+@ObservableState
+@Perceptible
+@Presents
+@Reducer
+@ViewAction
+```
+
+^ And let us tell you, we have written quite a few macros. And each one of these has come with their own unique challenges, and so we would like to steer you in the right direction for when you start writing your own macros,
+
 ---
 
 # Better to surface errors than generate bad Swift code
 
-^ Xcode has a bad habit of not surfacing syntax errors for invalid Swift code generated by macros.
+^ Our first lesson to keep in mind is that it is far, far better for your macro to emit a diagnostic than to rely on Xcode emitting it for you.
 
-^ So, if you can detect before hand that you are going to be forced to generated bad Swift code, like was the case for the overloaded enum cases, 
+^ If your macro generates code that has an error or a warning in it, then Xcode will unfortunately not show right in the editor where you would hope.
+
+^ Instead you have to go to the report navigator in Xcode, select the build that failed, and sift through a bunch of cryptic logs manually to find the true problem. That is a really bad experience for the users of your macro.
+
+^ So, we recommend that you do as much work as possible to detect problems in the code your macro will expand, and emit diagnostics for those problems yourself rather than relying on Xcode.
+
+---
+
+### Better to surface errors than generate bad Swift code
+# _Also surface sub-macro errors in the parent!_ 
+
+^ However, there is a caveat to the previous rule.
+
+^ If your macro applies new macros, and _those_ macros generate diagnostics, the Swift compiler will crash. It is a very unfortunate bug in the Swift compiler.
+
+^ So if you want to truly provide the best experience for users of your macro you have to go the extra mile and have the _parent_ macro detect any problems that the _child_ macro may come across, and emit those errors.
+
+^ It's a HUGE bummer that we have to do this, but it really makes a huge difference in the kind of experience users will have with your macro.
 
 ---
 
 # Write _lots_ of tests 
 
+^ Our next lesson for you to consider is to write lots and lots of tests. Thanks to our swift-macro-testing library it is very easy to write tests, and so we recommend writing many for every little edge case and Swift quirk you can tnink of.
+
 ---
 
-# Exercise Swift oddities
+# Exercise many Swift features
 
-* Closures with named arguments
+* Access control
+* `@available`
+* `#if`/`#elseif`/`#else`
 * Overloaded case names
-* more????
+* Closures with named arguments
+* …
 
----
+^ And we discussed a lot of the complexities of Swift syntax during this presentation.
+
+^ You need to make sure to handle things like access control, availability annotations, and compiler directives correctly.
+
+^ Also if your macro deals with enums you might need to deal with the fact that enum cases can be overloaded
+
+^ And there are some "fun" quirks to named arguments in Swift. For example, closure arguments can't be provided external argument names, but they can provide internal. And you may have to take that into account.
+
+<!-- ---
 
 # Protocol requirements and access control
-
-if macro generates requirements for a public protocol, always make the members public.
 
 ```swift
 public extension Feature {
@@ -532,45 +776,36 @@ public extension Feature {
 }
 ```
 
+^ This is a very specific lesson, but I'm sure some of y'all will run into this eventually.
+
+^ If your macro generates the protocol requirements for a public protocol, then you should just make 
+
+ If your macro generates requirements for a public protocol
+
+^ if macro generates requirements for a public protocol, always make the members public. -->
+
 ---
 
 # Report bugs to Apple
 
-^ Most bugs can be filed just with GitHub issues since it's part of the open source Swift repo.
+Include a complete project with the most minimal amount of code possible that demonstrates the problem.
 
-^ But anything Xcode specific should also be filed with Feedback
+^ And finally, when you come across a bug with macros, and you almost certainly will, then please file a bug with Apple. Since most macro bugs are in the Swift compiler you can file them in the GitHub issues.
 
+^ You only need to file a Feedback if the bug involves Xcode too.
 
-<!-- 
----
-
-## Columns
-
-Using the **[.column]** command you can create two or more columns of content, like so:
-
-[.column]
-
-* You can place some content above an image
-
-![inline](https://deckset-assets.s3.amazonaws.com/colnago2.jpg)
-
-[.column]
-
-1. Isn't it cool to have two lists?
-2. Isn't it cool to have two lists?
+^ Also, to increase the chances of someone actually looking at the bug please provide a complete project that demonstrates the bug, and include the absolute minimum amount of code possible. This makes it very easy for someone at Apple to reproduce the problem and figure out how to triage the problem.
 
 ---
 
-# This works with plain text as well!
+# Thanks!
 
-[.column]
+## Brandon Williams
+### brandon@pointfree.co
 
-You can add longer paragraphs of text just like this. And then split them into two columns!
+## Stephen Celis
+### stephen@pointfree.co
 
-[.column]
+![](pf-bg.jpeg)
 
-Just like this! You can also add lists here like so:
-
-* Column item below paragraph
-* Column item below paragraph
- -->
+^ That's all we have for today. Thanks!
