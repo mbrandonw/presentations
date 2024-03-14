@@ -54,7 +54,7 @@ build-lists: true
   * `.macro` SPM target
 
 
-^ So, we will just say that at a very high level, macros are compiler plugins, in fact they are executables, that are invoked as Swift is compiling your application's code. They are defined in the SPM Package.swift file, and they even have their own kind of target.
+^ So, we will just say that at a very high level, macros are compiler plugins, in fact they are executables, that are invoked as Swift is compiling your application's code. They are declared in the SPM Package.swift file, and they even have their own kind of target.
 
 ---
 
@@ -114,11 +114,9 @@ class FeatureModel { … }
 
 ^ Well, first and foremost a macro simply inserts more Swift code into your application that gets compiled right along the rest of your Swift code.
 
-^ But also macros are capable of rewriting existing code in your application.
+^ But macros can also generate diagnostics, such as warnings and errors that are surfaced in Xcode, as well as "fix-its", which gives uses a nice UI in Xcode for altering incorrect code into the correct format.
 
-^ Macros can also generate diagnostics, such as warnings and errors that are surfaced in Xcode, as well as "fix-its", which gives uses a nice UI in Xcode for altering incorrect code into the correct format.
-
-^ And finally, macros can apply more macros to your code, allowing the process to continue a few more times. However, macros cannot be recursively applied, so the process does always end at some point.
+^ And finally, in the process of inserting Swift code, macros can apply more macros to your code, allowing the process to continue a few more times. However, macros cannot be recursively applied, so the process does always end at some point.
 
 ---
 
@@ -182,13 +180,13 @@ extension FeatureModel: Observable {}
 
 ^ If we expand the macro in Xcode we will see everything it adds.
 
-^ In essense it works by swapping out the stored property of `count` for a computed property and underscored stored property. this allows the class to tell the observation framework whenever the property is accessed and mutated so that it can notify any listeners that changes have happened.
+^ In essence it works by swapping out the stored property of `count` for a computed property and underscored stored property. this allows the class to tell the observation framework whenever the property is accessed and mutated so that it can notify any listeners that changes have happened.
 
 ^ the macro also adds some other properties and methods
 
 ^ as well as extends the class to conform to the `Observable` protocol.
 
-^ This is quite a bit of code that is generated for us by the macro. It would be a bummer if we had to maintain all of this code ourselves, and it pays of even more as the class becomes more complex.
+^ This is quite a bit of code that is generated for us by the macro. It would be a bummer if we had to maintain all of this code ourselves, and it pays off even more as the class becomes more complex.
 
 ---
 
@@ -285,8 +283,8 @@ enum Event {
 ---
 
 [.code-highlight: all]
-[.code-highlight: 10-999]
-[.code-highlight: 1-9]
+[.code-highlight: 10-48, 50]
+[.code-highlight: 1-9, 49]
 ```swift
 import CasePaths
 
@@ -335,8 +333,9 @@ enum Event {
       )
     }
   }
+  public static var allCasePaths: AllCasePaths { AllCasePaths() }
 }
-public static var allCasePaths: AllCasePaths { AllCasePaths() }
+extension Event: CasePaths.CasePathable {}
 ```
 
 ^ …which is all of this. Each case of the enum becomes a computed property on an inner type that is added by the macro. That is what gives us key path syntax for each case of the enum.
