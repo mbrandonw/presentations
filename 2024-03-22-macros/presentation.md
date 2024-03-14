@@ -106,7 +106,7 @@ class FeatureModel { … }
 
 * Generates new Swift code
 
-* Generate diagnostics and fix-its
+* Generates diagnostics and fix-its
 
 * Applies more macros
 
@@ -448,6 +448,8 @@ struct APIClient {
 
 ---
 
+# Stored vs computed property
+
 ```swift
 @Observable
 class FeatureModel {
@@ -459,6 +461,8 @@ class FeatureModel {
 ^ For example, the `@Observable` macro needs to be careful to only transform _stored_ properties of the class, and leave _computed_ properties alone. If it tries to expand additional code for the `isEven` property it will generate invalid Swift code.
 
 ---
+
+# `let` vs `var`
 
 ```swift
 @Observable
@@ -472,12 +476,21 @@ class FeatureModel {
 
 ---
 
+# Access control
+
+<!-- 
+  todo: use @MemberwiseInitializer for this
+ -->
+
 ```swift
 @Observable
 class FeatureModel {
   public let id = UUID()
   var count = 0
   private var isLoading = false
+
+  private var isLoading = false { get set }
+  private var _isLoading = false
 }
 ```
 
@@ -485,7 +498,9 @@ class FeatureModel {
 
 ---
 
-![fit](case-pathable-overloaded-enum.png)
+### Overloaded enum case names
+
+![inline](case-pathable-overloaded-enum.png)
 
 ^ There are also situations in which a macro cannot possibly generate valid Swift code based on the code it is applied to.
 
@@ -496,6 +511,8 @@ class FeatureModel {
 ^ So, we detect that situation early on and throw an error immediately. That way we don't generate invalid Swift code.
 
 ---
+
+# Compiler directives
 
 ```swift
 @MemberwiseInitializer
@@ -515,6 +532,8 @@ struct User {
 ^ But if some of those fields are hidden behind a compiler directive, like `#if DEBUG`, then you have to take extra care with how the initializers are generated. It is very easy to get this wrong.
 
 ---
+
+# Compiler directives
 
 ```swift
 #if canImport(AppKit)
@@ -539,6 +558,8 @@ enum Event {
 ^ There were people using our library that needed enums which had different cases on different platforms. We needed to create computed properties for each of these cases while also repeating the compiler directives.
 
 ---
+
+# Compiler directives
 
 ```swift
 #if canImport(AppKit)
@@ -634,11 +655,11 @@ func testMyMacro() {
 
 ^ But even that is not enough to get a passing test because we also have to assert on the diagnostics produced. To do that we need to provide an extra argument to `assertMacroExpansion` and describe all the details of the diagnostic, including the message, line and column it appeared. But even with that done, this diagnostic isn't super helpful. It tells us abstractly that the problem is on line 4 and column 8, but I would have to do a bunch of counting to actually see where the corresponds in the Swift code.
 
-^ We finally have a passing test, but it was a bit painful to maintain this expanded source. And if we make small changes to our macro then it will be easy to get another test failure here, and we will have to repreat all of these steps again to get the test passing.
-
 ---
 
 # `assertMacroExpansion`
+
+^ We finally have a passing test, but it was a bit painful to maintain this expanded source. And if we make small changes to our macro then it will be easy to get another test failure here, and we will have to repreat all of these steps again to get the test passing.
 
 ^ So, that is how Apple's test helper works. Again, it is nice that Apple provided something, but the ergonomics are just not quite there. It can be difficult to manually maintain the `expandedSource` string in tests, and diagnostics are really hard to maintain.
 
@@ -715,7 +736,7 @@ github.com/pointfreeco/swift-macro-testing
 
 ---
 
-# Better to surface errors than generate bad Swift code
+# Better for your macro to surface errors than generate bad Swift code
 
 ^ Our first lesson to keep in mind is that it is far, far better for your macro to emit a diagnostic than to rely on Xcode emitting it for you.
 
@@ -742,7 +763,7 @@ github.com/pointfreeco/swift-macro-testing
 
 # Write _lots_ of tests 
 
-^ Our next lesson for you to consider is to write lots and lots of tests. Thanks to our swift-macro-testing library it is very easy to write tests, and so we recommend writing many for every little edge case and Swift quirk you can tnink of.
+^ Our next lesson for you to consider is to write lots and lots of tests. Thanks to our swift-macro-testing library it is very easy to write tests, and so we recommend writing many for every little edge case and Swift quirk you can think of.
 
 ---
 
