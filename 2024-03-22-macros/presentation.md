@@ -525,7 +525,7 @@ extension FeatureModel: PersistentModel {}
 
 ^ Further, overloaded case names would cause our `@CasePathable` macro to generate invalid Swift since it would need to generate two computed properties with the same name.
 
-^ So, we detect that situation early on and throw an error immediately. That way we don't generate invalid Swift code.
+^ So, we detect that situation early on and emit an error immediately. That way we don't generate invalid Swift code.
 
 ---
 
@@ -678,7 +678,7 @@ func testMyMacro() {
 
 # `assertMacroExpansion`
 
-^ We finally have a passing test, but it was a bit painful to maintain this expanded source. And if we make small changes to our macro then it will be easy to get another test failure here, and we will have to repreat all of these steps again to get the test passing.
+^ We finally have a passing test, but it was a bit painful to maintain this expanded source. And if we make small changes to our macro then it will be easy to get another test failure here, and we will have to repeat all of these steps again to get the test passing.
 
 ^ So, that is how Apple's test helper works. Again, it is nice that Apple provided something, but the ergonomics are just not quite there. It can be difficult to manually maintain the `expandedSource` string in tests, and diagnostics are really hard to maintain.
 
@@ -718,7 +718,7 @@ github.com/pointfreeco/swift-macro-testing
 
 ^ But things get even better. Let's test the diagnostics.
 
-^ Let's add back an overloaded case name, put the test in record mode again, and re-run the test. A new `diagnostics` closure was automatically inserted into the test. This shows exactly where the diagnostic was emitted, inline the line, column and even range.
+^ Let's add back an overloaded case name, put the test in record mode again, and re-run the test. A new `diagnostics` closure was automatically inserted into the test. This shows exactly where the diagnostic was emitted inline, at the line, column and even range.
 
 ---
 
@@ -738,7 +738,7 @@ github.com/pointfreeco/swift-macro-testing
 
 ^ **BRANDON**
 
-^ And finally we want to end by sharing some lessons we've learned, often learned the _hard_ way, by having written many, many, many macros.
+^ And finally we want to end by sharing some lessons we've learned, often the _hard_ way, by having written many, many, many macros.
 
 ---
 
@@ -755,17 +755,17 @@ github.com/pointfreeco/swift-macro-testing
 @ViewAction
 ```
 
-^ And let us tell you, we have written quite a few macros. And each one of these has come with their own unique challenges, and so we would like to steer you in the right direction for when you start writing your own macros,
+^ And let us tell you, we have written quite a few macros. And each one of these has come with its own unique challenges, and so we would like to steer you in the right direction for when you start writing your own macros,
 
 ---
 
 # Better for your macro to generate errors than bad Swift code
 
-^ Our first lesson to keep in mind is that it is far, far better for your macro to emit a diagnostic than to rely on Xcode emitting it for you.
+^ Our first lesson to keep in mind is that it is far, far better for your macro to emit a diagnostic than to rely on Xcode emitting one for you.
 
 ^ If your macro generates code that has an error or a warning in it, then Xcode will unfortunately not display it right in the editor where you would hope.
 
-^ Instead you have to go to the report navigator in Xcode, select the build that failed, and sift through a bunch of cryptic logs manually to find the true problem. That is a really bad experience for the users of your macro.
+^ Instead you have to go to the issue or report navigator in Xcode, select the failure or the build that failed, and sometimes even sift through a bunch of cryptic logs manually to find the true problem. That is a really bad experience for the users of your macro.
 
 ^ So, we recommend that you do as much work as possible to detect problems in the code your macro will expand, and emit diagnostics for those problems yourself rather than relying on Xcode.
 
@@ -776,7 +776,7 @@ github.com/pointfreeco/swift-macro-testing
 
 ^ However, there is a caveat to the previous rule.
 
-^ If your macro applies new macros, and _those_ macros generate diagnostics, the Swift compiler will crash. It is a very unfortunate bug in the Swift compiler.
+^ If your macro applies new macros, and _those_ macros generate diagnostics, the Swift compiler will crash when they do. It is a very unfortunate bug in the Swift compiler.
 
 ^ So if you want to truly provide the best experience for users of your macro you have to go the extra mile and have the _parent_ macro detect any problems that the _child_ macro may come across, and emit those errors.
 
@@ -809,7 +809,7 @@ github.com/pointfreeco/swift-macro-testing
 
 ^ Also if your macro deals with enums you might need to deal with the fact that enum cases can be overloaded
 
-^ And there are some "fun" quirks to named arguments in Swift. For example, closure arguments can't be provided external argument names, but they can provide internal. And you may have to take that into account.
+^ And there are some "fun" quirks to named arguments in Swift. For example, closure arguments can't be provided external argument names, but they can provide internal names. And you may have to take that into account.
 
 <!-- ---
 
