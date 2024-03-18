@@ -432,7 +432,6 @@ struct APIClient {
 
 ![inline](dependency-client-fix-it-applied.png)
 
-
 ^ And if you apply the fix-it a type annotation placeholder will be inserted into the code letting you know exactly what needs to be done.
 
 ---
@@ -447,7 +446,7 @@ struct APIClient {
 
 ---
 
-# Stored vs computed property
+# Stored vs computed properties
 
 ```swift
 @Observable
@@ -478,7 +477,7 @@ class FeatureModel {
 # Access control
 
 <!-- 
-  todo: use @MemberwiseInitializer for this
+  todo: use @MemberwiseInitializer for this. Or @Model?
  -->
 
 ```swift
@@ -493,7 +492,7 @@ class FeatureModel {
 }
 ```
 
-^ Access control can also be tricky. When expanding a stored property to a computed property plus a stored property, like the `@Observable` macro, you must make sure to bring along the access control applied. Otherwise you will have a computed property attempting to access a store property with an incompatible access control, causing compiler errors.
+^ Access control can also be tricky. When expanding a stored property to a computed property plus a stored property, like the `@Observable` macro, you must make sure to bring along the access control applied. Otherwise you will have a computed property attempting to access a stored property with an incompatible access control, causing compiler errors.
 
 ---
 
@@ -503,9 +502,9 @@ class FeatureModel {
 
 ^ There are also situations in which a macro cannot possibly generate valid Swift code based on the code it is applied to.
 
-^ For example, it is technically possible to overload case names in Swift enums. However, overloaded case names aren't useful at all in Swift because due to a Swift compiler bug it is impossible to switch over such enums.
+^ For example, it is technically possible to overload case names in Swift enums. However, overloaded case names aren't useful at all in Swift due to a Swift compiler bug that makes it impossible to switch over such enums.
 
-^ Further, overloaded case names causes our `@CasePathable` macro to generate invalid Swift since it would need to generate two computed properties with the same name.
+^ Further, overloaded case names would cause our `@CasePathable` macro to generate invalid Swift since it would need to generate two computed properties with the same name.
 
 ^ So, we detect that situation early on and throw an error immediately. That way we don't generate invalid Swift code.
 
@@ -573,14 +572,14 @@ enum Event {
     case open(NSApplication)
   #else
     #if swift(>=5.9)
-     case open(UIApplication)
+      case open(UIApplication)
     #endif
   #endif
   case close
 }
 ```
 
-^ And of course things can get really complicated when you have multiple conditions in a directive or nested directives.
+^ And of course things can get really complicated when you have multiple conditions in a directive, or nested directives.
 
 ---
 
@@ -672,13 +671,13 @@ github.com/pointfreeco/swift-macro-testing
 
 ^ It is called swift-macro-testing and surprisingly it is actually built on top of our popular snapshot testing library. If you didn't already know, we have a snapshot testing library that allows you to snapshot any kind of data type into any kind of format, not just snapshotting views into images.
 
-^ And it's even able to in-line snapshot data types into strings, and insert those strings directly into the test source file. We call this in-line snapshot testing.
+^ And it's even able to inline snapshot data types into strings, and insert those strings directly into the test source file. We call this inline snapshot testing.
 
 ---
 
 # Live demo of `assertMacro`
 
-^ Let's demo how our macro testing helper can approve upon apples default, testing helper.
+^ Let's demo how our macro testing helper can improve upon Apple's default testing helper.
 
 ^ **Note to interpreters:** This portion will be done while we live code on the screen. The below transcript is _roughly_ what we will discuss.
 
@@ -735,11 +734,11 @@ github.com/pointfreeco/swift-macro-testing
 
 ---
 
-# Better for your macro to surface errors than generate bad Swift code
+# Better for your macro to generate errors than bad Swift code
 
 ^ Our first lesson to keep in mind is that it is far, far better for your macro to emit a diagnostic than to rely on Xcode emitting it for you.
 
-^ If your macro generates code that has an error or a warning in it, then Xcode will unfortunately not show right in the editor where you would hope.
+^ If your macro generates code that has an error or a warning in it, then Xcode will unfortunately not display it right in the editor where you would hope.
 
 ^ Instead you have to go to the report navigator in Xcode, select the build that failed, and sift through a bunch of cryptic logs manually to find the true problem. That is a really bad experience for the users of your macro.
 
