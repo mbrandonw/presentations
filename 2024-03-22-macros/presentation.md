@@ -35,6 +35,8 @@ theme: Olive Green, 2
 
 ^ You may know of us from our website Point-Free, a weekly video series that covers advanced topics in the Swift programming language, such as what we are going to discuss here today. If you find today's talk interesting then you may also find our videos very interesting.
 
+^ And interestingly, this is the first ever joint presentation we have done at a conference, and I think it's been nearly 2 years since we've even been under the same roof at the same time.
+
 ---
 
 # What is a macro?
@@ -822,7 +824,7 @@ public extension Feature {
 
 # Report bugs to Apple
 
-^ **STEPHEN
+^ **STEPHEN**
 
 Include a complete project with the most minimal amount of code possible that demonstrates the problem.
 
