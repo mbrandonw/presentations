@@ -9,9 +9,9 @@ theme: Olive Green, 2
 
 ^ Most people here have probably mostly interacted with macros by using ones already provided by Apple, such as the `@Observable` macro and `@Model` macro from SwiftData.
 
-^ However, there will eventually come a time where you will finally want to write a macro yourself, but it can be quite difficult to do so correctly. Because macros are essentially little Swift programs that analyze existing Swift code in order to generate all new Swift code, it is easy to accidentally generate invalid code.
+^ However, there will eventually come a time where you will finally want to write a macro yourself, but it can be quite difficult to do so correctly. Because macros are essentially little Swift programs that analyze existing Swift code in order to generate all new Swift code, it is easy to accidentally generate something invalid.
 
-^ So, today we will be discussing how one tests macros.
+^ So, today we will be discussing how one tests macros to ensure that they work as expected over a variety of cases.
 
 ---
 
@@ -35,7 +35,7 @@ theme: Olive Green, 2
 
 ^ You may know of us from our website Point-Free, a weekly video series that covers advanced topics in the Swift programming language, such as what we are going to discuss here today. If you find today's talk interesting then you may also find our videos very interesting.
 
-^ And interestingly, this is the first ever joint presentation we have done at a conference, and I think it's been nearly 2 years since we've even been under the same roof at the same time.
+^ This is also the first ever joint presentation we have done at a conference, and it's been nearly 2 years since we've even been under the same roof at the same time, but let's begin…
 
 ---
 
@@ -43,7 +43,7 @@ theme: Olive Green, 2
 
 ^ **BRANDON**
 
-^ Let's start with the basics. What is a macro?
+^ We'll start with the basics. What is a macro?
 
 ^ Now we are not going to go in great detail about all the different flavor of macros, how they are used, or how to implement them. We are going to assume you know the basics and that you are familiar with some of the material from last year's WWDC.
 
@@ -58,8 +58,7 @@ theme: Olive Green, 2
   * Swift executable
   * `.macro` SPM target
 
-
-^ So, we will just say that at a very high level, macros are compiler plugins, in fact they are executables, that are invoked as Swift is compiling your application's code. They are declared in the SPM Package.swift file, and they even have their own kind of target.
+^ So, we will just say that at a very high level, macros are compiler plugins—in fact they are executables—that are invoked as Swift is compiling your application's code. They are declared in the SPM Package.swift file, and they even have their own kind of target.
 
 ---
 
@@ -76,7 +75,7 @@ class FeatureModel { … }
 
 ^ Macros can be applied in one of two ways.
 
-^ It can be either attached directly to existing code, in which case an `@` symbol is used to indicate a macro.
+^ They can be either attached directly to existing code, in which case an `@` symbol is used to indicate a macro.
 
 ^ Perhaps the most popular and most used macro in the Swift ecosystem is the `@Observable` macro, which enhances any class type with extra capabilities that allow any outside system to observe changes that happen inside the class.
 
@@ -117,9 +116,9 @@ class FeatureModel { … }
 
 ^ And what can macros do?
 
-^ Well, first and foremost a macro simply inserts more Swift code into your application that gets compiled right along the rest of your Swift code.
+^ Well, first and foremost a macro simply inserts more Swift code into your application that gets compiled right along the rest of your code.
 
-^ But macros can also generate diagnostics, such as warnings and errors that are surfaced in Xcode, as well as "fix-its", which gives uses a nice UI in Xcode for altering incorrect code into the correct format.
+^ But macros can also generate diagnostics, such as warnings and errors that are surfaced in Xcode, as well as "fix-its", which gives users a nice UI in Xcode for altering incorrect code into the correct format.
 
 ^ And finally, in the process of inserting Swift code, macros can apply more macros to your code, allowing the process to continue a few more times. However, macros cannot be recursively applied, so the process does always end at some point.
 
@@ -159,22 +158,22 @@ class FeatureModel {
   var count = 0
   {
     @storageRestrictions(initializes: _count)
-    init(initialValue) { _count  = initialValue }
+    init(initialValue) { _count = initialValue }
     get {
-      access(keyPath: \.count )
+      access(keyPath: \.count)
       return _count
     }
     set {
-      withMutation(keyPath: \.count ) { _count  = newValue }
+      withMutation(keyPath: \.count ) { _count = newValue }
     }
   }
-  @ObservationIgnored private  var _count  = 0
+  @ObservationIgnored private var _count  = 0
   @ObservationIgnored private let _$observationRegistrar = ObservationRegistrar()
-  internal nonisolated func access<Member>(keyPath: KeyPath<FeatureModel , Member>) {
+  internal nonisolated func access<Member>(keyPath: KeyPath<FeatureModel, Member>) {
     _$observationRegistrar.access(self, keyPath: keyPath)
   }
   internal nonisolated func withMutation<Member, MutationResult>(
-    keyPath: KeyPath<FeatureModel , Member>,
+    keyPath: KeyPath<FeatureModel, Member>,
     _ mutation: () throws -> MutationResult
   ) rethrows -> MutationResult {
     try _$observationRegistrar.withMutation(of: self, keyPath: keyPath, mutation)
@@ -185,7 +184,7 @@ extension FeatureModel: Observable {}
 
 ^ If we expand the macro in Xcode we will see everything it adds.
 
-^ In essence it works by swapping out the stored property of `count` for a computed property and underscored stored property. this allows the class to tell the observation framework whenever the property is accessed and mutated so that it can notify any listeners that changes have happened.
+^ In essence it works by swapping out the stored property of `count` for a computed property and underscored stored property. this allows the class to tell the Observation framework whenever the property is accessed and mutated so that it can notify any listeners that changes have happened.
 
 ^ the macro also adds some other properties and methods
 
@@ -218,18 +217,18 @@ class FeatureModel {
 import SwiftData
  
 @Model
-class FeatureModel {
+class Stats {
   @_PersistedProperty
   var count = 0
   {
     @storageRestrictions(accesses: _$backingData, initializes: _count)
     init(initialValue) {
-        _$backingData.setValue(forKey: \.count, to: initialValue)
-        _count = _SwiftDataNoType()
+      _$backingData.setValue(forKey: \.count, to: initialValue)
+      _count = _SwiftDataNoType()
     }
     get {
-        _$observationRegistrar.access(self, keyPath: \.count)
-       return self.getValue(forKey: \.count)
+      _$observationRegistrar.access(self, keyPath: \.count)
+      return self.getValue(forKey: \.count)
     }
     set {
       _$observationRegistrar.withMutation(of: self, keyPath: \.count) { self.setValue(forKey: \.count, to: newValue) }
@@ -257,8 +256,8 @@ class FeatureModel {
   private let _$observationRegistrar = ObservationRegistrar()
   struct _SwiftDataNoType {}
 }
-extension FeatureModel: PersistentModel {}
-extension FeatureModel: Observable {}
+extension Stats: PersistentModel {}
+extension Stats: Observable {}
 ```
 
 ^ When expanded you get this, which is even more code that the `@Observable` macro. 
@@ -380,13 +379,13 @@ struct APIClient {
   {
     @storageRestrictions(initializes: _fetchUser)
     init(initialValue) {
-        _fetchUser = initialValue
+      _fetchUser = initialValue
     }
     get {
-        _fetchUser
+      _fetchUser
     }
     set {
-        _fetchUser = newValue
+      _fetchUser = newValue
     }
   }
   private var _fetchUser: (Int) async throws -> User = { _ in
@@ -398,13 +397,13 @@ struct APIClient {
   {
     @storageRestrictions(initializes: _saveUser)
     init(initialValue) {
-        _saveUser = initialValue
+      _saveUser = initialValue
     }
     get {
-        _saveUser
+      _saveUser
     }
     set {
-        _saveUser = newValue
+      _saveUser = newValue
     }
   }
   private var _saveUser: (User) async throws -> Void = { _ in
@@ -483,23 +482,36 @@ class FeatureModel {
 
 # Access control
 
-<!-- 
-  todo: use @MemberwiseInitializer for this. Or @Model?
- -->
-
 ```swift
-@Observable
-class FeatureModel {
-  public let id = UUID()
-  var count = 0
-  private var isLoading = false
-
-  private var isLoading = false { get set }
-  private var _isLoading = false
+@Model
+class Stats {
+  …
+  var persistentBackingData { … }
+  static var schemaMetadata { … }
+  required init(backingData:) { … }
 }
+extension FeatureModel: PersistentModel {}
 ```
 
-^ Access control can also be tricky. When expanding a stored property to a computed property plus a stored property, like the `@Observable` macro, you must make sure to bring along the access control applied. Otherwise you will have a computed property attempting to access a stored property with an incompatible access control, causing compiler errors.
+^ Access control can also be tricky. For example, the `@Model` macro automatically conforms a class to the `PersistentModel` protocol, which has a few requirements that the macro expands, and it must take care to bring along the access control applied to the class to these requirements. If it hadn't a public class would have incompatible access control on its protocol requirements, causing compiler errors.
+
+---
+
+# Access control
+
+[.code-highlight: 2, 4-6]
+```swift
+@Model
+public class Stats {
+  …
+  public var persistentBackingData { … }
+  public static var schemaMetadata { … }
+  public required init(backingData:) { … }
+}
+extension FeatureModel: PersistentModel {}
+```
+
+^ In general one should consider access control to ensure that a macro can be applied to all kinds of public, private, internal, and package-level code.
 
 ---
 
