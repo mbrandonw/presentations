@@ -39,6 +39,8 @@ theme: Olive Green, 2
 
 # What is a macro?
 
+^ **BRANDON**
+
 ^ Let's start with the basics. What is a macro?
 
 ^ Now we are not going to go in great detail about all the different flavor of macros, how they are used, or how to implement them. We are going to assume you know the basics and that you are familiar with some of the material from last year's WWDC.
@@ -439,6 +441,8 @@ struct APIClient {
 
 # A lot can go wrong when expanding macro code
 
+^ **STEPHEN**
+
 ^ So we now see that macros can generate a lot of code for us so that we can concentrate on our core domain without worrying about a bunch of boilerplate.
 
 ^ That's great.
@@ -586,6 +590,8 @@ enum Event {
 
 # How to test macros?
 
+^ **BRANDON**
+
 ^ This is only a small taste of all the complexities one has to think about when writing a macro.
 
 ^ Swift syntax can be quirky, and that puts a lot of responsibility on our shoulders to make sure we deal with its quirkiness in the right way.
@@ -668,6 +674,8 @@ func testMyMacro() {
 
 github.com/pointfreeco/swift-macro-testing
 
+^ **STEPHEN**
+
 ^ And this is what motivated us to create our own macro testing library.
 
 ^ It is called swift-macro-testing and surprisingly it is actually built on top of our popular snapshot testing library. If you didn't already know, we have a snapshot testing library that allows you to snapshot any kind of data type into any kind of format, not just snapshotting views into images.
@@ -713,6 +721,8 @@ github.com/pointfreeco/swift-macro-testing
 ---
 
 # Lessons learned from writing _lots_ of macros
+
+^ **BRANDON**
 
 ^ And finally we want to end by sharing some lessons we've learned, often learned the _hard_ way, by having written many, many, many macros.
 
@@ -762,11 +772,15 @@ github.com/pointfreeco/swift-macro-testing
 
 # Write _lots_ of tests 
 
+^ **STEPHEN**
+
 ^ Our next lesson for you to consider is to write lots and lots of tests. Thanks to our swift-macro-testing library it is very easy to write tests, and so we recommend writing many for every little edge case and Swift quirk you can think of.
 
 ---
 
 # Exercise many Swift features
+
+^ **BRANDON**
 
 * Access control
 * `@available`
@@ -807,6 +821,8 @@ public extension Feature {
 ---
 
 # Report bugs to Apple
+
+^ **STEPHEN
 
 Include a complete project with the most minimal amount of code possible that demonstrates the problem.
 
