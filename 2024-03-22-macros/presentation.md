@@ -3,6 +3,8 @@ theme: Olive Green, 2
 
 # Testing Swift macros
 
+^ ‼️🙋‍♂️ **STEPHEN**
+
 ^ Hello!
 
 ^ Macros are a wonderful new tool provided by Swift as of version 5.9 that can add all new super powers to your code.
@@ -23,6 +25,8 @@ theme: Olive Green, 2
 ## Stephen Celis
 ### [stephen@pointfree.co](#)
 
+^ ‼️🙋‍♂️ **BRANDON**
+
 ^ But first, we are Brandon and Stephen, and here is some contact info for everyone.
 
 ---
@@ -30,6 +34,7 @@ theme: Olive Green, 2
 # Point-Free
 
 ### [www.pointfree.co](#)
+### @pointfreeco
 
 ![](pf-bg.jpeg)
 
@@ -40,8 +45,6 @@ theme: Olive Green, 2
 ---
 
 # What is a macro?
-
-^ **BRANDON**
 
 ^ We'll start with the basics. What is a macro?
 
@@ -348,7 +351,7 @@ extension Event: CasePaths.CasePathable {}
 
 ![fit](case-pathable-error.png)
 
-^ Also the macro performs a bit of validation in order to make sure you are using it correctly. For example, it does not make sense to apply the `@CasePathable` macro to a struct, and so the macro will emit an error if you try to do so.
+^ Also the macro performs a bit of validation in order to make sure you are using it correctly. For example, it does not make sense to apply the `@CasePathable` macro to a struct, since structs already get key paths for their properties, and so the macro will emit an error if you try to do so.
 
 ---
 
@@ -442,7 +445,7 @@ struct APIClient {
 
 # A lot can go wrong when expanding macro code
 
-^ **STEPHEN**
+^ ‼️🙋‍♂️ **STEPHEN**
 
 ^ So we now see that macros can generate a lot of code for us so that we can concentrate on our core domain without worrying about a bunch of boilerplate.
 
@@ -604,7 +607,7 @@ enum Event {
 
 # How to test macros?
 
-^ **BRANDON**
+^ ‼️🙋‍♂️ **BRANDON**
 
 ^ This is only a small taste of all the complexities one has to think about when writing a macro.
 
@@ -646,7 +649,7 @@ func testMyMacro() {
 
 ^ Let's check out how this works live in Xcode!
 
-^ **Note to interpreters:** This portion will be done while we live code on the screen. The below transcript is _roughly_ what we will discuss.
+^ ‼️🙋‍♂️ **Note to interpreters:** This portion will be done while we live code on the screen. The below transcript is _roughly_ what we will discuss.
 
 ^ We have our "Case Paths" library open right now, and we have a fresh test file prepared where we can write a new test.
 
@@ -688,7 +691,7 @@ func testMyMacro() {
 
 github.com/pointfreeco/swift-macro-testing
 
-^ **STEPHEN**
+^ ‼️🙋‍♂️ **STEPHEN**
 
 ^ And this is what motivated us to create our own macro testing library.
 
@@ -702,7 +705,7 @@ github.com/pointfreeco/swift-macro-testing
 
 ^ Let's demo how our macro testing helper can improve upon Apple's default testing helper.
 
-^ **Note to interpreters:** This portion will be done while we live code on the screen. The below transcript is _roughly_ what we will discuss.
+^ ‼️🙋‍♂️ **Note to interpreters:** This portion will be done while we live code on the screen. The below transcript is _roughly_ what we will discuss.
 
 ^ I am going to create a new test method, and use our `assertMacro` helper. It can be used by providing just a single argument: a trailing closure of a string that represents the input Swift source code that you want to expand.
 
@@ -736,7 +739,7 @@ github.com/pointfreeco/swift-macro-testing
 
 # Lessons learned from writing _lots_ of macros
 
-^ **BRANDON**
+^ ‼️🙋‍♂️ **BRANDON**
 
 ^ And finally we want to end by sharing some lessons we've learned, often the _hard_ way, by having written many, many, many macros.
 
@@ -786,7 +789,7 @@ github.com/pointfreeco/swift-macro-testing
 
 # Write _lots_ of tests 
 
-^ **STEPHEN**
+^ ‼️🙋‍♂️ **STEPHEN**
 
 ^ Our next lesson for you to consider is to write lots and lots of tests. Thanks to our swift-macro-testing library it is very easy to write tests, and so we recommend writing many for every little edge case and Swift quirk you can think of.
 
@@ -794,7 +797,7 @@ github.com/pointfreeco/swift-macro-testing
 
 # Exercise many Swift features
 
-^ **BRANDON**
+^ ‼️🙋‍♂️ **BRANDON**
 
 * Access control
 * `@available`
@@ -836,7 +839,7 @@ public extension Feature {
 
 # Report bugs to Apple
 
-^ **STEPHEN**
+^ ‼️🙋‍♂️ **STEPHEN**
 
 Include a complete project with the most minimal amount of code possible that demonstrates the problem.
 
