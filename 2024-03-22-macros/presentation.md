@@ -11,9 +11,9 @@ theme: Olive Green, 2
 
 ^ Most people here have probably mostly interacted with macros by using ones already provided by Apple, such as the `@Observable` macro and `@Model` macro from SwiftData.
 
-^ However, there will eventually come a time where you will finally want to write a macro yourself, but it can be quite difficult to do so correctly. Because macros are essentially little Swift programs that analyze existing Swift code in order to generate all new Swift code, it is easy to accidentally generate something invalid.
+^ However, there will eventually come a time where you will finally want to write a macro yourself, but it can be quite difficult to do so correctly. Because macros are essentially little Swift programs that analyze existing Swift code in order to generate all new Swift code, it is easy to accidentally generate something wrong.
 
-^ So, today we will be discussing how one tests macros to ensure that they work as expected over a variety of cases.
+^ So, today we will be discussing how one tests macros to ensure that they work as expected over the many ways they could be used.
 
 ---
 
