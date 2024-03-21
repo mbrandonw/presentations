@@ -496,7 +496,7 @@ class FeatureModel {
 extension FeatureModel: PersistentModel {}
 ```
 
-^ Access control can also be tricky. For example, the `@Model` macro not only extends a class to conform to a protocol, but it also implements a few of its requirements. And it takes care to bring along the class's access control. A public class conforming to a public protocol must have public requirements. Otherwise the code is invalid Swift.
+^ Access control can also be tricky. For example, the `@Model` macro not only extends a class to conform to a protocol, but it also implements a few of its requirements. And it takes care to bring along the class's access control.
 
 ---
 
@@ -514,7 +514,9 @@ public class FeatureModel {
 extension FeatureModel: PersistentModel {}
 ```
 
-^ In general one should consider the various access control of the code it can be attached to.
+^ A public class conforming to a public protocol must have public requirements. Otherwise the code is invalid Swift.
+
+^ More generally one should always be mindful of how the access control of the code a macro is attached to should affect the access control of the code it generates.
 
 ---
 
