@@ -13,7 +13,7 @@ theme: Olive Green, 2
 
 ^ However, there will eventually come a time where you will finally want to write a macro yourself, but it can be quite difficult to get it right. Because macros are essentially little Swift programs that analyze existing Swift code in order to generate all new Swift code, it is easy to accidentally generate something wrong.
 
-^ So, today we will be discussing how one tests macros to ensure that they work as expected over the many ways they could be used.
+^ So, today we will be discussing how one tests macros to ensure that they behave as expected over the many, many different ways they could be used.
 
 ---
 
