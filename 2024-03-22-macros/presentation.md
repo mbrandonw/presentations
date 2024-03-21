@@ -220,7 +220,7 @@ class FeatureModel {
 import SwiftData
  
 @Model
-class Stats {
+class FeatureModel {
   @_PersistedProperty
   var count = 0
   {
@@ -259,8 +259,8 @@ class Stats {
   private let _$observationRegistrar = ObservationRegistrar()
   struct _SwiftDataNoType {}
 }
-extension Stats: PersistentModel {}
-extension Stats: Observable {}
+extension FeatureModel: PersistentModel {}
+extension FeatureModel: Observable {}
 ```
 
 ^ When expanded you get this, which is even more code that the `@Observable` macro. 
@@ -487,7 +487,7 @@ class FeatureModel {
 
 ```swift
 @Model
-class Stats {
+class FeatureModel {
   …
   var persistentBackingData { … }
   static var schemaMetadata { … }
@@ -496,7 +496,7 @@ class Stats {
 extension FeatureModel: PersistentModel {}
 ```
 
-^ Access control can also be tricky. For example, the `@Model` macro automatically conforms a class to the `PersistentModel` protocol, which has a few requirements that the macro expands, and it must take care to bring along the access control applied to the class to these requirements. If it hadn't a public class would have incompatible access control on its protocol requirements, causing compiler errors.
+^ Access control can also be tricky. For example, the `@Model` macro automatically conforms a class to the `PersistentModel` protocol, which has a few requirements that the macro expands, and it must take care to bring along the access control applied to the class to these requirements. If it doesn't, a public class would have incompatible access control on its protocol requirements, causing compiler errors.
 
 ---
 
@@ -505,7 +505,7 @@ extension FeatureModel: PersistentModel {}
 [.code-highlight: 2, 4-6]
 ```swift
 @Model
-public class Stats {
+public class FeatureModel {
   …
   public var persistentBackingData { … }
   public static var schemaMetadata { … }
