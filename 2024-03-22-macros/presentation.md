@@ -733,9 +733,44 @@ github.com/pointfreeco/swift-macro-testing
 
 ---
 
-# Static macro tests
+# Static integration macro tests
 
-^ todo: we can cut this if we need to save time
+^ Then there is a second flavor of macro tests that we want to mention.
+
+^ So far the `assertMacroExpansion` tool from Apple and our `assertMacro` tool allow us to visually see that the expanded macro code is roughly correct, as far as we can tell. But still, the compile isn't actually trying to compile that expanded code, so technically there could be some errors in it.
+
+^ And so that is why we like to have a suite of what we call "static integration" macro tests, where we simply have a file in the test suite that applies the macro to some actual code. And then the mere fact that the test suite can compile proves that at least the macro is expanding valid code.
+
+^ Of course, the code could be completely wrong, but at least it compiles.
+
+---
+
+```swift
+// CasePathableMacroTests.swift
+
+@CasePathable
+enum Event {
+  case foo1(Int)
+  case foo2(id: Int)
+  case foo3(id: Int, String)
+  case foo4(id: Int, name: String)
+  case foo5(_ id: Int, _ name: String)
+  case foo6(id: Int, name: String, isAdmin: Bool = false)
+  case foo7(Int), foo8(String)
+  case foo9
+
+  @available(iOS, unavailable)
+  case foo10(Int)
+
+  #if DEBUG
+  case foo11(Int)
+  #endif
+
+  static func foo12() -> Self { .foo9 }
+}
+```
+
+^ And so we feel these two types of macro tests give us good coverage that the macro not only generates valid, compiling Swift code, but that it is also generate the correct that we expect.
 
 ---
 
@@ -815,27 +850,6 @@ github.com/pointfreeco/swift-macro-testing
 ^ Also if your macro deals with enums you might need to deal with the fact that enum cases can be overloaded
 
 ^ And there are some "fun" quirks to named arguments in Swift. For example, closure arguments can't be provided external argument names, but they can provide internal names. And you may have to take that into account.
-
-<!-- ---
-
-# Protocol requirements and access control
-
-```swift
-public extension Feature {
-  @Reducer
-  enum Destination {
-    // ...
-  }
-}
-```
-
-^ This is a very specific lesson, but I'm sure some of y'all will run into this eventually.
-
-^ If your macro generates the protocol requirements for a public protocol, then you should just make 
-
- If your macro generates requirements for a public protocol
-
-^ if macro generates requirements for a public protocol, always make the members public. -->
 
 ---
 
