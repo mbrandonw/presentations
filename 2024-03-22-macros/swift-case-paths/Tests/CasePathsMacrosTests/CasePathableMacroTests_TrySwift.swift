@@ -5,4 +5,7 @@ import SwiftSyntaxMacrosTestSupport
 import XCTest
 
 final class CasePathableMacroTests_TrySwift: XCTestCase {
+  func testBasics() {
+    
+  }
 }
