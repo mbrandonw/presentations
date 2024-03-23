@@ -20,5 +20,28 @@
 			<integer>2</integer>
 		</dict>
 	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>CasePaths</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>CasePathsMacrosTests</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>CasePathsTests</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>swift-case-paths-benchmark</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+	</dict>
 </dict>
 </plist>

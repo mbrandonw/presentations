@@ -689,9 +689,9 @@ func testMyMacro() {
 
 ---
 
-# A better macro testing helper
+# [fit] A better macro testing helper
 
-github.com/pointfreeco/swift-macro-testing
+[github.com/pointfreeco/swift-macro-testing](#)
 
 ^ ‼️🙋‍♂️ **STEPHEN**
 
