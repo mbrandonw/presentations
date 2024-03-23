@@ -15,7 +15,6 @@ final class CasePathableMacroTests_TrySwift: XCTestCase {
   }
 
   func testBasics_AssertMacro() {
-    let x =   1
     assertMacro(record: true) {
       """
       @CasePathable
